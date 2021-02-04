@@ -1,0 +1,54 @@
+{
+  "name": "ecto",
+  "version": "0.1.0",
+  "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, and Handlebars",
+  "main": "./dist/index",
+  "types": "./dist/index",
+  "repository": "https://github.com/jaredwray/ecto.git",
+  "author": "Jared Wray <me@jaredwray.com>",
+  "license": "MIT",
+  "keywords": [
+    "templates",
+    "generator",
+    "framework",
+    "html",
+    "handlebars",
+    "hbs",
+    "markdown",
+    "hjs",
+    "ejs"
+  ],
+  "scripts": {
+    "watch": "tsc -w -p .",
+    "clean": "rm -rf ./dist && rm -rf node_modules",
+    "test": "jest --coverage",
+    "compile": "tsc -p .",
+    "build": "yarn && yarn test && yarn compile"
+  },
+  "dependencies": {
+    "@types/keyv": "^3.1.0",
+    "ejs": "^2.7.1",
+    "fs-extra": "^8.1.0",
+    "handlebars": "^4.4.3",
+    "helper-date": "^1.0.1",
+    "keyv": "^3.1.0",
+    "markdown-it": "^10.0.0",
+    "pug": "^2.0.4",
+    "winston": "^2.4.1"
+  },
+  "devDependencies": {
+    "@types/ejs": "^2.6.3",
+    "@types/express": "^4.11.1",
+    "@types/fs-extra": "^5.0.3",
+    "@types/jest": "^26.0.20",
+    "@types/pug": "^2.0.4",
+    "codecov": "^3.5.0",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.0",
+    "typescript": "^3.5.3"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ]
+}
