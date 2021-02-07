@@ -17,17 +17,17 @@
 * Only the Top Template Engines: EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
 * Maintained with Monthly Updates! 
 
-## Only The Top Template Engines
+## Only the Top Template Engines and Their Extensions
 
-| Engine     | Package                                                                                | Monthly Downloads                                                                              | Extensions              |
-| :---------- | :-------------------------------------------------------------------------------------- | :---------- | :----------------------- |
-| EJS        | [https://www.npmjs.com/package/ejs](https://www.npmjs.com/package/ejs)                 | [![npm](https://img.shields.io/npm/dm/ejs)](https://npmjs.com/package/ejs)                 | .ejs                    |
-| Markdown   | [https://www.npmjs.com/package/markdown-it](https://www.npmjs.com/package/markdown-it) | [![npm](https://img.shields.io/npm/dm/markdown-it)](https://npmjs.com/package/markdown-it) | .markdown, .md          |
-| Pug        | [https://www.npmjs.com/package/pug](https://www.npmjs.com/package/pug)                 | [![npm](https://img.shields.io/npm/dm/pug)](https://npmjs.com/package/pug)                 | .pug, .jade             |
-| Nunjucks   | [https://www.npmjs.com/package/nunjucks](https://www.npmjs.com/package/nunjucks)       | [![npm](https://img.shields.io/npm/dm/nunjucks)](https://npmjs.com/package/nunjucks)       | .njk                    |
-| Mustache   | [https://www.npmjs.com/package/mustache](https://www.npmjs.com/package/mustache)       | [![npm](https://img.shields.io/npm/dm/mustache)](https://npmjs.com/package/mustache)       | .mustache               |
-| Handlebars | [https://www.npmjs.com/package/handlebars](https://www.npmjs.com/package/handlebars)   | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hls |
-| Liquid     | [https://www.npmjs.com/package/liquidjs](https://www.npmjs.com/package/liquidjs)       | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |
+| Engine     | Monthly Downloads                                                                              | Extensions              |
+| ---------- | ---------------------------------------------------------------------------------------------- | ----------------------- |
+| [EJS](https://www.npmjs.com/package/ejs)        | [![npm](https://img.shields.io/npm/dm/ejs)](https://npmjs.com/package/ejs)                 | .ejs                    |
+| [Markdown](https://www.npmjs.com/package/markdown-it)   | [![npm](https://img.shields.io/npm/dm/markdown-it)](https://npmjs.com/package/markdown-it) | .markdown, .md          |
+| [Pug](https://www.npmjs.com/package/pug)        | [![npm](https://img.shields.io/npm/dm/pug)](https://npmjs.com/package/pug)                 | .pug, .jade             |
+| [Nunjucks](https://www.npmjs.com/package/nunjucks)   | [![npm](https://img.shields.io/npm/dm/nunjucks)](https://npmjs.com/package/nunjucks)       | .njk                    |
+| [Mustache](https://www.npmjs.com/package/mustache)   | [![npm](https://img.shields.io/npm/dm/mustache)](https://npmjs.com/package/mustache)       | .mustache               |
+| [Handlebars](https://www.npmjs.com/package/handlebars) | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hls |
+| [Liquid](https://www.npmjs.com/package/liquidjs)     | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |               |
 
 -----
 
