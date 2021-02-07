@@ -8,9 +8,10 @@ export class EngineMap {
     }
 
     set(name:string, extensions:Array<string>): void {
-        if(name !== undefined && extensions !== undefined) {
-            let engineName = name.trim().toLowerCase();
-            let engineExtensions = new Array<string>();
+        let engineName = name.trim().toLowerCase();
+        let engineExtensions = new Array<string>();
+        
+        if(extensions.length !== 0 && name !== "") {
             //clean engine extensions
             extensions.forEach(ext => {
                 ext = ext.trim().toLowerCase();
@@ -27,7 +28,7 @@ export class EngineMap {
         this._mappings.delete(name.trim().toLowerCase());
     }
 
-    deleteExtention(name:string, extension:string): void {
+    deleteExtension(name:string, extension:string): void {
         let engineName = name.trim().toLowerCase();
         let extensions = this._mappings.get(engineName);
         if(extensions) {
