@@ -1,29 +1,32 @@
 import { BaseEngine } from "../baseEngine";
 
-export class Markdown extends BaseEngine {
+export class Markdown extends BaseEngine implements EngineInterface {
 
-    private __markdown: any;
-
-    constructor(){
+    constructor(opts?:object){
         super();
 
-        this.name = "Markdown";
+        this.name = "markdown";
 
-        this.addExtenstions(["md", "markdown"]);
-    }
-
-    async render(content:string): Promise<string> {
-
-        let md = this.__markdown;
-
-        if(md === undefined) {
-            md = this.__markdown = require('markdown-it')({
-                html: true,
-                linkify: true,
-                typographer: true,
-              });
+        if(opts) {
+            this.opts = opts;
         }
 
-        return md.render(content);
+        this.setExtensions(["md", "markdown"]);
+    }
+
+    async render(source:string, data?:object): Promise<string> {
+
+        let md = this.engine;
+
+        if(md === undefined) {
+            
+            if(!this.opts) {
+                this.opts = { html: true, linkify: true, typographer: true };
+            }
+
+            md = this.engine = require('markdown-it')(this.opts);
+        }
+
+        return md.render(source);
     }
 } 

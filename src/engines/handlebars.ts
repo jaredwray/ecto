@@ -1,47 +1,25 @@
 import { BaseEngine } from "../baseEngine";
 import * as handlebars from "handlebars";
-import * as fs from "fs-extra";
+import * as helpers from "handlebars-helpers";
 
-export class Handlebars extends BaseEngine {
 
-    private __engine: any;
+export class Handlebars extends BaseEngine implements EngineInterface {
 
-    constructor(){
+    private __templates: Map<string, handlebars.Template> = new Map<string, handlebars.Template>();
+
+    constructor(opts?:object){
         super();
 
-        this.name = "Handlebars";
+        this.name = "handlebars";
+        this.opts = opts;
 
-        this.addExtenstions(["hbs", "hls", "handlebars"]);
+        this.setExtensions(["hbs", "hjs", "handlebars"]);
     }
 
-    async render(content:string): Promise<string> {
-
-        let hjs = this.__engine;
-
-            handlebars.registerHelper('formatDate', require('helper-date'));
-            let template: handlebars.Template = handlebars.compile(content);
-
-        return template(content);
-    }
-
-    registerPartials(config: any) {
-        let result = false;
-        let path = config.path + "/templates/partials";
-        if(fs.pathExistsSync(path)) {
-            let partials = fs.readdirSync(path);
-            
-            partials.forEach(p => {
-                let source = fs.readFileSync(path + "/" + p).toString();
-                let name = p.split(".hjs")[0];
-
-                if(handlebars.partials[name] === undefined) {
-                    handlebars.registerPartial(name, handlebars.compile(source));
-                }
-
-            });
-            result = true;
-        }
-
-        return result;
+    async render(source:string, data?:object): Promise<string> {
+        helpers({ handlebars: handlebars });
+        let template = handlebars.compile(source, this.opts);
+        this.__templates.set(source, template);
+        return template(data);
     }
 } 

@@ -1,35 +1,65 @@
 
 export class EngineMap {
 
-    _name = "";
-    _extensions = new Array<string>();
+    private _mappings: Map<string, Array<string>> = new Map<string, Array<string>>();
 
-    constructor(name: string, extensions: Array<string>) {
+    constructor() {
 
-        if(name !== undefined) {
-            this._name = name;  
-        }
-
-        if(extensions !== undefined) {
-            this._extensions = extensions;
-        }
     }
 
-    get name(): string {
-        return this._name;
-    }
+    set(name:string, extensions:Array<string>): void {
+        if(name !== undefined && extensions !== undefined) {
+            let engineName = name.trim().toLowerCase();
+            let engineExtensions = new Array<string>();
+            //clean engine extensions
+            extensions.forEach(ext => {
+                ext = ext.trim().toLowerCase();
+                if(!engineExtensions.includes(ext)){
+                    engineExtensions.push(ext);
+                }
+            });
 
-    set name(val:string) {
-        this._name = val;
-    }
-
-    get extensions(): Array<string> {
-        return this._extensions;
-    }
-
-    set extensions(val: Array<string>) {
-        if(val instanceof Array) {
-            this._extensions = val;
+            this._mappings.set(engineName, engineExtensions);
         }
     }
+
+    delete(name:string): void {
+        this._mappings.delete(name.trim().toLowerCase());
+    }
+
+    deleteExtention(name:string, extension:string): void {
+        let engineName = name.trim().toLowerCase();
+        let extensions = this._mappings.get(engineName);
+        if(extensions) {
+            let engineExtensions = new Array<string>();
+            extensions.forEach(ext => {
+                if(ext !== extension.trim().toLowerCase()) {
+                    engineExtensions.push(ext);
+                }
+            });
+
+            this._mappings.set(engineName, engineExtensions);
+        }
+    }
+
+    get(name:string): Array<string> | undefined {
+        return this._mappings.get(name.trim().toLowerCase());
+    }
+
+    getName(extension:string): string | undefined {
+        let engineName = undefined;
+        
+        this._mappings.forEach((extensions, name, map) => {
+           if(extensions.includes(extension.trim().toLowerCase())) {
+               engineName = name;
+           } 
+        });
+
+        return engineName;
+    }
+
+
+
+
+
 }
