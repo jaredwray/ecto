@@ -23,7 +23,7 @@ const Ecto = require("ecto");
 let ecto = new Ecto();
 ```
 
-Step 3: Render via String
+Step 3: Render via String for EJS ([Default Engine](#))
 ```javascript
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"}
@@ -37,18 +37,18 @@ const Ecto = require("ecto");
 let ecto = new Ecto();
 
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
-let data = {firstName: "John", lastName: "Doe"}
+let data = {firstName: "John", lastName: "Doe"};
 //async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data);
 
 console.log(output);
-
 ```
 
 Next Steps:
-* [More examples on Render via String]()
-* [More examples on Render via Template File]()
-* [Check out the entire API / Functions]()
+* [More examples on Render via String](#render-via-string)
+* [More examples on Render via Template File](#render-via-template-file-with-automatic-engine-selection)
+* [Examples by Specific Engines](#examples-by-specific-engines)
+* [Check out the entire API / Functions](#api)
 
 -----
 
@@ -74,6 +74,54 @@ While doing research for other projects one of the reasons we decided to not use
 | [Liquid](https://www.npmjs.com/package/liquidjs)     | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |               |
 
 _The `Extensions` are listed above for when we Render via Template file which you can learn about [here](#render-via-template-file-with-automatic-engine-selection)._
+
+-----
+
+## Render via String
+
+As we have shown in [Getting Started -- It's that Easy!](#getting-started----its-that-easy) you can do a render in only a couple lines of code: 
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+
+let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+let data = {firstName: "John", lastName: "Doe"};
+//async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+let output = await ecto.render(source, data);
+
+console.log(output);
+```
+
+Now lets say your engine is not [EJS](https://www.npmjs.com/package/ejs) so you want to specify it. You can either set the [defaultEngine]() parameter or simply pass it in the `render` function. Here we are doing [Handlebars](https://www.npmjs.com/package/handlebars):
+
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+
+let source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
+let data = {firstName: "John", lastName: "Doe"};
+//async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+let output = await ecto.render(source, data, "handlebars");
+
+console.log(output);
+```
+
+
+`render` also can write out the file for you by specifying the `filePathOutput` parameter like below. It will still return the output via `string`:
+
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+
+let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+let data = {firstName: "John", lastName: "Doe"};
+//async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+let output = await ecto.render(source, data, undefined, "./path/to/output/file.html");
+
+console.log(output);
+```
+
+Notice the `undefined` passed into the `engineName` parameter. This is done because we already have the [defaultEngine]() set to [EJS](https://www.npmjs.com/package/ejs). If you want you can easily add it in by specifying it.
 
 -----
 
@@ -116,8 +164,30 @@ let output = await ecto.templateRender("./path/to/template.ejs", data, "./path/t
 
 ```
 
+This will override the auto selection process and render the template using the [Pug](https://www.npmjs.com/package/pug) engine. 
+
+-----
+
+## Examples by Specific Engines
+
+### Markdown
+
+### Handlebars
+
 -----
 
 ## API
 
-`Render(sourceDir:string, data:obj, fileOutput?:string): string (returns rendered output)`
+### Parameter: `defaultEngine:String`
+By default the system is set to [EJS](https://www.npmjs.com/package/ejs) but if you are using a different engine no problem as you can easily change the default like so:
+```
+let ecto = new Ecto();
+ecto.defaultEngine = "pug" //we support ejs, markdown, pug, nunjucks, mustache, handlebars, and liquid
+```
+From there you can do the default `render` and it just works! Now if you want to just pass it on the command line you can by doing the following on render which will overwrite the `defaultEngine`: 
+```
+let ecto = new Ecto();
+let output = await ecto.render(source, data, "pug", "./path/to/output/file.html");
+```
+
+### Function: `render(sourceDir:string, data:obj, fileOutput?:string): string (returns rendered output)`
