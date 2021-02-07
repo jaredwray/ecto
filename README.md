@@ -130,7 +130,7 @@ To render via a template file it is as simple as calling the `renderFromTemplate
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
+//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string>
 let output = await ecto.renderFromTemplate("./path/to/template.ejs", data);
 
 ```
@@ -140,7 +140,7 @@ In this example we are now asking it to write the output file for us and it will
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
+//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string>
 let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, "./path/to/output/yourname.html");
 
 ```
@@ -153,7 +153,7 @@ You can override the auto selected engine by adding it on the function as a para
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
+//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string>
 let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, "./path/to/output/yourname.html", "pug");
 
 ```
