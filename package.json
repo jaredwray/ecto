@@ -16,7 +16,16 @@
     "hbs",
     "markdown",
     "hjs",
-    "ejs"
+    "ejs",
+    "consolidate",
+    "consolidatejs",
+    "pug",
+    "jade",
+    "nunjucks",
+    "njk",
+    "mustache",
+    "liquid",
+    "liquidjs"
   ],
   "scripts": {
     "watch": "tsc -w -p .",
