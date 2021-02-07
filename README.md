@@ -61,7 +61,9 @@ Next Steps:
 
 ## Only the Top Template Engines and Their Extensions
 
-While doing research for other projects one of the reasons we decided to not use other consolidation engines is that the support is all over the place. Some of the packages were unsupported and most likely hard to validate as working. Our goal is to support the top engines which most likely handle the vast majority of use cases. 
+While doing research for enabling other projects to handle multiple template engines we decided to not use other consolidation engines as they is all over the place. Some of the packages were unsupported and most likely hard to validate as working. Some had had limited types and ease of use. 
+
+Our goal is to support the top engines which most likely handle the vast majority of use cases and just make it easy. Here are the top engines that we support and make easy:
 
 | Engine     | Monthly Downloads                                                                              | Extensions              |
 | ---------- | ---------------------------------------------------------------------------------------------- | ----------------------- |
