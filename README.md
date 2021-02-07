@@ -10,6 +10,48 @@
 
 -----
 
+## Getting Started -- It's that Easy!
+
+Step 1: Add Ecto to your Project
+```
+yarn add ecto
+```
+
+Step 2: Declate and Initialize
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+```
+
+Step 3: Render via String
+```javascript
+let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+let data = {firstName: "John", lastName: "Doe"}
+//async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+let output = await ecto.render(source, data);
+```
+
+Here is how it looks all together after you have added it as a package via `yarn add ecto`!
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+
+let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+let data = {firstName: "John", lastName: "Doe"}
+//async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+let output = await ecto.render(source, data);
+
+console.log(output);
+
+```
+
+Next Steps:
+* [More examples on Render via String]()
+* [More examples on Render via Template File]()
+* [Check out the entire API / Functions]()
+
+-----
+
 ## Features
 * Zero Config by default.
 * Async `render` and `templateRender` functions for ES6 and Typescript. 
@@ -18,6 +60,8 @@
 * Maintained with Monthly Updates! 
 
 ## Only the Top Template Engines and Their Extensions
+
+While doing research for other projects one of the reasons we decided to not use other consolidation engines is that the support is all over the place. Some of the packages were unsupported and most likely hard to validate as working. Our goal is to support the top engines which most likely handle the vast majority of use cases. 
 
 | Engine     | Monthly Downloads                                                                              | Extensions              |
 | ---------- | ---------------------------------------------------------------------------------------------- | ----------------------- |
@@ -28,6 +72,8 @@
 | [Mustache](https://www.npmjs.com/package/mustache)   | [![npm](https://img.shields.io/npm/dm/mustache)](https://npmjs.com/package/mustache)       | .mustache               |
 | [Handlebars](https://www.npmjs.com/package/handlebars) | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hls |
 | [Liquid](https://www.npmjs.com/package/liquidjs)     | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |               |
+
+_The `Extensions` are listed above for when we Render via Template file which you can learn about [here](#render-via-template-file-with-automatic-engine-selection)._
 
 -----
 
@@ -58,7 +104,7 @@ let output = await ecto.templateRender("./path/to/template.ejs", data, "./path/t
 
 Notice that in these examples it is using the `./path/to/template.ejs` to use the engine [EJS](https://www.npmjs.com/package/ejs) for the rendering. 
 
-You can override the auto selected engine by adding it on the function as a paramater:
+You can override the auto selected engine by adding it on the function as a parameter by passing in `pug` in this example:
 
 ```javascript
 const Ecto = require("ecto");
