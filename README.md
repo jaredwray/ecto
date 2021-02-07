@@ -73,7 +73,7 @@ While doing research for other projects one of the reasons we decided to not use
 | [Handlebars](https://www.npmjs.com/package/handlebars) | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hls |
 | [Liquid](https://www.npmjs.com/package/liquidjs)     | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |               |
 
-_The `Extensions` are listed above for when we Render via Template file which you can learn about [here](#render-via-template-file-with-automatic-engine-selection)._
+_The `Extensions` are listed above for when we [Render via Template File](#render-via-template-file-with-automatic-engine-selection)._
 
 -----
 
