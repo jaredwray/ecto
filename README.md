@@ -17,17 +17,17 @@
 * Support for the top Template Engines: EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
 * Maintained with Monthly Updates! 
 
-## Auto File Extension Selectors
+## Template Engine and Extensions
 
-| Engine         | Extensions   |
-| :------------- | :---------- |
-| EJS | .ejs   |
-| Markdown   | .markdown, .md |
-| Pug   | .pug |
-| Nunjucks   | .njk | 
-| Mustache   | .mustache | 
-| Handlebars   | .hbs, .handlebars, .hjs | 
-| Liquid   | .liquid | 
+| Engine     | Package                                                                                | Extensions              |
+| :---------- | :-------------------------------------------------------------------------------------- | :----------------------- |
+| EJS        | [https://www.npmjs.com/package/ejs](https://www.npmjs.com/package/ejs)                 | .ejs                    |
+| Markdown   | [https://www.npmjs.com/package/markdown-it](https://www.npmjs.com/package/markdown-it) | .markdown, .md          |
+| Pug        | [https://www.npmjs.com/package/pug](https://www.npmjs.com/package/pug)                 | .pug, .jade             |
+| Nunjucks   | [https://www.npmjs.com/package/nunjucks](https://www.npmjs.com/package/nunjucks)       | .njk                    |
+| Mustache   | [https://www.npmjs.com/package/mustache](https://www.npmjs.com/package/mustache)       | .mustache               |
+| Handlebars | [https://www.npmjs.com/package/handlebars](https://www.npmjs.com/package/handlebars)   | .handlebars, .hbs, .hls |
+| Liquid     | [https://www.npmjs.com/package/liquidjs](https://www.npmjs.com/package/liquidjs)       | .liquid 
 
 -----
 
