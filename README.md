@@ -12,8 +12,8 @@
 
 ## Features
 * Zero Config by default.
-* Async render function for ES6 and Typescript. 
-* Automatic Engine Selection. No more selecting which engine to use as it does it for you based on file extension.
+* Async `render` and `templateRender` functions for ES6 and Typescript. 
+* Render via Template File with Automatic Engine Selection. No more selecting which engine to use as it does it for you based on file extension.
 * Only the Top Template Engines: EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
 * Maintained with Monthly Updates! 
 
@@ -28,6 +28,47 @@
 | Mustache   | [https://www.npmjs.com/package/mustache](https://www.npmjs.com/package/mustache)       | [![npm](https://img.shields.io/npm/dm/mustache)](https://npmjs.com/package/mustache)       | .mustache               |
 | Handlebars | [https://www.npmjs.com/package/handlebars](https://www.npmjs.com/package/handlebars)   | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hls |
 | Liquid     | [https://www.npmjs.com/package/liquidjs](https://www.npmjs.com/package/liquidjs)       | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |
+
+-----
+
+## Render via Template File with Automatic Engine Selection
+
+To render via a template file it is as simple as calling the `templateRender` function with a couple simple parameters to be passed in. In this example we are simply passing in the template and it will return a `string`.
+
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+let data = { firstName: "John", lastName: "Doe"};
+
+//templatePath:string, data:object, filePathOutput?:string, engineName?:string
+let output = await ecto.templateRender("./path/to/template.ejs", data);
+
+```
+In this example we are now asking it to write the output file for us and it will return the output still as a `string`:
+
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+let data = { firstName: "John", lastName: "Doe"};
+
+//templatePath:string, data:object, filePathOutput?:string, engineName?:string
+let output = await ecto.templateRender("./path/to/template.ejs", data, "./path/to/output/yourname.html");
+
+```
+
+Notice that in these examples it is using the `./path/to/template.ejs` to use the engine [EJS](https://www.npmjs.com/package/ejs) for the rendering. 
+
+You can override the auto selected engine by adding it on the function as a paramater:
+
+```javascript
+const Ecto = require("ecto");
+let ecto = new Ecto();
+let data = { firstName: "John", lastName: "Doe"};
+
+//templatePath:string, data:object, filePathOutput?:string, engineName?:string
+let output = await ecto.templateRender("./path/to/template.ejs", data, "./path/to/output/yourname.html", "pug");
+
+```
 
 -----
 
