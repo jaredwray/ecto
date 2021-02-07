@@ -87,7 +87,7 @@ test("isValidEngine should return false because bad name", () => {
 test("registerEngineMappings should register mappings", () => {
     let ecto = new Ecto();
 
-    ecto.mappings.deleteExtention("handlebars", "hbs");
+    ecto.mappings.deleteExtension("handlebars", "hbs");
     expect(ecto.mappings.get("handlebars")?.includes("hbs")).toBe(false);
 
     ecto.registerEngineMappings();
