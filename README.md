@@ -54,7 +54,7 @@ Next Steps:
 
 ## Features
 * Zero Config by default.
-* Async `render` and `templateRender` functions for ES6 and Typescript. 
+* Async `render` and `renderFromTemplate` functions for ES6 and Typescript. 
 * Render via Template File with Automatic Engine Selection. No more selecting which engine to use as it does it for you based on file extension.
 * Only the Top Template Engines: EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
 * Maintained with Monthly Updates! 
@@ -124,14 +124,14 @@ Notice the `undefined` passed into the `engineName` parameter. This is done beca
 
 ## Render via Template File with Automatic Engine Selection
 
-To render via a template file it is as simple as calling the `templateRender` function with a couple simple parameters to be passed in. In this example we are simply passing in the template and it will return a `string`.
+To render via a template file it is as simple as calling the `renderFromTemplate` function with a couple simple parameters to be passed in. In this example we are simply passing in the template and it will return a `string`.
 
 ```javascript
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//templateRender(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
-let output = await ecto.templateRender("./path/to/template.ejs", data);
+//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
+let output = await ecto.renderFromTemplate("./path/to/template.ejs", data);
 
 ```
 In this example we are now asking it to write the output file for us and it will return the output still as a `string`:
@@ -140,8 +140,8 @@ In this example we are now asking it to write the output file for us and it will
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//templateRender(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
-let output = await ecto.templateRender("./path/to/template.ejs", data, "./path/to/output/yourname.html");
+//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
+let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, "./path/to/output/yourname.html");
 
 ```
 
@@ -153,8 +153,8 @@ You can override the auto selected engine by adding it on the function as a para
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//templateRender(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
-let output = await ecto.templateRender("./path/to/template.ejs", data, "./path/to/output/yourname.html", "pug");
+//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string>
+let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, "./path/to/output/yourname.html", "pug");
 
 ```
 
@@ -176,7 +176,7 @@ Ecto:
 * Constructor
 * Functions:
     * render
-    * templateRender
+    * renderFromTemplate
 * Parameters:
     * defaultEngine
     * mappings

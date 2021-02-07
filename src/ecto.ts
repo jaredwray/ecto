@@ -95,7 +95,7 @@ export class Ecto {
     }
 
     //Template Render
-    async templateRender(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string> {
+    async renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string> {
         return "";
     }
 
