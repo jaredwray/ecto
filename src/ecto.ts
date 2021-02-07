@@ -1,27 +1,49 @@
 import { EngineMap } from "./engineMap";
 import { Markdown } from "./engines/markdown";
 import { Handlebars } from "./engines/handlebars";
+import { EJS } from "./engines/ejs";
+import { Pug } from "./engines/pug";
+import { Nunjucks } from "./engines/nunjucks";
+import { Mustache } from "./engines/mustache";
+import { Liquid } from "./engines/liquid";
+import { BaseEngine } from "./baseEngine";
 
 export class Ecto {
 
     private __mapping: EngineMap = new EngineMap();
+    private __engines: Array<BaseEngine> = new Array<BaseEngine>();
 
     private __defaultEngine: string = "ejs";
 
     //engines
+    private __ejs: EJS = new EJS();
     private __markdown: Markdown = new Markdown();
+    private __pug: Pug = new Pug();
+    private __nunjucks: Nunjucks = new Nunjucks();
+    private __mustache: Mustache = new Mustache();
     private __handlebars: Handlebars = new Handlebars();
+    private __liquid: Liquid = new Liquid();
     
-    constructor() {
+    constructor(opts?:any) {
+
+        //register engines
+        this.__engines.push(this.__ejs);
+        this.__engines.push(this.__markdown);
+        this.__engines.push(this.__pug);
+        this.__engines.push(this.__nunjucks);
+        this.__engines.push(this.__mustache);
+        this.__engines.push(this.__handlebars);
+        this.__engines.push(this.__liquid);
 
         //register mappings
-        this.__mapping.set("ejs", ["ejs"]);
-        this.__mapping.set("markdown", ["markdown", "md"]);
-        this.__mapping.set("pug", ["jade", "pug"]);
-        this.__mapping.set("nunjucks", ["njk"]);
-        this.__mapping.set("mustache", ["mustache"]);
-        this.__mapping.set("handlebars", ["hbs", "hjs", "handlebars"]);
-        this.__mapping.set("liquid", ["liquid"]);
+        this.registerEngineMappings();
+
+        //set the options
+        if(opts) {
+            if(opts.defaultEngine) {
+                this.__defaultEngine = opts.defaultEngine;
+            }
+        }
 
     }
 
@@ -29,31 +51,55 @@ export class Ecto {
         return this.__defaultEngine;
     }
 
+    set defaultEngine(val:string) {
+        this.__defaultEngine = val;
+    }
+
     get mappings():EngineMap {
         return this.__mapping;
     }
 
     //Engines
+    get ejs(): EJS {
+        return this.__ejs;
+    }
+
     get markdown(): Markdown {
         return this.__markdown;
+    }
+
+    get pug(): Pug {
+        return this.__pug;
+    }
+
+    get nunjucks(): Nunjucks {
+        return this.__nunjucks;
+    }
+
+    get mustache(): Mustache {
+        return this.__mustache;
     }
 
     get handlebars(): Handlebars {
         return this.__handlebars;
     }
 
+    get liquid(): Liquid {
+        return this.__liquid;
+    }
+
 
     //String Render
-    async render(source:string, data:object, engineName?:string, filePathOutput?:string): Promise<string> {
+    async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string> {
         return "";
     }
 
-    //File Render
-    async renderFile(templatePath:string, data:object, filePathOutput?:string): Promise<string> {
+    //Template Render
+    async templateRender(templatePath:string, data?:object, filePathOutput?:string, engineName?:string): Promise<string> {
         return "";
     }
 
-    detectEngineByFilePath(filePath:string): string {
+    private detectEngineByTemplatePath(filePath:string): string {
         let result = this.defaultEngine;
 
         if(filePath !== undefined) {
@@ -63,6 +109,55 @@ export class Ecto {
             if(engExt !== undefined) {
                 result = engExt;
             }
+        }
+
+        return result;
+    }
+
+    //Engines
+    private registerEngineMappings():void {
+        this.__engines.forEach(eng => {
+            this.__mapping.set(eng.name, eng.getExtensions());
+        });
+    }
+
+    private getEngineName(engineName?:string): string {
+        let result = this.__defaultEngine;
+        if(!result) {
+            result = "ejs"; //set it back since it is undefined.
+        }
+
+        if(engineName) {
+            if(this.__mapping.get(engineName) !== undefined) {
+                result = engineName.trim().toLowerCase(); //its valid
+            }
+        }
+
+        return result;
+    }
+
+    private getRenderEngine(engineName:string): EngineInterface {
+        let result = this.__ejs; //setting default
+
+        switch(engineName.trim().toLowerCase()){
+            case "markdown":
+                result = this.__markdown;
+                break;
+            case "pug":
+                result = this.__pug;
+                break;
+            case "nunjucks":
+                result = this.__nunjucks;
+                break;
+            case "mustache":
+                result = this.__mustache;
+                break;
+            case "handlebars":
+                result = this.__handlebars;
+                break;
+            case "liquid":
+                result = this.__liquid;
+                break;
         }
 
         return result;
