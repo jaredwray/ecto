@@ -2,6 +2,8 @@
 
 ## Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Mustache, and Handlebars
 
+[![Build Status](https://github.com/jaredwray/ecto/workflows/ecto-build/badge.svg)](https://github.com/jaredwray/ecto/actions)
+[![Release Status](https://github.com/jaredwray/ecto/workflows/ecto-release/badge.svg)](https://github.com/jaredwray/ecto/actions)
 [![GitHub license](https://img.shields.io/github/license/jaredwray/ecto)](https://github.com/jaredwray/ecto/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/jaredwray/ecto/branch/master/graph/badge.svg)](https://codecov.io/gh/jaredwray/ecto)
 [![npm](https://img.shields.io/npm/dm/ecto)](https://npmjs.com/packages/ecto)
@@ -28,9 +30,6 @@
 | Liquid   | .liquid | 
 
 -----
-
-## To Do: 
-- [ ] Supports Express 3.x.x and 4.x.x
 
 ## API
 
