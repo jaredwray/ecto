@@ -40,7 +40,7 @@ export class Ecto {
 
         //set the options
         if(opts) {
-            if(opts.defaultEngine) {
+            if(this.isValidEngine(opts.defaultEngine)) {
                 this.__defaultEngine = opts.defaultEngine;
             }
         }
@@ -52,7 +52,9 @@ export class Ecto {
     }
 
     set defaultEngine(val:string) {
-        this.__defaultEngine = val;
+        if(this.isValidEngine(val)) {
+            this.__defaultEngine = val;
+        }
     }
 
     get mappings():EngineMap {
@@ -88,7 +90,6 @@ export class Ecto {
         return this.__liquid;
     }
 
-
     //String Render
     async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string> {
         return "";
@@ -99,7 +100,7 @@ export class Ecto {
         return "";
     }
 
-    private detectEngineByTemplatePath(filePath:string): string {
+    getEngineByTemplatePath(filePath:string): string {
         let result = this.defaultEngine;
 
         if(filePath !== undefined) {
@@ -115,28 +116,23 @@ export class Ecto {
     }
 
     //Engines
-    private registerEngineMappings():void {
-        this.__engines.forEach(eng => {
-            this.__mapping.set(eng.name, eng.getExtensions());
-        });
-    }
+    isValidEngine(engineName:string): Boolean {
+        let result = false;
 
-    private getEngineName(engineName?:string): string {
-        let result = this.__defaultEngine;
-        if(!result) {
-            result = "ejs"; //set it back since it is undefined.
-        }
-
-        if(engineName) {
-            if(this.__mapping.get(engineName) !== undefined) {
-                result = engineName.trim().toLowerCase(); //its valid
-            }
+        if(engineName !== undefined && this.__mapping.get(engineName) !== undefined) {
+            result = true;
         }
 
         return result;
     }
 
-    private getRenderEngine(engineName:string): EngineInterface {
+    registerEngineMappings():void {
+        this.__engines.forEach(eng => {
+            this.__mapping.set(eng.name, eng.getExtensions());
+        });
+    }
+
+    getRenderEngine(engineName:string): EngineInterface {
         let result = this.__ejs; //setting default
 
         switch(engineName.trim().toLowerCase()){
