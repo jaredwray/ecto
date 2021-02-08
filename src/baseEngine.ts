@@ -2,7 +2,7 @@ export class BaseEngine {
     
     private __extensions = Array<string>();
     name:string = "";
-    opts?:object = undefined;
+    opts?:any = undefined;
     engine: any = undefined;
 
     getExtensions(): Array<string> {

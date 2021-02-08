@@ -1,6 +1,6 @@
 interface EngineInterface {
     name: string;
     engine: any;
-    opts?: object;
+    opts?: any;
     render(source:string, data?:object): Promise<string>;
 }

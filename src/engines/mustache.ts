@@ -17,10 +17,6 @@ export class Mustache extends BaseEngine implements EngineInterface {
 
     async render(source:string, data?:object): Promise<string> {
 
-        if(!this.engine) {
-            this.engine = mustache;
-        }
-
-        return mustache.render(source, data);
+        return this.engine = mustache.render(source, data);
     }
 } 

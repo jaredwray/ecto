@@ -2,7 +2,7 @@ import { BaseEngine } from "../baseEngine";
 
 export class Markdown extends BaseEngine implements EngineInterface {
 
-    constructor(opts?:object){
+    constructor(opts?:any){
         super();
 
         this.name = "markdown";
