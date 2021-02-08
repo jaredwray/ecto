@@ -34,5 +34,5 @@ test("EJS - Rendering a simple string after inital render", async () => {
     let engine = new EJS();
     let data = { user: { name: "Joe" }, test: { foo: "bar" } };
     expect(await engine.render(simpleString1, data)).toContain("Joe");
-    expect(await engine.render(simpleString2, data)).toContain("Bar");
+    expect(await engine.render(simpleString2, data)).toContain("bar");
 });
