@@ -8,6 +8,8 @@ export class Mustache extends BaseEngine implements EngineInterface {
 
         this.name = "mustache";
 
+        this.engine = mustache;
+
         if(opts) {
             this.opts = opts;
         }
@@ -17,6 +19,6 @@ export class Mustache extends BaseEngine implements EngineInterface {
 
     async render(source:string, data?:object): Promise<string> {
 
-        return this.engine = mustache.render(source, data);
+        return mustache.render(source, data);
     }
 } 
