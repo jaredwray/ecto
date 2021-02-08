@@ -8,6 +8,10 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
 
         this.name = "nunjucks";
 
+        this.engine = nunjucks;
+
+        this.opts = { autoescape: true }; //default opts
+
         if(opts) {
             this.opts = opts;
         }
@@ -16,10 +20,6 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
     }
 
     async render(source:string, data?:object): Promise<string> {
-
-        if(!this.engine) {
-            this.engine = nunjucks;
-        }
 
         if(this.opts){
             nunjucks.configure(this.opts);   
