@@ -10,6 +10,15 @@
 
 -----
 
+## Features
+* Zero Config by default.
+* Async `render` and `renderFromTemplate` functions for ES6 and Typescript. 
+* Render via Template File with Automatic Engine Selection. No more selecting which engine to use as it does it for you based on file extension.
+* Only the Top Template Engines: EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
+* Maintained with Monthly Updates! 
+
+-----
+
 ## Getting Started -- It's that Easy!
 
 Step 1: Add Ecto to your Project
@@ -52,16 +61,9 @@ Next Steps:
 
 -----
 
-## Features
-* Zero Config by default.
-* Async `render` and `renderFromTemplate` functions for ES6 and Typescript. 
-* Render via Template File with Automatic Engine Selection. No more selecting which engine to use as it does it for you based on file extension.
-* Only the Top Template Engines: EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
-* Maintained with Monthly Updates! 
-
 ## Only the Top Template Engines and Their Extensions
 
-While doing research for enabling other projects to handle multiple template engines we decided to not use other consolidation engines as they is all over the place. Some of the packages were unsupported and most likely hard to validate as working. Some had had limited types and ease of use. 
+While doing research for enabling other projects to handle multiple template engines we decided to not use other consolidation engines as they were all over the place. Some of the packages were unsupported and most likely hard to validate as working. Some had had limited types and ease of use. 
 
 Our goal is to support the top engines which most likely handle the vast majority of use cases and just make it easy. Here are the top engines that we support and make easy:
 
