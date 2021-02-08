@@ -140,6 +140,13 @@ test("render via ejs", async () => {
     expect(await ecto.render(ejsExampleSource, ejsExampleData)).toBe("<h2>bar</h2>");
 });
 
+test("render via ejs hello from docs", async () => {
+    let ecto = new Ecto();
+    let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+    let data = {firstName: "John", lastName: "Doe"}
+    expect(await ecto.render(source, data)).toBe("<h1>Hello John Doe!</h1>");
+});
+
 test("render via handlebars", async () => {
     let ecto = new Ecto();
     
