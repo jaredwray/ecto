@@ -8,6 +8,8 @@ export class Pug extends BaseEngine implements EngineInterface {
 
         this.name = "pug";
 
+        this.engine = pug;
+
         if(opts) {
             this.opts = opts;
         }
@@ -16,10 +18,6 @@ export class Pug extends BaseEngine implements EngineInterface {
     }
 
     async render(source:string, data?:object): Promise<string> {
-
-        if(!this.engine) {
-            this.engine = pug;
-        }
 
         let template = pug.compile(source, this.opts);
 
