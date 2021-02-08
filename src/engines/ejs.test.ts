@@ -1,7 +1,7 @@
 import { EJS } from "./ejs";
 
-const simpleString1 = "<% if (user) { %><h2><%= user.name %></h2><% } %>";
-const simpleString2 = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
+const exampleSource1 = "<% if (user) { %><h2><%= user.name %></h2><% } %>";
+const exampleSource2 = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
 
 test("EJS - Default Name ejs", () => {
     let engine = new EJS();
@@ -27,12 +27,12 @@ test("EJS - Extension should be a count of 1", () => {
 test("EJS - Rendering a simple string", async () => {
     let engine = new EJS();
     let data = { user: { name: "Joe" } };
-    expect(await engine.render(simpleString1, data)).toContain("Joe");
+    expect(await engine.render(exampleSource1, data)).toContain("Joe");
 });
 
 test("EJS - Rendering a simple string after inital render", async () => {
     let engine = new EJS();
     let data = { user: { name: "Joe" }, test: { foo: "bar" } };
-    expect(await engine.render(simpleString1, data)).toContain("Joe");
-    expect(await engine.render(simpleString2, data)).toContain("bar");
+    expect(await engine.render(exampleSource1, data)).toContain("Joe");
+    expect(await engine.render(exampleSource2, data)).toContain("bar");
 });
