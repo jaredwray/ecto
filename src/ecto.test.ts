@@ -2,6 +2,13 @@ import { Ecto } from "./ecto";
 
 const engines: Array<string> = ["ejs", "markdown", "pug", "nunjucks", "mustache", "handlebars", "liquid"];
 
+const ejsExampleSource = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
+const ejsExampleData = { user: { name: "Joe" }, test: { foo: "bar" } };
+
+const handlebarsExampleSource = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
+const handlebarsExampleData = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
+
+
 test("Init and Verify defaultEngine", () => {
     let ecto = new Ecto();
     expect(ecto.defaultEngine).toBe("ejs");
@@ -125,4 +132,22 @@ test("getEngineByTemplatePath should return pug for jade", () => {
     let ecto = new Ecto();
     
     expect(ecto.getEngineByTemplatePath("./this/is/a/long/pathfoo.jade")).toBe("pug");
+});
+
+test("render via ejs", async () => {
+    let ecto = new Ecto();
+    
+    expect(await ecto.render(ejsExampleSource, ejsExampleData)).toBe("<h2>bar</h2>");
+});
+
+test("render via handlebars", async () => {
+    let ecto = new Ecto();
+    
+    expect(await ecto.render(handlebarsExampleSource, handlebarsExampleData, "handlebars")).toBe("<p>Hello, my name is Alan. I am from Somewhere, TX. I have 2 kids:</p> <ul><li>Jimmy is 12</li><li>Sally is 4</li></ul>");
+});
+
+test("render via handlebars and not define engineName", async () => {
+    let ecto = new Ecto();
+    
+    expect(await ecto.render(handlebarsExampleSource, handlebarsExampleData)).toBe(handlebarsExampleSource);
 });

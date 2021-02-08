@@ -92,13 +92,31 @@ export class Ecto {
 
     //String Render
     async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string> {
-        return "";
+        let result = "";
+        let renderEngineName = this.__defaultEngine;
+
+        //set the render engine
+        if(this.isValidEngine(engineName) && engineName !== undefined) {
+            renderEngineName = engineName;
+        }
+        
+        //get the render engine
+        let renderEngine = this.getRenderEngine(renderEngineName);
+        
+        //get the output
+        result = await renderEngine.render(source, data);
+        
+        //write out the file
+
+        return result;
     }
 
     //Template Render
+    /*
     async renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string> {
         return "";
     }
+    */
 
     getEngineByTemplatePath(filePath:string): string {
         let result = this.defaultEngine;
@@ -116,7 +134,7 @@ export class Ecto {
     }
 
     //Engines
-    isValidEngine(engineName:string): Boolean {
+    isValidEngine(engineName?:string): Boolean {
         let result = false;
 
         if(engineName !== undefined && this.__mapping.get(engineName) !== undefined) {
