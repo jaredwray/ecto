@@ -36,6 +36,11 @@ test("Nunjucks - Rendering a simple string", async () => {
     expect(await engine.render(exampleSource1, exampleData1)).toContain("john.doe");
 });
 
+test("Nunjucks - Rendering a simple string with no data", async () => {
+    let engine = new Nunjucks();
+    expect(await engine.render(exampleSource1, undefined)).toBe("Hello ");
+});
+
 test("Nunjucks - Rendering a list / ul html", async () => {
     let engine = new Nunjucks();
     expect(await engine.render(exampleSource2, exampleData2)).toContain("<h1>Posts</h1><ul><li>foo</li><li>bar</li></ul>");
