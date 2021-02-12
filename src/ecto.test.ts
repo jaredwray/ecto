@@ -1,4 +1,5 @@
 import { Ecto } from "./ecto";
+import * as fs from "fs-extra";
 
 const engines: Array<string> = ["ejs", "markdown", "pug", "nunjucks", "mustache", "handlebars", "liquid"];
 
@@ -8,6 +9,7 @@ const ejsExampleData = { user: { name: "Joe" }, test: { foo: "bar" } };
 const handlebarsExampleSource = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
 const handlebarsExampleData = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
 
+const testOutputDir = "./test-output";
 
 test("Init and Verify defaultEngine", () => {
     let ecto = new Ecto();
@@ -157,4 +159,19 @@ test("render via handlebars and not define engineName", async () => {
     let ecto = new Ecto();
     
     expect(await ecto.render(handlebarsExampleSource, handlebarsExampleData)).toBe(handlebarsExampleSource);
+});
+
+test("write via ejs", async () => {
+    let ecto = new Ecto();
+    let filePath = testOutputDir + "/ejs/ecto-ejs-test.html";
+    if(await fs.pathExists(filePath)) {
+        await fs.remove(filePath);
+    }
+    await ecto.render(ejsExampleSource, ejsExampleData, "ejs", filePath);
+    console.log("reading file");
+    let fileSource = await fs.readFile(filePath, "utf8");
+
+    expect(fileSource).toBe("<h2>bar</h2>");
+
+    await fs.remove(testOutputDir);
 });

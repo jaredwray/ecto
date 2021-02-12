@@ -7,6 +7,7 @@ import { Nunjucks } from "./engines/nunjucks";
 import { Mustache } from "./engines/mustache";
 import { Liquid } from "./engines/liquid";
 import { BaseEngine } from "./baseEngine";
+import * as fs from "fs-extra";
 
 export class Ecto {
 
@@ -107,6 +108,11 @@ export class Ecto {
         result = await renderEngine.render(source, data);
         
         //write out the file
+        if(filePathOutput) {
+            console.log("writing file...");
+            await fs.ensureFile(filePathOutput);
+            await fs.writeFile(filePathOutput, result);
+        }
 
         return result;
     }
