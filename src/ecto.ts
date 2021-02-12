@@ -108,21 +108,40 @@ export class Ecto {
         result = await renderEngine.render(source, data);
         
         //write out the file
-        if(filePathOutput) {
-            console.log("writing file...");
-            await fs.ensureFile(filePathOutput);
-            await fs.writeFile(filePathOutput, result);
-        }
-
+        await this.writeFile(filePathOutput, result);
         return result;
     }
 
-    //Template Render
+    //Template Render with Partials
     /*
-    async renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string> {
-        return "";
+    async renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, partialsPath?:string, engineName?:string): Promise<string> {
+        let result = "";
+
+        //select which engine
+        engineName = this.getEngineByTemplatePath(templatePath);
+        if(engineName === undefined) {
+            engineName = this.__defaultEngine;
+        }
+
+        //get the render engine
+        let renderEngine = this.getRenderEngine(engineName);
+        
+        //get the output
+        result = await renderEngine.renderFromTemplate(templatePath, data, partialsPath, engineName);
+        
+        //write out the file
+        await this.writeFile(filePathOutput, result);
+
+        return result;
     }
     */
+    
+    private async writeFile(filePath?:string, source?:string) {
+        if(filePath) {
+            await fs.ensureFile(filePath);
+            await fs.writeFile(filePath, source);
+        }
+    }
 
     getEngineByTemplatePath(filePath:string): string {
         let result = this.defaultEngine;
