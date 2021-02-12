@@ -9,7 +9,7 @@ const ejsExampleData = { user: { name: "Joe" }, test: { foo: "bar" } };
 const handlebarsExampleSource = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
 const handlebarsExampleData = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
 
-const testOutputDir = "./test-output";
+const testOutputDir = "./testing/output";
 
 test("Init and Verify defaultEngine", () => {
     let ecto = new Ecto();
@@ -168,7 +168,6 @@ test("write via ejs", async () => {
         await fs.remove(filePath);
     }
     await ecto.render(ejsExampleSource, ejsExampleData, "ejs", filePath);
-    console.log("reading file");
     let fileSource = await fs.readFile(filePath, "utf8");
 
     expect(fileSource).toBe("<h2>bar</h2>");
