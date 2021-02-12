@@ -10,6 +10,11 @@
 
 -----
 
+
+### *THIS IS STILL IN BETA: `renderFromTemplate` IS NOT WORKING but `render` IS FULLY FUNCTIONAL.*
+
+-----
+
 ## Features
 * Zero Config by default.
 * Async `render` and `renderFromTemplate` functions for ES6 and Typescript. 
