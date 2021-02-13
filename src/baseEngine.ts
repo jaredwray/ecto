@@ -4,6 +4,7 @@ export class BaseEngine {
     name:string = "";
     opts?:any = undefined;
     engine: any = undefined;
+    rootTemplatePath?: string = undefined;
 
     getExtensions(): Array<string> {
         return this.__extensions;

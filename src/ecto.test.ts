@@ -5,11 +5,13 @@ const engines: Array<string> = ["ejs", "markdown", "pug", "nunjucks", "mustache"
 
 const ejsExampleSource = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
 const ejsExampleData = { user: { name: "Joe" }, test: { foo: "bar" } };
+const ejsExampleData2 = { fruits: ["Apple", "Pear", "Orange", "Lemon"], user: { name: "John Doe"} };
 
 const handlebarsExampleSource = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
 const handlebarsExampleData = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
 
-const testOutputDir = "./test-output";
+const testOutputDir = "./testing/output";
+const testRootDir = "./testing";
 
 test("Init and Verify defaultEngine", () => {
     let ecto = new Ecto();
@@ -167,11 +169,31 @@ test("write via ejs", async () => {
     if(await fs.pathExists(filePath)) {
         await fs.remove(filePath);
     }
-    await ecto.render(ejsExampleSource, ejsExampleData, "ejs", filePath);
-    console.log("reading file");
+    await ecto.render(ejsExampleSource, ejsExampleData, "ejs", undefined, filePath);
     let fileSource = await fs.readFile(filePath, "utf8");
 
     expect(fileSource).toBe("<h2>bar</h2>");
 
     await fs.remove(testOutputDir);
+});
+
+test("Render from Template - EJS", async () => {
+    let ecto = new Ecto();
+    let source = await ecto.renderFromTemplate(testRootDir + "/ejs/example1.ejs", ejsExampleData2, testRootDir + "/ejs");
+
+    expect(source).toContain("Oranges");
+});
+
+test("Render from Template - Default to EJS", async () => {
+    let ecto = new Ecto();
+    let source = await ecto.renderFromTemplate(testRootDir + "/ejs/example1.html", ejsExampleData2, testRootDir + "/ejs");
+
+    expect(source).toContain("Oranges");
+});
+
+test("Render from Template - Handlebars", async () => {
+    let ecto = new Ecto();
+    let source = await ecto.renderFromTemplate(testRootDir + "/handlebars/example1.hbs", handlebarsExampleData, testRootDir + "/handlebars");
+
+    expect(source).toContain("<title>Alan's - Header Title </title>");
 });

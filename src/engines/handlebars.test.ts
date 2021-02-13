@@ -1,8 +1,11 @@
 import { Handlebars } from "./handlebars";
+import * as fs from "fs-extra";
 
 const exampleSource1 = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
 const exampleSource2 = "<p>Hello, my name is {{name}}. I am from {{hometown}}. </p>";
 const exampleData1 = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
+
+const testTemplateDir = "./testing/handlebars";
 
 test("Handlebars - Default Name ejs", () => {
     let engine = new Handlebars();
@@ -48,4 +51,12 @@ test("Handlebars - Test Rendering Helper isEmpty Array", async () => {
     let data = { name: "Joe", hometown: "Somewhere, TX", jobs: []};
     let source = "<p>Hello, my name is {{name}}. I am from {{hometown}}. {{year}} {{isEmpty jobs}} </p>";
     expect(await engine.render(source, data)).toContain("true");
+});
+
+test("Handlebars - Rendering with Partials", async () => {
+    let engine = new Handlebars();
+    let source = await fs.readFile(testTemplateDir + "/example1.hbs", "utf8");
+    engine.rootTemplatePath = testTemplateDir;
+    
+    expect(await engine.render(source, exampleData1)).toContain("Alan's - Header Title");
 });

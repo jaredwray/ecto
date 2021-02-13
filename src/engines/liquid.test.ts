@@ -1,9 +1,12 @@
 import { Liquid } from "./liquid";
+import * as fs from "fs-extra";
 
 const exampleSource1 = "{{name | capitalize}}";
 const exampleData1 = { name: "john Doe"};
 const exampleSource2 = "<ul> {% for todo in todos %} <li>{{forloop.index}} - {{todo}}</li> {% endfor %}</ul>";
-const exampleData2 = { todos: ["unit tests", "wash car", "go running", "bycicle"] };
+const exampleData2 = { todos: ["unit tests", "wash car", "go running", "bycicle"], name: "John Doe" };
+
+const testTemplateDir = "./testing/liquid";
 
 test("Liquid - Default Name Liquid", () => {
     let engine = new Liquid();
@@ -34,4 +37,17 @@ test("Liquid - Rendering a simple string", async () => {
 test("Liquid - Rendering a list in html", async () => {
     let engine = new Liquid();
     expect(await engine.render(exampleSource2, exampleData2)).toBe("<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>");
+});
+
+test("Liquid - Rendering Partials", async () => {
+    let engine = new Liquid();
+    let source = await fs.readFile(testTemplateDir + "/example1.liquid", "utf8");
+    
+    engine.rootTemplatePath = testTemplateDir;
+
+    let output = await engine.render(source, exampleData2);
+
+    expect(output).toContain("<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>");
+    expect(output).toContain("John Doe");
+
 });

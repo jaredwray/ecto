@@ -21,7 +21,11 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
 
     async render(source:string, data?:object): Promise<string> {
 
-        nunjucks.configure(this.opts);   
+        if(this.rootTemplatePath){
+            nunjucks.configure(this.rootTemplatePath, this.opts);
+        } else {
+            nunjucks.configure(this.opts);  
+        }
 
         if(!data) {
             data = {};

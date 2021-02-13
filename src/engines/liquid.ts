@@ -17,6 +17,14 @@ export class Liquid extends BaseEngine implements EngineInterface {
 
     async render(source:string, data?:object): Promise<string> {
 
+        if(this.rootTemplatePath) {
+            if(!this.opts) {
+                this.opts = {};
+            }
+
+            this.opts.root = this.rootTemplatePath;
+        }
+
         if(!this.engine) {
             this.engine = new LiquidEngine(this.opts);
         }
