@@ -116,17 +116,17 @@ export class Ecto {
         return result;
     }
 
-    //Render from Template
-    async renderFromTemplate(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string> {
+    //Render from File
+    async renderFromFile(filePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string> {
         let result = "";
 
         //select which engine
         if(!engineName) {
-            engineName = this.getEngineByTemplatePath(templatePath);
+            engineName = this.getEngineByTemplatePath(filePath);
         }
 
         //get the source
-        let source = await fs.readFile(templatePath, "utf8");
+        let source = await fs.readFile(filePath, "utf8");
         
         result = await this.render(source, data, engineName, rootTemplatePath, filePathOutput);
 

@@ -179,21 +179,21 @@ test("write via ejs", async () => {
 
 test("Render from Template - EJS", async () => {
     let ecto = new Ecto();
-    let source = await ecto.renderFromTemplate(testRootDir + "/ejs/example1.ejs", ejsExampleData2, testRootDir + "/ejs");
+    let source = await ecto.renderFromFile(testRootDir + "/ejs/example1.ejs", ejsExampleData2, testRootDir + "/ejs");
 
     expect(source).toContain("Oranges");
 });
 
 test("Render from Template - Default to EJS", async () => {
     let ecto = new Ecto();
-    let source = await ecto.renderFromTemplate(testRootDir + "/ejs/example1.html", ejsExampleData2, testRootDir + "/ejs");
+    let source = await ecto.renderFromFile(testRootDir + "/ejs/example1.html", ejsExampleData2, testRootDir + "/ejs");
 
     expect(source).toContain("Oranges");
 });
 
 test("Render from Template - Handlebars", async () => {
     let ecto = new Ecto();
-    let source = await ecto.renderFromTemplate(testRootDir + "/handlebars/example1.hbs", handlebarsExampleData, testRootDir + "/handlebars");
+    let source = await ecto.renderFromFile(testRootDir + "/handlebars/example1.hbs", handlebarsExampleData, testRootDir + "/handlebars");
 
     expect(source).toContain("<title>Alan's - Header Title </title>");
 });
