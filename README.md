@@ -10,11 +10,6 @@
 
 -----
 
-
-### *THIS IS STILL IN BETA: `renderFromTemplate` IS NOT WORKING but `render` IS FULLY FUNCTIONAL.*
-
------
-
 ## Features
 * Zero Config by default.
 * Async `render` and `renderFromTemplate` functions for ES6 and Typescript. 
@@ -41,7 +36,7 @@ Step 3: Render via String for EJS ([Default Engine](#))
 ```javascript
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"}
-//async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data);
 ```
 
@@ -52,7 +47,7 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data);
 
 console.log(output);
@@ -79,7 +74,7 @@ Our goal is to support the top engines which most likely handle the vast majorit
 | [Pug](https://www.npmjs.com/package/pug)        | [![npm](https://img.shields.io/npm/dm/pug)](https://npmjs.com/package/pug)                 | .pug, .jade             |
 | [Nunjucks](https://www.npmjs.com/package/nunjucks)   | [![npm](https://img.shields.io/npm/dm/nunjucks)](https://npmjs.com/package/nunjucks)       | .njk                    |
 | [Mustache](https://www.npmjs.com/package/mustache)   | [![npm](https://img.shields.io/npm/dm/mustache)](https://npmjs.com/package/mustache)       | .mustache               |
-| [Handlebars](https://www.npmjs.com/package/handlebars) | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hls |
+| [Handlebars](https://www.npmjs.com/package/handlebars) | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hjs |
 | [Liquid](https://www.npmjs.com/package/liquidjs)     | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |               |
 
 _The `Extensions` are listed above for when we [Render via Template File](#render-via-template-file-with-automatic-engine-selection)._
@@ -94,7 +89,7 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data);
 
 console.log(output);
@@ -107,12 +102,24 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
+//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data, "handlebars");
 
 console.log(output);
 ```
 
+`render` also can handle partial files for you standard engines (markdown excluded) by just adding the `rootTemplatePath`:
+
+```javascript
+let ecto = new Ecto();
+
+let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1><%- include('/relative/path/to/partial'); %>";
+let data = {firstName: "John", lastName: "Doe"};
+//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
+let output = await ecto.render(source, data, undefined, "./path/to/templates");
+
+console.log(output);
+```
 
 `render` also can write out the file for you by specifying the `filePathOutput` parameter like below. It will still return the output via `string`:
 
@@ -121,8 +128,8 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
-let output = await ecto.render(source, data, undefined, "./path/to/output/file.html");
+//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
+let output = await ecto.render(source, data, undefined, undefined, "./path/to/output/file.html");
 
 console.log(output);
 ```
@@ -139,7 +146,7 @@ To render via a template file it is as simple as calling the `renderFromTemplate
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string>
+//async renderFromTemplate(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
 let output = await ecto.renderFromTemplate("./path/to/template.ejs", data);
 
 ```
@@ -149,8 +156,8 @@ In this example we are now asking it to write the output file for us and it will
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string>
-let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, "./path/to/output/yourname.html");
+//async renderFromTemplate(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
+let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, undefined,"./path/to/output/yourname.html");
 
 ```
 
@@ -162,8 +169,8 @@ You can override the auto selected engine by adding it on the function as a para
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, rootPath?:string, engineName?:string): Promise<string>
-let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, "./path/to/output/yourname.html", "pug");
+//async renderFromTemplate(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
+let output = await ecto.renderFromTemplate("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html", "pug");
 
 ```
 
