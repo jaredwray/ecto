@@ -1,7 +1,9 @@
 import { EJS } from "./ejs";
+import * as fs from "fs-extra";
 
 const exampleSource1 = "<% if (user) { %><h2><%= user.name %></h2><% } %>";
 const exampleSource2 = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
+
 const exampleData1 = { fruits: ["Apple", "Pear", "Orange", "Lemon"], user: { name: "John Doe"} };
 
 const testTemplateDir = "./testing/ejs";
@@ -40,22 +42,12 @@ test("EJS - Rendering a simple string after inital render", async () => {
     expect(await engine.render(exampleSource2, data)).toContain("bar");
 });
 
-test("EJS - renderFromTemplate Example1", async () => {
+test("EJS - Rendering with partial", async () => {
     let engine = new EJS();
-    let templateFilePath = testTemplateDir + "/example1.ejs"
+    
+    let source = await fs.readFile(testTemplateDir + "/example2.ejs", "utf8");
 
-    let output = await engine.renderFromTemplate(templateFilePath, exampleData1);
+    engine.rootTemplatePath = testTemplateDir;
 
-    expect(output).toContain("Apple");
-
-});
-
-test("EJS - renderFromTemplate Example1", async () => {
-    let engine = new EJS();
-    let templateFilePath = testTemplateDir + "/example2.ejs"
-
-    let output = await engine.renderFromTemplate(templateFilePath, exampleData1, testTemplateDir);
-
-    expect(output).toContain("Apple");
-    expect(output).toContain("John Doe");
+    expect(await engine.render(source, exampleData1)).toContain("John Doe");
 });

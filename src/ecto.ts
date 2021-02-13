@@ -92,7 +92,7 @@ export class Ecto {
     }
 
     //String Render
-    async render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string> {
+    async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string> {
         let result = "";
         let renderEngineName = this.__defaultEngine;
 
@@ -104,37 +104,35 @@ export class Ecto {
         //get the render engine
         let renderEngine = this.getRenderEngine(renderEngineName);
         
+        //set the root template path
+        renderEngine.rootTemplatePath = rootTemplatePath;
+
         //get the output
         result = await renderEngine.render(source, data);
         
         //write out the file
         await this.writeFile(filePathOutput, result);
+
         return result;
     }
 
-    //Template Render with Partials
-    /*
-    async renderFromTemplate(templatePath:string, data?:object, filePathOutput?:string, partialsPath?:string, engineName?:string): Promise<string> {
+    //Render from Template
+    async renderFromTemplate(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string> {
         let result = "";
 
         //select which engine
-        engineName = this.getEngineByTemplatePath(templatePath);
-        if(engineName === undefined) {
-            engineName = this.__defaultEngine;
+        if(!engineName) {
+            engineName = this.getEngineByTemplatePath(templatePath);
         }
 
-        //get the render engine
-        let renderEngine = this.getRenderEngine(engineName);
+        //get the source
+        let source = await fs.readFile(templatePath, "utf8");
         
-        //get the output
-        result = await renderEngine.renderFromTemplate(templatePath, data, partialsPath, engineName);
-        
-        //write out the file
-        await this.writeFile(filePathOutput, result);
+        result = await this.render(source, data, engineName, rootTemplatePath, filePathOutput);
 
         return result;
     }
-    */
+    
     
     private async writeFile(filePath?:string, source?:string) {
         if(filePath) {
@@ -144,7 +142,7 @@ export class Ecto {
     }
 
     getEngineByTemplatePath(filePath:string): string {
-        let result = this.defaultEngine;
+        let result = this.__defaultEngine;
 
         if(filePath !== undefined) {
             let ext = filePath.slice((filePath.lastIndexOf(".") - 1 >>> 0) + 2);
