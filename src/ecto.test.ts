@@ -123,19 +123,19 @@ test("getRenderEngine should return valid for each", () => {
 test("getEngineByTemplatePath should return default ejs", () => {
     let ecto = new Ecto();
     
-    expect(ecto.getEngineByTemplatePath("foo.html")).toBe("ejs");
+    expect(ecto.getEngineByFilePath("foo.html")).toBe("ejs");
 });
 
 test("getEngineByTemplatePath should return nunjucks", () => {
     let ecto = new Ecto();
     
-    expect(ecto.getEngineByTemplatePath("foo.njk")).toBe("nunjucks");
+    expect(ecto.getEngineByFilePath("foo.njk")).toBe("nunjucks");
 });
 
 test("getEngineByTemplatePath should return pug for jade", () => {
     let ecto = new Ecto();
     
-    expect(ecto.getEngineByTemplatePath("./this/is/a/long/pathfoo.jade")).toBe("pug");
+    expect(ecto.getEngineByFilePath("./this/is/a/long/pathfoo.jade")).toBe("pug");
 });
 
 test("render via ejs", async () => {

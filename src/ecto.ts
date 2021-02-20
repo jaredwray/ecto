@@ -122,7 +122,7 @@ export class Ecto {
 
         //select which engine
         if(!engineName) {
-            engineName = this.getEngineByTemplatePath(filePath);
+            engineName = this.getEngineByFilePath(filePath);
         }
 
         //get the source
@@ -141,7 +141,7 @@ export class Ecto {
         }
     }
 
-    getEngineByTemplatePath(filePath:string): string {
+    getEngineByFilePath(filePath:string): string {
         let result = this.__defaultEngine;
 
         if(filePath !== undefined) {
