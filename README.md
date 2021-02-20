@@ -186,9 +186,7 @@ This will override the auto selection process and render the template using the 
 
 -----
 
-## More Examples
-
-### Default Engine
+## Default Engine
 
 There are a couple of ways to set the default engine to make it flexible. The first is that the `Ecto.defaultEngine` is set by default to `ejs`. So if you are using `ejs` no need to change anything. 
 
@@ -223,7 +221,7 @@ let data = { firstName: "John", lastName: "Doe"};
 
 let output = await ecto.renderFromFile("./path/to/template.html", data, undefined, "./path/to/output/yourname.html", "pug");
 ```
-
+## More Examples By Specific Engines
 
 ### Markdown
 
