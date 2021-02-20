@@ -30,7 +30,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
         let template = handlebars.compile(source, this.opts);
         this.__templates.set(source, template);
 
-        return template(data);
+        return template(data, this.opts);
     }
 
     registerPartials(partialsPath:string): boolean {
