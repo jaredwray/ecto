@@ -53,6 +53,7 @@ export class Ecto {
     }
 
     set defaultEngine(val:string) {
+        val = val.toLowerCase().trim();
         if(this.isValidEngine(val)) {
             this.__defaultEngine = val;
         }

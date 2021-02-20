@@ -90,13 +90,13 @@ Our goal is to support the top engines which most likely handle the vast majorit
 | [Handlebars](https://www.npmjs.com/package/handlebars) | [![npm](https://img.shields.io/npm/dm/handlebars)](https://npmjs.com/package/handlebars)   | .handlebars, .hbs, .hjs |
 | [Liquid](https://www.npmjs.com/package/liquidjs)     | [![npm](https://img.shields.io/npm/dm/liquidjs)](https://npmjs.com/package/liquidjs)       | .liquid                 |               |
 
-_The `Extensions` are listed above for when we [Render via Template File](#render-via-template-file-with-automatic-engine-selection)._
+_The `Extensions` are listed above for when we [Render from File](#render-from-file)._
 
 -----
 
 ## Render From String
 
-As we have shown in [Getting Started -- It's that Easy!](#getting-started----its-that-easy) you can do a render in only a couple lines of code: 
+As we have shown in [Getting Started -- It's that Easy!](#getting-started) you can do a render in only a couple lines of code: 
 ```javascript
 let ecto = new Ecto();
 
@@ -107,7 +107,7 @@ let output = await ecto.render(source, data);
 console.log(output);
 ```
 
-Now lets say your engine is not [EJS](https://www.npmjs.com/package/ejs) so you want to specify it. You can either set the [defaultEngine](#parameter-defaultengine) parameter or simply pass it in the `render` function. Here we are doing [Handlebars](https://www.npmjs.com/package/handlebars):
+Now lets say your engine is not [EJS](https://www.npmjs.com/package/ejs) so you want to specify it. You can either set the [defaultEngine](#default-engine) parameter or simply pass it in the `render` function. Here we are doing [Handlebars](https://www.npmjs.com/package/handlebars):
 
 ```javascript
 let ecto = new Ecto();
@@ -143,7 +143,7 @@ let output = await ecto.render(source, data, undefined, undefined, "./path/to/ou
 console.log(output);
 ```
 
-Notice the `undefined` passed into the `engineName` parameter. This is done because we already have the [defaultEngine](#parameter-defaultengine) set to [EJS](https://www.npmjs.com/package/ejs). If you want you can easily add it in by specifying it.
+Notice the `undefined` passed into the `engineName` parameter. This is done because we already have the [defaultEngine](#default-engine) set to [EJS](https://www.npmjs.com/package/ejs). If you want you can easily add it in by specifying it.
 
 -----
 
@@ -296,4 +296,10 @@ To make it easier to access certain engines and change them all engins supported
 let ecto = Ecto();
 console.log(ecto.Handlebars.name); // will return "handlebars"
 console.log(ecto.Handlebars.opts); // will return "handlebars" options object
+```
+
+To access the specific engine you can do so by going to `ect.<engine_name>.engine` such as setting the [SafeString](https://handlebarsjs.com/api-reference/utilities.html#handlebars-safestring-string):
+```javascript
+let ecto = Ecto();
+ect.Handlebars.engine.SafeString("<div>HTML Content!</div>");
 ```

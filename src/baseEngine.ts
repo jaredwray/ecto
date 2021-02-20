@@ -3,7 +3,7 @@ export class BaseEngine {
     private __extensions = Array<string>();
     name:string = "";
     opts?:any = undefined;
-    engine: any = undefined;
+    engine: any;
     rootTemplatePath?: string = undefined;
 
     getExtensions(): Array<string> {

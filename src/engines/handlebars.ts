@@ -14,6 +14,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
         this.name = "handlebars";
         this.opts = opts;
+        this.engine = handlebars;
 
         this.setExtensions(["hbs", "hjs", "handlebars"]);
     }

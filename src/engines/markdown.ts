@@ -9,7 +9,10 @@ export class Markdown extends BaseEngine implements EngineInterface {
 
         if(opts) {
             this.opts = opts;
+            
         }
+
+        this.engine = require('markdown-it')(this.opts);
 
         this.setExtensions(["md", "markdown"]);
     }
@@ -18,12 +21,9 @@ export class Markdown extends BaseEngine implements EngineInterface {
 
         let md = this.engine;
 
-        if(md === undefined) {
-            
-            if(!this.opts) {
-                this.opts = { html: true, linkify: true, typographer: true };
-            }
 
+        if(!this.opts) {
+            this.opts = { html: true, linkify: true, typographer: true };
             md = this.engine = require('markdown-it')(this.opts);
         }
 
