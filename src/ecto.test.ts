@@ -177,6 +177,20 @@ test("write via ejs", async () => {
     await fs.remove(testOutputDir);
 });
 
+test("write via ejs with long path", async () => {
+    let ecto = new Ecto();
+    let filePath = testOutputDir + "/ejs/foo/wow/ecto-ejs-test.html";
+    if(await fs.pathExists(filePath)) {
+        await fs.remove(filePath);
+    }
+    await ecto.render(ejsExampleSource, ejsExampleData, "ejs", undefined, filePath);
+    let fileSource = await fs.readFile(filePath, "utf8");
+
+    expect(fileSource).toBe("<h2>bar</h2>");
+
+    await fs.remove(testOutputDir);
+});
+
 test("Render from Template - EJS", async () => {
     let ecto = new Ecto();
     let source = await ecto.renderFromFile(testRootDir + "/ejs/example1.ejs", ejsExampleData2, testRootDir + "/ejs");

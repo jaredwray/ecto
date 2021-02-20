@@ -137,9 +137,18 @@ export class Ecto {
     
     private async writeFile(filePath?:string, source?:string) {
         if(filePath) {
-            await fs.ensureFile(filePath);
+            await this.ensureFilePath(filePath);
             await fs.writeFile(filePath, source);
         }
+    }
+
+    async ensureFilePath(path:string) {
+        let pathList = path.split("/");
+        pathList.pop();
+
+        let dir = pathList.join("/");
+
+        await fs.ensureDir(dir);
     }
 
     getEngineByFilePath(filePath:string): string {
