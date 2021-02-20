@@ -11,15 +11,15 @@
 -----
 
 ## Features
-* Zero Config by default.
+* Zero Config by default but all properties exposed for flexibility. Check out our easy [API](#api)
 * Async `render` and `renderFromFile` functions for ES6 and Typescript. 
-* Render via Template File with Automatic Engine Selection. No more selecting which engine to use as it does it for you based on file extension.
-* Only the Top Template Engines: EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
+* [Render via Template File](#render-from-file) with Automatic Engine Selection. No more selecting which engine to use as it does it for you based on file extension.
+* [Only the Top Template Engines](#only-the-top-template-engines-and-their-extensions): EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars
 * Maintained with Monthly Updates! 
 
 -----
 
-## Getting Started -- It's that Easy!
+## Getting Started
 
 Step 1: Add Ecto to your Project
 ```
@@ -32,7 +32,7 @@ const Ecto = require("ecto");
 let ecto = new Ecto();
 ```
 
-Step 3: Render via String for EJS ([Default Engine](#))
+Step 3: Render via String for EJS ([Default Engine](#default-engine))
 ```javascript
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"}
@@ -40,24 +40,37 @@ let data = {firstName: "John", lastName: "Doe"}
 let output = await ecto.render(source, data);
 ```
 
-Here is how it looks all together after you have added it as a package via `yarn add ecto`!
+Here is how it looks all together after you have added it as a package via `yarn add ecto`! Here we also set a different [defaultEngine](#default-engine).
+
 ```javascript
 const Ecto = require("ecto");
-let ecto = new Ecto();
+let ecto = new Ecto({defaultEngine: "handlebars"});
 
-let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+let source = "<h1>Hello {{ firstName }} {{ lastName }}!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data);
 
 console.log(output);
 ```
 
+To render from a template file it just use the `renderFromFile` function. This does automatic selection of the engine based on file extension.
+
+```javascript
+let ecto = new Ecto();
+let data = { firstName: "John", lastName: "Doe"};
+//async renderFromFile(filePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
+let output = await ecto.renderFromFile("./path/to/template.ejs", data);
+
+```
+
 Next Steps:
-* [More examples on Render via String](#render-via-string)
-* [More examples on Render via Template File](#render-via-template-file-with-automatic-engine-selection)
+* [More examples on Render from String](#render-from-string)
+* [More examples on Render from File](#render-from-file)
+* [Examples on setting the Default Engine](#default-engine)
 * [Examples by Specific Engines](#examples-by-specific-engines)
 * [Check out the entire API / Functions](#api)
+* [Learn more about Markdown](#markdown)
+* [Learn more about Handlebars and Helpers that we added](#handlebars)
 
 -----
 
@@ -81,7 +94,7 @@ _The `Extensions` are listed above for when we [Render via Template File](#rende
 
 -----
 
-## Render via String
+## Render From String
 
 As we have shown in [Getting Started -- It's that Easy!](#getting-started----its-that-easy) you can do a render in only a couple lines of code: 
 ```javascript
@@ -134,9 +147,11 @@ Notice the `undefined` passed into the `engineName` parameter. This is done beca
 
 -----
 
-## Render via Template File with Automatic Engine Selection
+## Render From File
 
-To render via a template file it is as simple as calling the `renderFromFile` function with a couple simple parameters to be passed in. In this example we are simply passing in the template and it will return a `string`.
+To render via a template file it is as simple as calling the `renderFromFile` function with a couple simple parameters to be passed in. In this example we are simply passing in the template and it will return a `string`. 
+
+_One of the biggest benefits is that based on the file extension it will automatically select the correct engine._
 
 ```javascript
 let ecto = new Ecto();
@@ -171,11 +186,49 @@ This will override the auto selection process and render the template using the 
 
 -----
 
-## Examples by Specific Engines
+## More Examples
+
+### Default Engine
+
+There are a couple of ways to set the default engine to make it flexible. The first is that the `Ecto.defaultEngine` is set by default to `ejs`. So if you are using `ejs` no need to change anything. 
+
+Here is how you set it on initializing your class with `liquid` as the default engine:
+```javascript
+let ecto = new Ecto({defaultEngine: "liquid"});
+```
+
+Here is how you set it as a parameter:
+
+```javascript
+let ecto = new Ecto();
+ecto.defaultEngine = "mustache";
+
+```
+
+You can also do it on the `render` which will override the `Ecto.defaultEngine` parameter:
+
+```javascript
+let ecto = new Ecto();
+
+let source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
+let data = {firstName: "John", lastName: "Doe"};
+let output = await ecto.render(source, data, "handlebars");
+```
+
+You can also override the auto selection on `renderFromFile` like so:
+
+```javascript
+let ecto = new Ecto();
+let data = { firstName: "John", lastName: "Doe"};
+
+let output = await ecto.renderFromFile("./path/to/template.html", data, undefined, "./path/to/output/yourname.html", "pug");
+```
+
 
 ### Markdown
 
 Markdown is a bit differnt as it will not have some of the complexities such as `data` objects or partials and layouts. To render markdown it is this easy:
+
 ```javascript
 let ecto = Ecto();
 let source = "# markdown-it rulezz!";
@@ -194,6 +247,15 @@ console.log(output);
 
 ### Handlebars
 
+Handlebars is a favorite of ours but it needs a bit more help to really get the bang for the buck. To do that we added in [handlebars-helpers](https://www.npmjs.com/package/hanldebars-helpers) to do the trick so you can format dates and more. Here is an example using `Handlebars Helpers` in your template:
+
+```javascript
+let ecto = Ecto();
+let source = "{{year}}";
+let output = await ecto.render(source, undefined, "handlebars");
+
+console.log(output); //should be current year such as 2021
+```
 
 
 -----
@@ -235,4 +297,5 @@ To make it easier to access certain engines and change them all engins supported
 ```javascript
 let ecto = Ecto();
 console.log(ecto.Handlebars.name); // will return "handlebars"
+console.log(ecto.Handlebars.opts); // will return "handlebars" options object
 ```
