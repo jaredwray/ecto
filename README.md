@@ -221,7 +221,7 @@ let data = { firstName: "John", lastName: "Doe"};
 
 let output = await ecto.renderFromFile("./path/to/template.html", data, undefined, "./path/to/output/yourname.html", "pug");
 ```
-## More Examples By Specific Engines
+## Examples By Specific Engines
 
 ### Markdown
 
