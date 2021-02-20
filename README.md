@@ -89,7 +89,6 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data);
 
 console.log(output);
@@ -102,7 +101,6 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data, "handlebars");
 
 console.log(output);
@@ -115,7 +113,6 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1><%- include('/relative/path/to/partial'); %>";
 let data = {firstName: "John", lastName: "Doe"};
-//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data, undefined, "./path/to/templates");
 
 console.log(output);
@@ -128,7 +125,6 @@ let ecto = new Ecto();
 
 let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-//async render(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string): Promise<string>
 let output = await ecto.render(source, data, undefined, undefined, "./path/to/output/file.html");
 
 console.log(output);
@@ -146,7 +142,6 @@ To render via a template file it is as simple as calling the `renderFromFile` fu
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//async renderFromFile(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
 let output = await ecto.renderFromFile("./path/to/template.ejs", data);
 
 ```
@@ -156,7 +151,6 @@ In this example we are now asking it to write the output file for us and it will
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//async renderFromFile(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
 let output = await ecto.renderFromFile("./path/to/template.ejs", data, undefined,"./path/to/output/yourname.html");
 
 ```
@@ -169,7 +163,6 @@ You can override the auto selected engine by adding it on the function as a para
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 
-//async renderFromFile(templatePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
 let output = await ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html", "pug");
 
 ```
@@ -182,60 +175,64 @@ This will override the auto selection process and render the template using the 
 
 ### Markdown
 
+Markdown is a bit differnt as it will not have some of the complexities such as `data` objects or partials and layouts. To render markdown it is this easy:
+```javascript
+let ecto = Ecto();
+let source = "# markdown-it rulezz!";
+let output = await ecto.render(source, undefined, "markdown");
+
+console.log(output); //should be <h1>markdown-it rulezz!</h1>
+```
+Render by File
+
+```javascript
+let ecto = Ecto();
+let output = await ecto.renderByFile("/path/to/file.md");
+
+console.log(output);
+```
+
 ### Handlebars
+
+
 
 -----
 
 ## API
 
-Ecto:
-* Constructor
-* Functions:
-    * render
-    * renderFromFile
-* Parameters:
-    * defaultEngine
-    * mappings
-    * markdown
-    * handlebars
-    * ejs
-    * pug
-    * nunjucks
-    * mustache
-    * liquid
-
-### Constructor:
+The API is focused on using the main `Ecto` class:
 
 ```javascript
-(opts:object)
-```
+const Ecto = require("Ecto");
 
-The constructor can be initialized with the defaultEngine like so for options:
-```
-let ecto = new Ecto({defaultEngine: "pug"});
-```
-
-
-
-### Parameter: `defaultEngine`
-
-```
-defaultEngine: String
-```
-
-By default the system is set to [EJS](https://www.npmjs.com/package/ejs) but if you are using a different engine no problem as you can easily change the default like so:
-```javascript
 let ecto = new Ecto();
-ecto.defaultEngine = "pug" //we support ejs, markdown, pug, nunjucks, mustache, handlebars, and liquid
+
+//ecto.<API> -- functions and parameters
+
 ```
-From there you can do the default `render` and it just works! Now if you want to just pass it on the command line you can by doing the following on render which will overwrite the `defaultEngine`: 
+
+### Functions:
+* render (`async`) - Render from a string.
+    * source:string - the markup/template source that you would like to render
+    * data?:object - data to be rendered by the file
+    * engineName?:string - to override the `Ecto.defaultEngine` parameter
+    * rootTemplatePath?:string - root template path that is used for `patials` and `layouts`
+    * filePathOutput?:string - specify the file path if you would like to write out the rendered output. 
+* renderFromFile (`async`) - Render from a file path and will auto select what engine to use based off of extension. It will return a `Promise<string>` of the rendered output.
+    * filePath?:string - the file that you would like to render
+    * data?:object - data to be rendered by the file
+    * rootTemplatePath?:string - root template path that is used for `patials` and `layouts`
+    * filePathOutput?:string - specify the file path if you would like to write out the rendered output. 
+    * engineName?:string - to override the auto selection of the engineName
+
+### Parameters:
+* defaultEngine:string = the default engine to use and set by default to `ejs`
+* mappings:EngineMap - Mapping class of all the engines registered in the system. 
+
+### Engines
+
+To make it easier to access certain engines and change them all engins supported are provided as parameters directly on the `Ecto` class as `Ecto.<EngineFullName>` such as:
 ```javascript
-let ecto = new Ecto();
-let output = await ecto.render(source, data, "pug", "./path/to/output/file.html");
+let ecto = Ecto();
+console.log(ecto.Handlebars.name); // will return "handlebars"
 ```
-
-### Function: `render`
-```
-render(source:string, data?:object, engineName?:string, filePathOutput?:string): Promise<string>
-```
-
