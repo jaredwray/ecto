@@ -148,7 +148,9 @@ export class Ecto {
 
         let dir = pathList.join("/");
 
-        await fs.ensureDir(dir);
+        if(!fs.existsSync(dir)) {
+            await fs.ensureDir(dir);
+        }
     }
 
     getEngineByFilePath(filePath:string): string {
