@@ -83,7 +83,7 @@ Our goal is to support the top engines which most likely handle the vast majorit
 | Engine     | Monthly Downloads                                                                              | Extensions              |
 | ---------- | ---------------------------------------------------------------------------------------------- | ----------------------- |
 | [EJS](https://www.npmjs.com/package/ejs)        | [![npm](https://img.shields.io/npm/dm/ejs)](https://npmjs.com/package/ejs)                 | .ejs                    |
-| [Markdown](https://www.npmjs.com/package/markdown-it)   | [![npm](https://img.shields.io/npm/dm/markdown-it)](https://npmjs.com/package/markdown-it) | .markdown, .md          |
+| [Markdown](https://www.npmjs.com/package/marked)   | [![npm](https://img.shields.io/npm/dm/marked)](https://npmjs.com/package/marked) | .markdown, .md          |
 | [Pug](https://www.npmjs.com/package/pug)        | [![npm](https://img.shields.io/npm/dm/pug)](https://npmjs.com/package/pug)                 | .pug, .jade             |
 | [Nunjucks](https://www.npmjs.com/package/nunjucks)   | [![npm](https://img.shields.io/npm/dm/nunjucks)](https://npmjs.com/package/nunjucks)       | .njk                    |
 | [Mustache](https://www.npmjs.com/package/mustache)   | [![npm](https://img.shields.io/npm/dm/mustache)](https://npmjs.com/package/mustache)       | .mustache               |
@@ -229,10 +229,10 @@ Markdown is a bit differnt as it will not have some of the complexities such as 
 
 ```javascript
 let ecto = Ecto();
-let source = "# markdown-it rulezz!";
+let source = "# markdown rulezz!";
 let output = await ecto.render(source, undefined, "markdown");
 
-console.log(output); //should be <h1>markdown-it rulezz!</h1>
+console.log(output); //should be <h1 id="markdown-rulezz">markdown rulezz!</h1>
 ```
 Render by File
 

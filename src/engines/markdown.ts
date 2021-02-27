@@ -1,3 +1,4 @@
+import { HttpTransportOptions } from "winston/lib/winston/transports";
 import { BaseEngine } from "../baseEngine";
 
 export class Markdown extends BaseEngine implements EngineInterface {
@@ -12,7 +13,7 @@ export class Markdown extends BaseEngine implements EngineInterface {
             
         }
 
-        this.engine = require('markdown-it')(this.opts);
+        this.engine = require("marked");
 
         this.setExtensions(["md", "markdown"]);
     }
@@ -21,12 +22,18 @@ export class Markdown extends BaseEngine implements EngineInterface {
 
         let md = this.engine;
 
-
         if(!this.opts) {
-            this.opts = { html: true, linkify: true, typographer: true };
-            md = this.engine = require('markdown-it')(this.opts);
+            this.opts = {
+                pedantic: false,
+                gfm: true,
+                breaks: false,
+                sanitize: false,
+                smartLists: true,
+                smartypants: false,
+                xhtml: false
+              };
         }
 
-        return md.render(source);
+        return md(source, this.opts);
     }
 } 
