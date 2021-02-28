@@ -243,6 +243,20 @@ let output = await ecto.renderByFile("/path/to/file.md");
 console.log(output);
 ```
 
+With Markdown we have added the following options as they are the most common:
+```javascript
+{
+    pedantic: false,
+    gfm: true,
+    breaks: false,
+    sanitize: false,
+    smartLists: true,
+    smartypants: false,
+    xhtml: false
+}
+```
+You can read more about them by going [here](https://marked.js.org/using_advanced#options).
+
 ### Handlebars
 
 Handlebars is a favorite of ours but it needs a bit more help to really get the bang for the buck. To do that we added in [handlebars-helpers](https://www.npmjs.com/package/hanldebars-helpers) to do the trick so you can format dates and more. Here is an example using `Handlebars Helpers` in your template:
