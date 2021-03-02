@@ -4,7 +4,7 @@ import * as fs from "fs-extra";
 
 export class Mustache extends BaseEngine implements EngineInterface {
 
-    public partials: any = {};
+    public partials: any = undefined;
     public partialsPath: string = "/partials";
 
     constructor(opts?:object){
@@ -24,7 +24,8 @@ export class Mustache extends BaseEngine implements EngineInterface {
     async render(source:string, data?:object): Promise<string> {
 
         if(this.rootTemplatePath) {
-            if(this.partials) {
+            if(!this.partials) {
+                this.partials = {};
                 let partialFiles = await fs.readdir(this.rootTemplatePath + this.partialsPath);
                 for(let filePath of partialFiles) {
                     let name = filePath.split(".mustache")[0];
