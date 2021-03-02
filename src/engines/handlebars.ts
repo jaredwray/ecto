@@ -5,8 +5,6 @@ import * as fs from "fs-extra";
 
 export class Handlebars extends BaseEngine implements EngineInterface {
 
-    private __templates: Map<string, handlebars.Template> = new Map<string, handlebars.Template>();
-
     public partialsPath: string = "/partials";
 
     constructor(opts?:object){
@@ -28,7 +26,8 @@ export class Handlebars extends BaseEngine implements EngineInterface {
         
         helpers({ handlebars: handlebars });
         let template = handlebars.compile(source, this.opts);
-        this.__templates.set(source, template);
+
+
 
         return template(data, this.opts);
     }
