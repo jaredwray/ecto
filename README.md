@@ -312,7 +312,7 @@ console.log(ecto.Handlebars.name); // will return "handlebars"
 console.log(ecto.Handlebars.opts); // will return "handlebars" options object
 ```
 
-To access the specific engine you can do so by going to `ect.<engine_name>.engine` such as setting the [SafeString](https://handlebarsjs.com/api-reference/utilities.html#handlebars-safestring-string):
+To access the specific engine you can do so by going to `ecto.<engine_name>.engine` such as setting the [SafeString](https://handlebarsjs.com/api-reference/utilities.html#handlebars-safestring-string):
 ```javascript
 let ecto = Ecto();
 ect.Handlebars.engine.SafeString("<div>HTML Content!</div>");
