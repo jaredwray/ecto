@@ -225,7 +225,7 @@ let output = await ecto.renderFromFile("./path/to/template.html", data, undefine
 
 ### Markdown
 
-Markdown is a bit differnt as it will not have some of the complexities such as `data` objects or partials and layouts. To render markdown it is this easy:
+Markdown is a bit different as it will not have some of the complexities such as `data` objects or partials and layouts. To render markdown it is this easy:
 
 ```javascript
 let ecto = Ecto();
@@ -305,7 +305,7 @@ let ecto = new Ecto();
 
 ### Engines
 
-To make it easier to access certain engines and change them all engins supported are provided as parameters directly on the `Ecto` class as `Ecto.<EngineFullName>` such as:
+To make it easier to access certain engines and change them all engines supported are provided as parameters directly on the `Ecto` class as `Ecto.<EngineFullName>` such as:
 ```javascript
 let ecto = Ecto();
 console.log(ecto.Handlebars.name); // will return "handlebars"
