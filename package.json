@@ -1,9 +1,9 @@
 {
   "name": "ecto",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, and Handlebars",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/ecto.js",
+  "types": "./dist/ecto.d.ts",
   "repository": "https://github.com/jaredwray/ecto.git",
   "author": "Jared Wray <me@jaredwray.com>",
   "license": "MIT",
