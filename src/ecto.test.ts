@@ -13,6 +13,17 @@ const handlebarsExampleData = { "name": "Alan", "hometown": "Somewhere, TX", "ki
 const testOutputDir = "./testing/output";
 const testRootDir = "./testing";
 
+test("Init and Verify Require", () => {
+    const Ecto = require("./ecto").Ecto;
+    let ecto = new Ecto();
+    expect(ecto.defaultEngine).toBe("ejs");
+});
+
+test("Init and Verify Require Create", () => {
+    let ecto = require("./ecto").create();
+    expect(ecto.defaultEngine).toBe("ejs");
+});
+
 test("Init and Verify defaultEngine", () => {
     let ecto = new Ecto();
     expect(ecto.defaultEngine).toBe("ejs");
