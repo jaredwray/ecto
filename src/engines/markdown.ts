@@ -6,7 +6,7 @@ export class Markdown extends BaseEngine implements EngineInterface {
     constructor(opts?:any){
         super();
 
-        this.name = "markdown";
+        this.names = ["markdown"];
 
         if(opts) {
             this.opts = opts;

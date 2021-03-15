@@ -1,7 +1,7 @@
 export class BaseEngine {
     
     private __extensions = Array<string>();
-    name:string = "";
+    names = Array<string>();
     opts?:any = undefined;
     engine: any;
     rootTemplatePath?: string = undefined;

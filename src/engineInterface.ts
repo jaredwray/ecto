@@ -1,5 +1,5 @@
 interface EngineInterface {
-    name: string;
+    names: Array<string>;
     engine: any;
     opts?: any;
     rootTemplatePath?: string;

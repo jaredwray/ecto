@@ -2,13 +2,13 @@ import { BaseEngine } from "./baseEngine";
 
 test("BaseEngine - Default Name should be Blank", () => {
     let be = new BaseEngine();
-    expect(be.name).toBe("");
+    expect(be.names.toString()).toBe("");
 });
 
 test("BaseEngine - Default Name should be Foo", () => {
     let be = new BaseEngine();
-    be.name = "foo";
-    expect(be.name).toBe("foo");
+    be.names = ["foo"];
+    expect(be.names.toString()).toBe("foo");
 });
 
 test("BaseEngine - Opts should be undefined", () => {

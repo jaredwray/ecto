@@ -6,7 +6,7 @@ export class EJS extends BaseEngine implements EngineInterface {
     constructor(opts?:object){
         super();
 
-        this.name = "ejs";
+        this.names = ["ejs"];
 
         if(opts) {
             this.opts = opts;

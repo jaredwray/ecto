@@ -6,7 +6,7 @@ export class Liquid extends BaseEngine implements EngineInterface {
     constructor(opts?:object){
         super();
 
-        this.name = "liquid";
+        this.names = ["liquid"];
 
         if(opts) {
             this.opts = opts;

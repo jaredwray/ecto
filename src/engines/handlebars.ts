@@ -10,11 +10,11 @@ export class Handlebars extends BaseEngine implements EngineInterface {
     constructor(opts?:object){
         super();
 
-        this.name = "handlebars";
+        this.names = ["handlebars", "mustache"];
         this.opts = opts;
         this.engine = handlebars;
 
-        this.setExtensions(["hbs", "hjs", "handlebars"]);
+        this.setExtensions(["hbs", "hjs", "handlebars", "mustache"]);
     }
 
     async render(source:string, data?:object): Promise<string> {
@@ -39,7 +39,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
             
             partials.forEach(p => {
                 let source = fs.readFileSync(partialsPath + "/" + p).toString();
-                let name = p.split(".hjs")[0];
+                let name = p.split(".")[0];
 
                 if(handlebars.partials[name] === undefined) {
                     handlebars.registerPartial(name, handlebars.compile(source));

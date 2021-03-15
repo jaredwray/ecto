@@ -10,7 +10,7 @@ const testTemplateDir = "./testing/ejs";
 
 test("EJS - Default Name ejs", () => {
     let engine = new EJS();
-    expect(engine.name).toBe("ejs");
+    expect(engine.names.toString()).toContain("ejs");
 });
 
 test("EJS - Opts should be undefined by default", () => {

@@ -10,7 +10,7 @@ const testTemplateDir = "./testing/liquid";
 
 test("Liquid - Default Name Liquid", () => {
     let engine = new Liquid();
-    expect(engine.name).toBe("liquid");
+    expect(engine.names.toString()).toContain("liquid");
 });
 
 test("Liquid - Opts should be undefined by default", () => {

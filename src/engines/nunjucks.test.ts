@@ -10,7 +10,7 @@ const testTemplateDir = "./testing/nunjucks";
 
 test("Nunjucks - Default Name Nunjucks", () => {
     let engine = new Nunjucks();
-    expect(engine.name).toBe("nunjucks");
+    expect(engine.names.toString()).toContain("nunjucks");
 });
 
 test("Nunjucks - Opts should be set by", () => {

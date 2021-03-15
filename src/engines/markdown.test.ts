@@ -5,7 +5,7 @@ const exampleSource2 = "_markdown_ rulezz!";
 
 test("Markdown - Default Name markdown", () => {
     let engine = new Markdown();
-    expect(engine.name).toBe("markdown");
+    expect(engine.names.toString()).toContain("markdown");
 });
 
 test("Markdown - Opts should be undefined by default", () => {

@@ -104,7 +104,7 @@ Next Steps:
 * [Examples by Specific Engines](#examples-by-specific-engines)
 * [Check out the entire API / Functions](#api)
 * [Learn more about Markdown](#markdown)
-* [Learn more about Handlebars and Helpers that we added](#handlebars)
+* [Learn more about Handlebars / Mustache and Helpers that we added](#handlebars)
 
 -----
 
@@ -296,6 +296,8 @@ With Markdown we have added the following options as they are the most common:
 You can read more about them [here](https://marked.js.org/using_advanced#options).
 
 ### Handlebars
+
+In Ecto we use the [handlebars](https://www.npmjs.com/package/handlebars-helpers) engine to render `mustache` related templates. This is because handlebars is based on mustache with just more additional features.
 
 Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [handlebars-helpers](https://www.npmjs.com/package/handlebars-helpers) so you can format dates, and more. Here is an example using `Handlebars Helpers` in your template:
 

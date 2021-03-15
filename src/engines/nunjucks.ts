@@ -6,7 +6,7 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
     constructor(opts?:object){
         super();
 
-        this.name = "nunjucks";
+        this.names = ["nunjucks"];
 
         this.engine = nunjucks;
 

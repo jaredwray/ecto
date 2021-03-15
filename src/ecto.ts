@@ -4,7 +4,6 @@ import { Handlebars } from "./engines/handlebars";
 import { EJS } from "./engines/ejs";
 import { Pug } from "./engines/pug";
 import { Nunjucks } from "./engines/nunjucks";
-import { Mustache } from "./engines/mustache";
 import { Liquid } from "./engines/liquid";
 import { BaseEngine } from "./baseEngine";
 import * as fs from "fs-extra";
@@ -21,7 +20,6 @@ export class Ecto {
     private __markdown: Markdown = new Markdown();
     private __pug: Pug = new Pug();
     private __nunjucks: Nunjucks = new Nunjucks();
-    private __mustache: Mustache = new Mustache();
     private __handlebars: Handlebars = new Handlebars();
     private __liquid: Liquid = new Liquid();
     
@@ -32,7 +30,6 @@ export class Ecto {
         this.__engines.push(this.__markdown);
         this.__engines.push(this.__pug);
         this.__engines.push(this.__nunjucks);
-        this.__engines.push(this.__mustache);
         this.__engines.push(this.__handlebars);
         this.__engines.push(this.__liquid);
 
@@ -78,10 +75,6 @@ export class Ecto {
 
     get nunjucks(): Nunjucks {
         return this.__nunjucks;
-    }
-
-    get mustache(): Mustache {
-        return this.__mustache;
     }
 
     get handlebars(): Handlebars {
@@ -180,7 +173,10 @@ export class Ecto {
 
     registerEngineMappings():void {
         this.__engines.forEach(eng => {
-            this.__mapping.set(eng.name, eng.getExtensions());
+
+            eng.names.forEach(name => {
+                this.__mapping.set(name, eng.getExtensions());
+            });
         });
     }
 
@@ -198,7 +194,7 @@ export class Ecto {
                 result = this.__nunjucks;
                 break;
             case "mustache":
-                result = this.__mustache;
+                result = this.__handlebars;
                 break;
             case "handlebars":
                 result = this.__handlebars;

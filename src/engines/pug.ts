@@ -6,7 +6,7 @@ export class Pug extends BaseEngine implements EngineInterface {
     constructor(opts?:object){
         super();
 
-        this.name = "pug";
+        this.names = ["pug"];
 
         this.engine = pug;
 

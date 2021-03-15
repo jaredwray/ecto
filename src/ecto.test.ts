@@ -58,42 +58,42 @@ test("EJS should be registered", () => {
 
 test("Handlebars should be registered", () => {
     let ecto = new Ecto();
-    expect(ecto.mappings.get("handlebars")?.length).toBe(3);
+    expect(ecto.mappings.get("handlebars")?.length).toBe(4);
+});
+
+test("Mustache should be registered", () => {
+    let ecto = new Ecto();
+    expect(ecto.mappings.get("mustache")?.length).toBe(4);
 });
 
 test("EJS is valid instance", () => {
     let ecto = new Ecto();
-    expect(ecto.ejs.name).toBe("ejs");
+    expect(ecto.ejs.names.toString()).toContain("ejs");
 });
 
 test("markdown is valid instance", () => {
     let ecto = new Ecto();
-    expect(ecto.markdown.name).toBe("markdown");
+    expect(ecto.markdown.names.toString()).toContain("markdown");
 });
 
 test("pug is valid instance", () => {
     let ecto = new Ecto();
-    expect(ecto.pug.name).toBe("pug");
+    expect(ecto.pug.names.toString()).toContain("pug");
 });
 
 test("nunjucks is valid instance", () => {
     let ecto = new Ecto();
-    expect(ecto.nunjucks.name).toBe("nunjucks");
-});
-
-test("mustache is valid instance", () => {
-    let ecto = new Ecto();
-    expect(ecto.mustache.name).toBe("mustache");
+    expect(ecto.nunjucks.names.toString()).toContain("nunjucks");
 });
 
 test("handlebars is valid instance", () => {
     let ecto = new Ecto();
-    expect(ecto.handlebars.name).toBe("handlebars");
+    expect(ecto.handlebars.names.toString()).toContain("handlebars");
 });
 
 test("liquid is valid instance", () => {
     let ecto = new Ecto();
-    expect(ecto.liquid.name).toBe("liquid");
+    expect(ecto.liquid.names.toString()).toContain("liquid");
 });
 
 test("isValidEngine should return true", () => {
@@ -120,14 +120,14 @@ test("registerEngineMappings should register mappings", () => {
 test("getRenderEngine should return the default ejs", () => {
     let ecto = new Ecto();
     
-    expect(ecto.getRenderEngine("cool").name).toBe("ejs");
+    expect(ecto.getRenderEngine("cool").names.toString()).toBe("ejs");
 });
 
 test("getRenderEngine should return valid for each", () => {
     let ecto = new Ecto();
     
     engines.forEach(engine => {
-        expect(ecto.getRenderEngine(engine).name).toBe(engine);
+        expect(ecto.getRenderEngine(engine).names.toString()).toContain(engine);
     });
 });
 

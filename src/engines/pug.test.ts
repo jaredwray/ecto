@@ -10,7 +10,7 @@ const testTemplateDir = "./testing/pug";
 
 test("Pug - Default Name Pug", () => {
     let engine = new Pug();
-    expect(engine.name).toBe("pug");
+    expect(engine.names.toString()).toContain("pug");
 });
 
 test("Pug - Opts should be undefined by default", () => {

@@ -9,7 +9,7 @@ const testTemplateDir = "./testing/handlebars";
 
 test("Handlebars - Default Name ejs", () => {
     let engine = new Handlebars();
-    expect(engine.name).toBe("handlebars");
+    expect(engine.names.toString()).toContain("handlebars");
 });
 
 test("Handlebars - Opts should be undefined by default", () => {
@@ -25,7 +25,7 @@ test("Handlebars - Setting Opts on the Constructor", () => {
 
 test("Handlebars - Extension should be a count of 1", () => {
     let engine = new Handlebars();
-    expect(engine.getExtensions().length).toBe(3);
+    expect(engine.getExtensions().length).toBe(4);
 });
 
 test("Handlebars - Rendering a simple string", async () => {
@@ -59,4 +59,5 @@ test("Handlebars - Rendering with Partials", async () => {
     engine.rootTemplatePath = testTemplateDir;
     
     expect(await engine.render(source, exampleData1)).toContain("Alan's - Header Title");
+    expect(await engine.render(source, exampleData1)).toContain("Foo!");
 });
