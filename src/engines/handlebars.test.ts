@@ -1,11 +1,11 @@
-import { Handlebars } from "./handlebars";
+import { Handlebars } from "../../src/engines/handlebars";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
 const exampleSource2 = "<p>Hello, my name is {{name}}. I am from {{hometown}}. </p>";
 const exampleData1 = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
 
-const testTemplateDir = "./testing/handlebars";
+const testTemplateDir = "./test-data/handlebars";
 
 test("Handlebars - Default Name ejs", () => {
     let engine = new Handlebars();

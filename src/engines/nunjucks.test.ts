@@ -1,4 +1,4 @@
-import { Nunjucks } from "./nunjucks";
+import { Nunjucks } from "../../src/engines/nunjucks";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "Hello {{ username }}";
@@ -6,7 +6,7 @@ const exampleData1 = { username: "john.doe" };
 const exampleSource2 = "<h1>Posts</h1><ul>{% for item in items %}<li>{{ item.title }}</li>{% else %}<li>This would display if the 'item' collection were empty</li>{% endfor %}</ul>";
 const exampleData2 = { items: [{ title: "foo", id: 1 }, { title: "bar", id: 2}] };
 
-const testTemplateDir = "./testing/nunjucks";
+const testTemplateDir = "./test-data/nunjucks";
 
 test("Nunjucks - Default Name Nunjucks", () => {
     let engine = new Nunjucks();

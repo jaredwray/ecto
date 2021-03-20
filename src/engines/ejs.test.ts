@@ -1,4 +1,4 @@
-import { EJS } from "./ejs";
+import { EJS } from "../../src/engines/ejs";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "<% if (user) { %><h2><%= user.name %></h2><% } %>";
@@ -6,7 +6,7 @@ const exampleSource2 = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
 
 const exampleData1 = { fruits: ["Apple", "Pear", "Orange", "Lemon"], user: { name: "John Doe"} };
 
-const testTemplateDir = "./testing/ejs";
+const testTemplateDir = "./test-data/ejs";
 
 test("EJS - Default Name ejs", () => {
     let engine = new EJS();

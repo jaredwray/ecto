@@ -1,4 +1,4 @@
-import { Liquid } from "./liquid";
+import { Liquid } from "../../src/engines/liquid";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "{{name | capitalize}}";
@@ -6,7 +6,7 @@ const exampleData1 = { name: "john Doe"};
 const exampleSource2 = "<ul> {% for todo in todos %} <li>{{forloop.index}} - {{todo}}</li> {% endfor %}</ul>";
 const exampleData2 = { todos: ["unit tests", "wash car", "go running", "bycicle"], name: "John Doe" };
 
-const testTemplateDir = "./testing/liquid";
+const testTemplateDir = "./test-data/liquid";
 
 test("Liquid - Default Name Liquid", () => {
     let engine = new Liquid();

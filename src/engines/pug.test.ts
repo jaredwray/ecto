@@ -1,4 +1,4 @@
-import { Pug } from "./pug";
+import { Pug } from "../../src/engines/pug";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "p #{name}'s Pug source code!";
@@ -6,7 +6,7 @@ const exampleData1 = { name: "John Doe"};
 const exampleSource2 = "ul\neach val in items\n\tli= val";
 const exampleData2 = { items: [1,2,3,4,5] };
 
-const testTemplateDir = "./testing/pug";
+const testTemplateDir = "./test-data/pug";
 
 test("Pug - Default Name Pug", () => {
     let engine = new Pug();
