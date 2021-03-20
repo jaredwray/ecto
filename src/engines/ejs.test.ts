@@ -1,4 +1,4 @@
-import { EJS } from "../../src/engines/ejs";
+import { EJS } from "./ejs";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "<% if (user) { %><h2><%= user.name %></h2><% } %>";

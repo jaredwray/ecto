@@ -1,4 +1,4 @@
-import { EngineMap } from "../src/engineMap";
+import { EngineMap } from "./engineMap";
 
 test("EngineMap - Default Name should be Blank", () => {
     let mappings = new EngineMap();

@@ -1,4 +1,4 @@
-import { BaseEngine } from "../src/baseEngine";
+import { BaseEngine } from "./baseEngine";
 
 test("BaseEngine - Default Name should be Blank", () => {
     let be = new BaseEngine();

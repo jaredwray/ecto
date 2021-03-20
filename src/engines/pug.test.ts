@@ -1,4 +1,4 @@
-import { Pug } from "../../src/engines/pug";
+import { Pug } from "./pug";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "p #{name}'s Pug source code!";

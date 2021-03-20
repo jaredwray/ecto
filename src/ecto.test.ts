@@ -14,13 +14,13 @@ const testOutputDir = "./test-data/output";
 const testRootDir = "./test-data";
 
 test("Init and Verify Require", () => {
-    const Ecto = require("../src/ecto").Ecto;
+    const Ecto = require("./ecto").Ecto;
     let ecto = new Ecto();
     expect(ecto.defaultEngine).toBe("ejs");
 });
 
 test("Init and Verify Require Create", () => {
-    let ecto = require("../src/ecto").create();
+    let ecto = require("./ecto").create();
     expect(ecto.defaultEngine).toBe("ejs");
 });
 
