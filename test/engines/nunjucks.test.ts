@@ -1,4 +1,4 @@
-import { Nunjucks } from "./nunjucks";
+import { Nunjucks } from "../../src/engines/nunjucks";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "Hello {{ username }}";

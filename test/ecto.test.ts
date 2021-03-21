@@ -1,4 +1,4 @@
-import { Ecto } from "./ecto";
+import { Ecto } from "../src/ecto";
 import * as fs from "fs-extra";
 
 const engines: Array<string> = ["ejs", "markdown", "pug", "nunjucks", "mustache", "handlebars", "liquid"];
@@ -14,13 +14,13 @@ const testOutputDir = "./test-data/output";
 const testRootDir = "./test-data";
 
 test("Init and Verify Require", () => {
-    const Ecto = require("./ecto").Ecto;
+    const Ecto = require("../src/ecto").Ecto;
     let ecto = new Ecto();
     expect(ecto.defaultEngine).toBe("ejs");
 });
 
 test("Init and Verify Require Create", () => {
-    let ecto = require("./ecto").create();
+    let ecto = require("../src/ecto").create();
     expect(ecto.defaultEngine).toBe("ejs");
 });
 

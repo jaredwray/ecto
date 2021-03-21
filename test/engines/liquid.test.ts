@@ -1,4 +1,4 @@
-import { Liquid } from "./liquid";
+import { Liquid } from "../../src/engines/liquid";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "{{name | capitalize}}";
