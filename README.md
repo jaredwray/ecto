@@ -105,7 +105,7 @@ Next Steps:
 * [Check out the entire API / Functions](#api)
 * [Learn more about Markdown](#markdown)
 * [Learn more about Handlebars / Mustache and Helpers that we added](#handlebars)
-* [A Full Deep Dive on Ecto](readme-adv.md)
+* [A Full Deep Dive on Ecto](README-ADV.md)
 
 -----
 
