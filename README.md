@@ -10,7 +10,10 @@
 
 -----
 
+Ecto is a modern template consolidation engine that works with top template engines like EJS, Markdown, Pug, Nunjucks, Mustache, Handlebars, and Liquid. It consolidates these template engines to a single library, allowing you to use any of them with ease. With features like automatic engine selection, an easy-to-use API, zero-configuration needs, and regular updates, you can rest assured that Ecto works as expected for all your templating needs.
+
 ## Features
+
 * Zero Config by default but all properties exposed for flexibility. Check out our easy [API.](#api)
 * Async `render` and `renderFromFile` functions for ES6 and Typescript. 
 * [Render via Template File](#render-from-file) with Automatic Engine Selection. No more selecting which engine to use, engine choice is automatically decided based on the file extension.
@@ -105,7 +108,10 @@ Next Steps:
 * [Check out the entire API / Functions](#api)
 * [Learn more about Markdown](#markdown)
 * [Learn more about Handlebars / Mustache and Helpers that we added](#handlebars)
-* [A Full Deep Dive on Ecto](README-ADV.md)
+* [More about the template engines we support](#the-template-engines-we-support)
+* [Learn about the Mappings](#mappings-class)
+* [How to Contribute](#how-to-contribute)
+* [How to Submit an Issue](#how-to-submit-an-issue)
 
 -----
 
@@ -129,9 +135,39 @@ _The `Extensions` are listed above for when we [Render from File](#render-from-f
 
 -----
 
+## API
+The API is focused on using the main Ecto class:
+
+```javascript
+const Ecto = require("Ecto").Ecto;
+let ecto = new Ecto();
+//ecto.<API> -- functions and parameters
+```
+
+When looking at the API there are two main methods to make note of:
+[render](#render-from-string) (async) - Render from a string.
+[renderFromFile](#render-from-file) (async) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a Promise<string> of the rendered output.
+
+Two key parameters to know are:
+defaultEngine:string - the [default engine](#default-engine) to use and set by default to ejs.
+mappings:EngineMap - [Mapping class](#mappings) of all the engines registered in the system.
+
 ## Render From String
 
-As we have shown in [Getting Started -- It's that Easy!](#getting-started) You can render in only a couple of lines of code: 
+As we have shown in [Getting Started -- It's that Easy!](#getting-started) You can render in only a couple of lines of code.
+
+render (`async`) - Render from a string. Here is the render function with all possible arguments shown:
+
+| Name             | Type   | Description                                                  |
+| ---------------- | ------ | ------------------------------------------------------------ |
+| source           | string | The markup/template source to be rendered.                   |
+| data             | object | The data to be rendered by the file.                         |
+| engineName       | string | Used to override the `Ecto.defaultEngine` parameter.         |
+| rootTemplatePath | string | The root template path that is used for `partials` and `layouts`. |
+| filePathOutput   | string | Used to specify the file path, if you want to write the rendered output to a file. |
+
+Here is the simplest example of a render function. We are also showing the required steps you need to take beforehand such as setting up Ecto.
+
 ```javascript
 let ecto = require("ecto").create();
 
@@ -142,7 +178,7 @@ ecto.render(source, data).then((output) => {
 });
 ```
 
-Now let's say your desired engine is not [EJS](https://www.npmjs.com/package/ejs), so you want to specify it explicitly. You can either set the [defaultEngine](#default-engine) parameter, or simply pass it in the `render` function. In this case with the popular engine, [Handlebars](https://www.npmjs.com/package/handlebars):
+Now let's say your desired engine is not [EJS](https://www.npmjs.com/package/ejs), you will need to specify it explicitly. You can either set the [defaultEngine](#default-engine) parameter, or simply pass it in the `render` function. In this case with the popular engine, [Handlebars](https://www.npmjs.com/package/handlebars):
 
 ```javascript
 let ecto = require("ecto").create();
@@ -186,9 +222,21 @@ Notice the `undefined` value passed into the `engineName` parameter. This is don
 
 ## Render From File
 
-To render via a template file, it is as simple as calling the `renderFromFile` function with a couple of simple parameters passed in. In this example, we are passing in the template and it will return a `string`. 
+To render via a template file, it is as simple as calling the `renderFromFile` function with a couple of simple parameters passed in. 
 
-_One of the main benefits is that it will automatically select the correct engine based on the file extension._
+renderFromFile (`async`) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a `Promise<string>` of the rendered output. One of the main benefits is that it will automatically select the correct engine based on the file extension. The renderFromFile function takes the following parameters:
+
+| Name             | Type   | Description                                                  |
+| ---------------- | ------ | ------------------------------------------------------------ |
+| filePath         | string | The file that you would like to render.                      |
+| data             | object | The data to be rendered by the file.                         |
+| rootTemplatePath | string | The root template path that is used for `partials` and `layouts`. |
+| filePathOutput   | string | Used to specify the file path if you want to write the rendered output to a file. |
+| engineName       | string | Used to to override the auto-selection of the `engineName`.  |
+
+This simple example showing the `renderFromFile` function shows you the bare minimum required to execute this function successfully, we are passing in the template and it will return a `string`. 
+
+One of the main benefits is that it will automatically select the correct engine based on the file extension.
 
 ```javascript
 let ecto = require("ecto").create();
@@ -217,31 +265,48 @@ ecto.renderFromFile("./path/to/template.ejs", data, undefined,
 "./path/to/output/yourname.html", "pug")
 ```
 
------
-
 ## Default Engine
 
-There are several ways to set the default engine to make it flexible.  `Ecto.defaultEngine` is set by default to `ejs`, so if you are using `ejs` no need to change anything.
+This string parameter can be used to set the default template engine for an instance of the Ecto class. Ecto has been designed to support all major engines. 
 
-Here is how you set `liquid` as the default engine while initializing your class:
-```javascript
-let ecto = require("ecto").create({defaultEngine: "liquid"});
-```
+`Ecto.defaultEngine` is set by default to EJS.If you would like to change the template engine there are several options available to users when setting the value of `defaultEngine`:
 
-Or you can set the default engine as a parameter like so:
+##### Set the engine in the arguments of the Ecto constructor
+
+One option for setting the default engine, is to do so in the Ecto constructor:
+
+- `const ecto = require("ecto").create({defaultEngine: "ejs"});`
+- `const ecto = require("ecto").create({defaultEngine: "markdown"});`
+- `const ecto = require("ecto").create({defaultEngine: "pug"});`
+- `const ecto = require("ecto").create({defaultEngine: "nunjucks"});`
+- `const ecto = require("ecto").create({defaultEngine: "mustache"});`
+- `const ecto = require("ecto").create({defaultEngine: "handlebars"});`
+- `const ecto = require("ecto").create({defaultEngine: "liquid"});`
+
+##### Set the default engine as a parameter
+
+We can also set the default engine as a parameter, like so:
 
 ```javascript
 const Ecto = require("ecto").Ecto;
 let ecto = new Ecto();
 ecto.defaultEngine = "mustache";
-
 ```
 
-You can also set the engine as a parameter on the `render` function, which will override the `Ecto.defaultEngine` parameter:
+Alternatively, we can set the engine directly on the constructor. This would make our previous example:
+
+```javascript
+const Ecto = require("ecto").Ecto;
+let ecto = new Ecto({defaultEngine: "liquid"});
+ecto.defaultEngine = "mustache";
+```
+
+##### Set the engine as a parameter on the render function
+
+You can explicitly override the Ecto.defaultEngine parameter in the render function:
 
 ```javascript
 let ecto = require("ecto").create();
-
 let source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
 ecto.render(source, data, "handlebars").then((output) => {
@@ -249,20 +314,36 @@ ecto.render(source, data, "handlebars").then((output) => {
 });
 ```
 
-You can also override the auto selection on `renderFromFile` like so:
+##### Override the auto selection on renderFromFile
+
+The `renderFromFile` function automatically decides on the template engine, based on the file extension in the file path you specify. However, you can also explicitly set the engine you would like to use. Here we set the engine to be Pug.
 
 ```javascript
 let ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
-
-ecto.renderFromFile("./path/to/template.ejs", data, undefined, 
-"./path/to/output/yourname.html", "pug").then((output) => {
-    console.log(output)
+ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html", "pug").then((output) => {  
+	console.log(output)
 });
 ```
-## Examples By Specific Engines
 
-### Markdown
+To make it easier to access and change between engines, all supported engines are provided as parameters on the `Ecto` class as `Ecto.<EngineFullName>`
+
+```javascript
+let ecto = Ecto();
+console.log(ecto.Handlebars.name); // will return "handlebars"
+console.log(ecto.Handlebars.opts); // will return "handlebars" options object
+```
+
+To access a specific engine you can do so by going to `ecto.<engine_name>.engine` and setting the [SafeString](https://handlebarsjs.com/api-reference/utilities.html#handlebars-safestring-string):
+
+```javascript
+let ecto = Ecto();
+ecto.Handlebars.engine.SafeString("<div>HTML Content!</div>");
+```
+
+### Examples By Specific Engines
+
+#### Markdown
 
 Markdown does not contain complexities such as data objects, or partials and layouts. To render markdown its as simple as:
 
@@ -296,7 +377,7 @@ With Markdown we have added the following options as they are the most common:
 ```
 You can read more about them [here](https://marked.js.org/using_advanced#options).
 
-### Handlebars
+#### Handlebars
 
 In Ecto we use the [handlebars](https://www.npmjs.com/package/handlebars-helpers) engine to render `mustache` related templates. This is because handlebars is based on mustache with just more additional features.
 
@@ -311,58 +392,94 @@ ecto.render(source, undefined, "handlebars").then((output) => {
 });
 ```
 
-
------
-
-## API
-
-The API is focused on using the main `Ecto` class:
-
-```javascript
-const Ecto = require("Ecto").Ecto;
-
-let ecto = new Ecto();
-
-//ecto.<API> -- functions and parameters
-
-```
-
-### Functions:
-* render (`async`) - Render from a string.
-    * source?:string - the markup/template source that you would like to render
-    * data?:object - data to be rendered by the file
-    * engineName?:string - to override the `Ecto.defaultEngine` parameter
-    * rootTemplatePath?:string - root template path that is used for `partials` and `layouts`
-    * filePathOutput?:string - to specify the file path if you want to write the rendered output to a file
-* renderFromFile (`async`) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a `Promise<string>` of the rendered output.
-    * filePath?:string - the file that you would like to render
-    * data?:object - data to be rendered by the file
-    * rootTemplatePath?:string - root template path that is used for `partials` and `layouts`
-    * filePathOutput?:string - to specify the file path if you want to write the rendered output to a file
-    * engineName?:string - to override the auto-selection of the engineName
-
-### Parameters:
-* defaultEngine:string - the default engine to use and set by default to `ejs`
-* mappings:EngineMap - Mapping class of all the engines registered in the system. 
-
-### Engines
-
-To make it easier to access and change between engines, all supported engines are provided as parameters on the `Ecto` class as `Ecto.<EngineFullName>`
-```javascript
-let ecto = Ecto();
-console.log(ecto.Handlebars.name); // will return "handlebars"
-console.log(ecto.Handlebars.opts); // will return "handlebars" options object
-```
-
-To access a specific engine you can do so by going to `ecto.<engine_name>.engine` and setting the [SafeString](https://handlebarsjs.com/api-reference/utilities.html#handlebars-safestring-string):
-```javascript
-let ecto = Ecto();
-ecto.Handlebars.engine.SafeString("<div>HTML Content!</div>");
-```
-
 ------
 
-### How to Contribute
+
+
+## Mappings Class
+
+Ecto contains a mapping class containing all of the engines registered in the system. The class has been designed to allow users to edit existing engine mappings. Let us explore this class in detail.
+
+The `Map` object has the following structure: `Map<string, Array<string>> `
+
+- The first element of the tuple is the name of the map, such as "handlebars".
+
+*   The second element of the tuple is an array of the extensions for that map, example values may include "handlebars", "hbs","hjs".
+
+From here you can start setting and editing engine mappings.
+
+### Setting an engine mapping - set(name:string, extensions:Array&lt;string>): void
+
+To set an engine mapping with extensions simply write:
+
+
+```
+mappings.set("handlebars", ["handlebars","hbs","hjs"]);
+```
+
+
+This sets the handlebars engine to accept files with the following file extensions:
+
+*   .handlebars
+*   .hbs
+*   .hjs
+
+### Delete an engine mapping - delete(name:string): void
+
+To delete a mapping entirely you can use the `delete` method.
+
+```
+mappings.delete("handlebars");
+```
+
+This will remove this engine mapping entirely.
+
+### Delete an extension - deleteExtension(name:string, extension:string): void
+
+To delete an extension for a particular engine mapping, you can use the `deleteExtension` method. This method takes two arguments:
+
+*   `name:string` - the name of the engine you would like to delete the extension for.
+*   `extension:string` - the extension you would like to delete.
+
+The following code deletes two of the extensions for our `handlebars` engine mapping. 
+
+
+```
+mappings.deleteExtension("handlebars", "hbs","hjs");
+```
+
+
+After executing this code the only accepted file extension for the Handlebars engine will be `handlebars`.
+
+Other useful methods include `get` and `getName`.
+
+### get method - get(name:string): Array&lt;string> | undefined
+
+The `get` method takes one argument, `name:string `, and will return the extensions for the name you specify. If extensions are found, they are returned as an `Array<string>`. If no engine mapping can be found for the name you specify, ` undefined` is returned. To use the `get` method simply write: 
+
+
+```
+mappings.get("handlebars")
+```
+
+
+This will retrieve the array of extensions assigned to the Handlebars engine.
+
+### getName method - getName(extension:string): string | undefined
+
+The `getName` method takes a single argument, `extension:string`. If a valid extension is given, this method will return the name of the engine mapping that the extension belongs to. For example:
+
+
+```
+mappings.getName("hjs")
+```
+
+
+This will return the string “handlebars”, which is the corresponding engine for this extension. If no match can be found, this method will return `undefined`.
+
+Gaining an understanding of this class will provide you with more options and possibilities when using Ecto.
+
+## How to Contribute
 
 This is an open-source project under MIT License. If you would like to get involved and contribute to this project, simply follow these steps:
 
@@ -371,15 +488,13 @@ This is an open-source project under MIT License. If you would like to get invol
 3. Make the desired changes to your copy of the project, commit, and push those changes when ready.
 4. Finally, create a pull request to suggest your changes to the original project.
 
-#### Pull Requests
+### Pull Requests
 
 Pull requests are used in open-source projects or in some corporate workflows to manage changes from contributors and to initiate code review before such changes are merged.
 
 By creating a pull request, you tell others about the changes you've pushed to your fork of a GitHub repository, so that the maintainers of the original repository can review your changes, discuss them, and integrate them into the base branch.
 
-------
-
-### How to Submit an Issue
+## How to Submit an Issue
 
 Issues can be used to keep track of bugs, enhancements, or other requests. Issues can be created based on code from pull requests, comments, or created from the main repository page. 
 
@@ -387,3 +502,113 @@ Issues can be used to keep track of bugs, enhancements, or other requests. Issue
 2. Under the repository name, jaredwray/ecto, click the "Issues" tab.
 3. Click New Issue.
 4. Enter the title and description for your issue, and click "Submit new issue".
+
+
+
+## The Template Engines we support
+
+### What is a Template Engine?
+
+A template engine is a tool that allows developers to write HTML markup that contains the template engine’s defined tags and syntax. These tags are used to insert variables into the final output of the template, or run some programming logic at run-time before sending the final HTML to the browser for display.
+
+### EJS
+
+EJS stands for Embedded JavaScript. It is a templating engine that allows users to generate HTML using plain JavaScript.
+
+You define HTML pages in the EJS syntax and specify where various data will be shown on the page. Then, your application combines data with the template and "renders" a complete HTML page where EJS takes your data and inserts it into the web page according to how you've defined the template. For example, you could have a table of dynamic data from a database and you want EJS to generate the table of data according to your display rules. It saves you from the writing code and logic to dynamically generate HTML based on data.
+
+It is a tool for generating web pages that can include dynamic data and can share templated pieces with other web pages. It is not a front-end framework. While EJS can be used by client-side Javascript to generate HTML on the client-side, it is typically used by your back-end to generate web pages in response to some URL request. EJS is not a client-side framework like Angular or React.
+
+### Markdown
+
+Markdown is a lightweight markup language that you can use to add formatting elements to plaintext text documents. Markdown is now one of the world’s most popular markup languages.
+
+Using Markdown is different from using a word and text editor. In an application like Microsoft Word, you click buttons to format words and phrases, and the changes are visible immediately. Markdown isn’t like that. When you create a Markdown-formatted file, you add Markdown syntax to the text to indicate which words and phrases should look different.
+
+There are several reasons why people might choose Markdown instead of standard text editors.
+
+*   Markdown has a wide range of potential uses. It can be used to create websites, documents, notes, books, presentations, email messages, and technical documentation.
+*   Files containing Markdown-formatted text can be opened using virtually any application. This differs greatly from word processing applications like Microsoft Word that lock your content into a proprietary file format.
+*   You can create Markdown-formatted text on any device running any operating system.
+*   Markdown is future proof. Even if the application you’re using stops working at some point in the future, you’ll still be able to read your Markdown-formatted text using a text editing application.
+*   Markdown is widely supported. Websites like Reddit and GitHub support Markdown, along with many other desktop and web-based applications.
+
+### PUG
+
+Pug.js is an HTML templating engine that takes simple Pug code, which the Pug compiler will compile into HTML code that browsers can understand. Some features and advantages of the Pug template engine are as follows:
+
+*   Pug has powerful features like conditions, loops, includes, that allows us to render HTML code based on user input or reference data. 
+*   Pug supports JavaScript natively.
+*   Pug is excellent for handling dynamic, changing data. Imagine we have an email template, with certain fields to be customized depending on who you are sending the email to. Before sending the email we can compile the Pug code to HTML, using the user data to fill the gaps where the dynamic information should go. 
+
+### Nunjucks
+
+Nunjucks is a rich and powerful template engine for JavaScript. Nunjucks is developed by Mozilla and maintained by the Node JS Foundation. Nunjucks can be used in both Node and the browser.
+
+In Node, Nunjucks is installed using npm. It is rich, fast, extensible, and available everywhere. It's highly optimized at just 8kb gzipped.
+
+Some of the advantages of using Nunjucks for your project are:
+
+*   It is a rich templating language with block inheritance, auto-escaping, macros, asynchronous control, and more.
+*   Nunjucks is fast, lean, and highly-performant. 
+*   Easily extensible with custom filters and extensions.
+*   Available in Node and all modern web browsers, along with precompilation options.
+
+### Mustache
+
+Mustache is a logic-less template syntax. It can be used for HTML, config files, source code, and more. It is often referred to as “logic-less” as there are no if statements, else clauses, or for loops. There are only tags. Tags are replaced with actual values at runtime.
+
+Mustache.js is an implementation of the mustache template system in JavaScript. It is often considered the base for JavaScript templating. Since mustache supports various languages, we don’t need a separate templating system on the server side.
+
+
+```javascript
+Mustache.render("Hello, {{name}}", { name: "John" });
+// returns: Hello, John
+```
+
+
+We see two braces around `{{ name }}`. This is Mustache syntax to show that it is a placeholder. When Mustache compiles this, it will look for the “name” property in the object we pass in, and replace `{{ name }}` with the actual value, in this case,  “John”.
+
+Mustache is not actually a templating engine. Mustache is a specification for a templating language. In general, we would write templates according to the Mustache specification, and they can then be compiled by a templating engine to be rendered, eventually creating an output.
+
+### Handlebars
+
+Handlebars is a logic-less templating engine that dynamically generates your HTML page. It is an extension of Mustache with a few additional features. Mustache is fully logic-less but Handlebars adds minimal logic thanks to the use of some helpers. These include logic and keywords such as `if`, `with`, `unless`, `each,` and more.
+
+Handlebars can be loaded into the browser just like any other JavaScript file:
+
+
+```html
+<script src="/path/to/handlebars.min.js"></script>
+```
+
+
+The way Handlebars works can be summarized as follows:
+
+1. Handlebars takes a template containing the variables and compiles it into a function.
+2. This function is then executed by passing a JSON object as an argument. This JSON object is known as context and it contains the values of the variables used in the template.
+3. On its execution, the function returns the required HTML after replacing the variables of the template with their corresponding values.
+
+In Ecto, we use the [Handlebars](https://www.npmjs.com/package/handlebars-helpers) engine to render mustache-related templates.
+
+Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [handlebars-helpers](https://www.npmjs.com/package/handlebars-helpers) so you can format dates, and more. Here is an example using Handlebars Helpers in your template:
+
+
+```javascript
+let ecto = Ecto();
+let source = "{{year}}";
+
+ecto.render(source, undefined, "handlebars").then((output) => {
+    console.log(output)
+});
+```
+
+#### Liquid
+
+Some refer to Liquid as a template language, while others may call it a template engine. It doesn't really matter which label you apply, in many ways both are right. It has a syntax (like traditional programming languages), has concepts such as output, logic, and loops, and it interacts with variables and data, just as you would with a language such as PHP.
+
+Liquid, like the previous template engines, creates a bridge between an HTML file and a data store. It does this by allowing us to access variables from within a template, or the Liquid file, with a simple and readable syntax.
+
+Liquid files have the extension of `.liquid`. A liquid file is a mix of standard HTML code and Liquid constructs. Its clear syntax is easy to distinguish from HTML when working with a Liquid file. This is made even easier thanks to the use of two sets of delimiters.
+
+The double curly brace delimiters `{{ }}` denote output, and the curly brace percentage delimiters `{% %}` denote logic. You'll become very familiar with these as every Liquid construct begins with one, or the other. Another way of thinking of delimiters is as placeholders. A placeholder can be viewed as a piece of code that will ultimately be replaced by data when the compiled file is sent to the browser.
