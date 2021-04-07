@@ -112,6 +112,7 @@ Next Steps:
 * [Learn about the Mappings](#mappings-class)
 * [How to Contribute](#how-to-contribute)
 * [How to Submit an Issue](#how-to-submit-an-issue)
+* [How to use Ecto in Typescript](#using-typescript)
 
 -----
 
@@ -340,6 +341,22 @@ To access a specific engine you can do so by going to `ecto.<engine_name>.engine
 let ecto = Ecto();
 ecto.Handlebars.engine.SafeString("<div>HTML Content!</div>");
 ```
+
+### Using Typescript
+Typescript is the language Ecto is already written in and while many of these examples are in `javascript` they should be compatible with `typescript`. To use Ecto just do an import:
+```javascript
+import { Ecto } from "ecto";
+```
+
+and then simply call it like you do with standard javascript:
+```javascript
+let ecto = Ecto();
+let source = "# markdown rulezz!";
+let output = await ecto.render(source, undefined, "markdown");
+console.log(output) //should be <h1 id="markdown-rulezz">markdown rulezz!</h1>
+```
+_NOTE: this example would be in an `async` function._
+
 
 ### Examples By Specific Engines
 
