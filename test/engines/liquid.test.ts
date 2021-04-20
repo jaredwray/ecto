@@ -2,7 +2,7 @@ import { Liquid } from "../../src/engines/liquid";
 import * as fs from "fs-extra";
 
 const exampleSource1 = "{{name | capitalize}}";
-const exampleData1 = { name: "john Doe"};
+const exampleData1 = { name: "john"};
 const exampleSource2 = "<ul> {% for todo in todos %} <li>{{forloop.index}} - {{todo}}</li> {% endfor %}</ul>";
 const exampleData2 = { todos: ["unit tests", "wash car", "go running", "bycicle"], name: "John Doe" };
 
@@ -31,7 +31,7 @@ test("Liquid - Extension should be a count of 1", () => {
 
 test("Liquid - Rendering a simple string", async () => {
     let engine = new Liquid();
-    expect(await engine.render(exampleSource1, exampleData1)).toBe("John Doe");
+    expect(await engine.render(exampleSource1, exampleData1)).toBe("John");
 });
 
 test("Liquid - Rendering a list in html", async () => {
