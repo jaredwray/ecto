@@ -110,14 +110,6 @@ export class Ecto {
         return result;
     }
 
-    renderSync(source:string, data?:object, engineName?:string, rootTemplatePath?:string, filePathOutput?:string) : string {
-        let result = "";
-
-        this.render(source, data, engineName, rootTemplatePath, filePathOutput).then((data) => {
-            return data;
-        })
-    }
-
     //Render from File
     async renderFromFile(filePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string> {
         let result = "";
