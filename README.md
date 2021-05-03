@@ -10,7 +10,7 @@
 
 -----
 
-Ecto is a modern template consolidation engine that works with top template engines like EJS, Markdown, Pug, Nunjucks, Mustache, Handlebars, and Liquid. It consolidates these template engines to a single library, allowing you to use any of them with ease. With features like automatic engine selection, an easy-to-use API, zero-configuration needs, and regular updates, you can rest assured that Ecto works as expected for all your templating needs.
+Ecto is a modern template consolidation engine that works with top template engines like EJS, Markdown, Pug, Nunjucks, Mustache, Handlebars, and Liquid. It consolidates these template engines to a single library, allowing you to use any of them with ease. With features like automatic engine selection, an easy-to-use API, zero-configuration, and regular updates, you can rest assured that Ecto works as expected for all your templating needs.
 
 ## Features
 
