@@ -27,8 +27,6 @@ export class Handlebars extends BaseEngine implements EngineInterface {
         helpers({ handlebars: handlebars });
         let template = handlebars.compile(source, this.opts);
 
-
-
         return template(data, this.opts);
     }
 
