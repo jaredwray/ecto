@@ -47,7 +47,7 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@types/ejs": "^3.0.7",
+    "@types/ejs": "^3.1.0",
     "@types/express": "^4.17.13",
     "@types/fs-extra": "^9.0.12",
     "@types/handlebars-helpers": "^0.5.3",
