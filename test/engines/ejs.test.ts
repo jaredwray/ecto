@@ -6,7 +6,7 @@ const exampleSource2 = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
 
 const exampleData1 = { fruits: ["Apple", "Pear", "Orange", "Lemon"], user: { name: "John Doe"} };
 
-const testTemplateDir = "./test-data/ejs";
+const testTemplateDir = "./test/data/ejs";
 
 test("EJS - Default Name ejs", () => {
     let engine = new EJS();

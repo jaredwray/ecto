@@ -6,7 +6,7 @@ const exampleData1 = { name: "John Doe"};
 const exampleSource2 = "ul\neach val in items\n\tli= val";
 const exampleData2 = { items: [1,2,3,4,5] };
 
-const testTemplateDir = "./test-data/pug";
+const testTemplateDir = "./test/data/pug";
 
 test("Pug - Default Name Pug", () => {
     let engine = new Pug();
