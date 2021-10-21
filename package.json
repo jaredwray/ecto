@@ -63,5 +63,10 @@
   "files": [
     "dist",
     "bin"
-  ]
+  ],
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "modulePathIgnorePatterns": [ "/dist"]
+  }
 }
