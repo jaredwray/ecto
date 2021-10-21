@@ -5,7 +5,7 @@ const exampleSource1 = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I
 const exampleSource2 = "<p>Hello, my name is {{name}}. I am from {{hometown}}. </p>";
 const exampleData1 = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
 
-const testTemplateDir = "./test-data/handlebars";
+const testTemplateDir = "./test/data/handlebars";
 
 test("Handlebars - Default Name ejs", () => {
     let engine = new Handlebars();
