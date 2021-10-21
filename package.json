@@ -1,6 +1,6 @@
 {
   "name": "ecto",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, and Handlebars",
   "main": "./dist/ecto.js",
   "types": "./dist/ecto.d.ts",
