@@ -1,5 +1,5 @@
-import { HttpTransportOptions } from "winston/lib/winston/transports";
 import { BaseEngine } from "../baseEngine";
+import { marked } from 'marked';
 
 export class Markdown extends BaseEngine implements EngineInterface {
 
@@ -9,20 +9,8 @@ export class Markdown extends BaseEngine implements EngineInterface {
         this.names = ["markdown"];
 
         if(opts) {
-            this.opts = opts;
-            
-        }
-
-        this.engine = require("marked");
-
-        this.setExtensions(["md", "markdown"]);
-    }
-
-    async render(source:string, data?:object): Promise<string> {
-
-        let md = this.engine;
-
-        if(!this.opts) {
+            this.opts = opts;   
+        } else {
             this.opts = {
                 pedantic: false,
                 gfm: true,
@@ -34,6 +22,15 @@ export class Markdown extends BaseEngine implements EngineInterface {
               };
         }
 
-        return md(source, this.opts);
+        this.engine = marked;
+
+        this.engine.setOptions(this.opts);
+
+        this.setExtensions(["md", "markdown"]);
+    }
+
+    async render(source:string, data?:object): Promise<string> {
+
+        return this.engine.parse(source);
     }
 } 
