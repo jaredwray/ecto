@@ -8,9 +8,17 @@ test("Markdown - Default Name markdown", () => {
     expect(engine.names.toString()).toContain("markdown");
 });
 
-test("Markdown - Opts should be undefined by default", () => {
+test("Markdown - Opts should be defined by default", () => {
     let engine = new Markdown();
-    expect(engine.opts).toBe(undefined);
+    expect(engine.opts).toStrictEqual({
+        pedantic: false,
+        gfm: true,
+        breaks: false,
+        sanitize: false,
+        smartLists: true,
+        smartypants: false,
+        xhtml: false
+      });
 });
 
 test("Markdown - Setting Opts on the Constructor", () => {
@@ -19,7 +27,7 @@ test("Markdown - Setting Opts on the Constructor", () => {
     expect(engine.opts.html).toBe(true);
 });
 
-test("Markdown - Rendering with undefined Opts", async () => {
+test("Markdown - Rendering with default Opts", async () => {
     let engine = new Markdown();
     engine.opts = undefined;
     expect(await engine.render(exampleSource1)).toContain("<h1 id=\"markdown-rulezz\">markdown rulezz!</h1>");
