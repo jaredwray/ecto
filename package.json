@@ -41,7 +41,7 @@
     "handlebars-helpers": "^0.10.0",
     "helper-date": "^1.0.1",
     "liquidjs": "^9.28.5",
-    "marked": "^4.0.3",
+    "marked": "^4.0.6",
     "nunjucks": "^3.2.3",
     "pug": "^3.0.2",
     "winston": "^3.3.3"
@@ -52,7 +52,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/handlebars-helpers": "^0.5.3",
     "@types/jest": "^27.0.3",
-    "@types/marked": "^4.0.0",
+    "@types/marked": "^4.0.1",
     "@types/mustache": "^4.1.2",
     "@types/nunjucks": "^3.2.0",
     "@types/pug": "^2.0.5",
