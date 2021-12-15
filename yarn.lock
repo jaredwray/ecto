@@ -3101,10 +3101,10 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-liquidjs@^9.28.5:
-  version "9.28.5"
-  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-9.28.5.tgz#8d37d92058f5b0a260ef7649d8c416b625f604a2"
-  integrity sha512-K9mSxsAilSezwBtEUtaTpJy6cff3YLoBShyjNLExk5tk/rkygWBPJYWCoJIXKdKdXs/2M/WG3EXYU1ssAtSrsQ==
+liquidjs@^9.29.0:
+  version "9.29.0"
+  resolved "https://registry.yarnpkg.com/liquidjs/-/liquidjs-9.29.0.tgz#da0770f018fc58e257960c57bcf0fbbcf8ad5a40"
+  integrity sha512-lnowf3fRcwjqaom8sQSImJeHWZS2974DFlMl8sTdlQX/P846MhK14C0oRGYHaXiDjJbhDzi0zKc1HB4y8hUArw==
 
 locate-path@^5.0.0:
   version "5.0.0"

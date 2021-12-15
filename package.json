@@ -40,7 +40,7 @@
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "helper-date": "^1.0.1",
-    "liquidjs": "^9.28.5",
+    "liquidjs": "^9.29.0",
     "marked": "^4.0.7",
     "nunjucks": "^3.2.3",
     "pug": "^3.0.2",
