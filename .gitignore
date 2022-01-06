@@ -104,3 +104,7 @@ dist
 .tern-port
 
 testing/output
+
+# package managers
+yarn.lock
+package-lock.json

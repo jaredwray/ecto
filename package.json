@@ -32,7 +32,7 @@
     "clean": "rm -rf ./dist && rm -rf node_modules",
     "test": "jest --coverage",
     "compile": "tsc -p .",
-    "build": "rm -rf ./dist && yarn && yarn test && yarn compile"
+    "build": "rm -rf ./dist && npm i && npm run test && npm run compile"
   },
   "dependencies": {
     "ejs": "^3.1.6",
