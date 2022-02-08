@@ -22,7 +22,7 @@ export class Ecto {
     private __nunjucks: Nunjucks = new Nunjucks();
     private __handlebars: Handlebars = new Handlebars();
     private __liquid: Liquid = new Liquid();
-    
+
     constructor(opts?:any) {
 
         //register engines
@@ -94,16 +94,16 @@ export class Ecto {
         if(this.isValidEngine(engineName) && engineName !== undefined) {
             renderEngineName = engineName;
         }
-        
+
         //get the render engine
         let renderEngine = this.getRenderEngine(renderEngineName);
-        
+
         //set the root template path
         renderEngine.rootTemplatePath = rootTemplatePath;
 
         //get the output
         result = await renderEngine.render(source, data);
-        
+
         //write out the file
         await this.writeFile(filePathOutput, result);
 
@@ -121,12 +121,12 @@ export class Ecto {
 
         //get the source
         let source = await fs.readFile(filePath, "utf8");
-        
+
         result = await this.render(source, data, engineName, rootTemplatePath, filePathOutput);
 
         return result;
     }
-    
+
     private async writeFile(filePath?:string, source?:string) {
         if(filePath) {
             await this.ensureFilePath(filePath);

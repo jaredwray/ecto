@@ -7,8 +7,8 @@ const ejsExampleSource = "<% if (test) { %><h2><%= test.foo %></h2><% } %>";
 const ejsExampleData = { user: { name: "Joe" }, test: { foo: "bar" } };
 const ejsExampleData2 = { fruits: ["Apple", "Pear", "Orange", "Lemon"], user: { name: "John Doe"} };
 
-const handlebarsExampleSource = "<p>Hello, my name is {{name}}. I am from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
-const handlebarsExampleData = { "name": "Alan", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
+const handlebarsExampleSource = "<p>Hello, my name is {{name}}. I'm from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
+const handlebarsExampleData = { "name": "Alan O'Connor", "hometown": "Somewhere, TX", "kids": [{"name": "Jimmy", "age": "12"}, {"name": "Sally", "age": "4"}]};
 
 const testOutputDir = "./test/output";
 const testRootDir = "./test/data";
@@ -119,13 +119,13 @@ test("registerEngineMappings should register mappings", () => {
 
 test("getRenderEngine should return the default ejs", () => {
     let ecto = new Ecto();
-    
+
     expect(ecto.getRenderEngine("cool").names.toString()).toBe("ejs");
 });
 
 test("getRenderEngine should return valid for each", () => {
     let ecto = new Ecto();
-    
+
     engines.forEach(engine => {
         expect(ecto.getRenderEngine(engine).names.toString()).toContain(engine);
     });
@@ -133,25 +133,25 @@ test("getRenderEngine should return valid for each", () => {
 
 test("getEngineByTemplatePath should return default ejs", () => {
     let ecto = new Ecto();
-    
+
     expect(ecto.getEngineByFilePath("foo.html")).toBe("ejs");
 });
 
 test("getEngineByTemplatePath should return nunjucks", () => {
     let ecto = new Ecto();
-    
+
     expect(ecto.getEngineByFilePath("foo.njk")).toBe("nunjucks");
 });
 
 test("getEngineByTemplatePath should return pug for jade", () => {
     let ecto = new Ecto();
-    
+
     expect(ecto.getEngineByFilePath("./this/is/a/long/pathfoo.jade")).toBe("pug");
 });
 
 test("render via ejs", async () => {
     let ecto = new Ecto();
-    
+
     expect(await ecto.render(ejsExampleSource, ejsExampleData)).toBe("<h2>bar</h2>");
 });
 
@@ -164,13 +164,13 @@ test("render via ejs hello from docs", async () => {
 
 test("render via handlebars", async () => {
     let ecto = new Ecto();
-    
-    expect(await ecto.render(handlebarsExampleSource, handlebarsExampleData, "handlebars")).toBe("<p>Hello, my name is Alan. I am from Somewhere, TX. I have 2 kids:</p> <ul><li>Jimmy is 12</li><li>Sally is 4</li></ul>");
+
+    expect(await ecto.render(handlebarsExampleSource, handlebarsExampleData, "handlebars")).toBe("<p>Hello, my name is Alan O'Connor. I'm from Somewhere, TX. I have 2 kids:</p> <ul><li>Jimmy is 12</li><li>Sally is 4</li></ul>");
 });
 
 test("render via handlebars and not define engineName", async () => {
     let ecto = new Ecto();
-    
+
     expect(await ecto.render(handlebarsExampleSource, handlebarsExampleData)).toBe(handlebarsExampleSource);
 });
 
@@ -220,5 +220,5 @@ test("Render from Template - Handlebars", async () => {
     let ecto = new Ecto();
     let source = await ecto.renderFromFile(testRootDir + "/handlebars/example1.hbs", handlebarsExampleData, testRootDir + "/handlebars");
 
-    expect(source).toContain("<title>Alan's - Header Title </title>");
+    expect(source).toContain("<title>Alan O'Connor - Header Title </title>");
 });
