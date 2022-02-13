@@ -2,6 +2,7 @@ import { BaseEngine } from "../baseEngine";
 import * as handlebars from "handlebars";
 import * as helpers from "handlebars-helpers";
 import * as fs from "fs-extra";
+import * as _ from "underscore";
 
 export class Handlebars extends BaseEngine implements EngineInterface {
 
@@ -18,23 +19,26 @@ export class Handlebars extends BaseEngine implements EngineInterface {
     }
 
     async render(source:string, data?:object): Promise<string> {
-        
+
         //register partials
         if(this.rootTemplatePath) {
             this.registerPartials(this.rootTemplatePath+this.partialsPath);
         }
-        
+
         helpers({ handlebars: handlebars });
         let template = handlebars.compile(source, this.opts);
 
-        return template(data, this.opts);
+        let result = template(data, this.opts);
+        result = _.unescape(result);
+
+        return result;
     }
 
     registerPartials(partialsPath:string): boolean {
         let result = false;
         if(fs.pathExistsSync(partialsPath)) {
             let partials = fs.readdirSync(partialsPath);
-            
+
             partials.forEach(p => {
                 let source = fs.readFileSync(partialsPath + "/" + p).toString();
                 let name = p.split(".")[0];
@@ -49,4 +53,4 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
         return result;
     }
-} 
+}
