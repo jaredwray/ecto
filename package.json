@@ -44,7 +44,7 @@
     "marked": "^4.0.16",
     "nunjucks": "^3.2.3",
     "pug": "^3.0.2",
-    "underscore": "^1.13.2",
+    "underscore": "^1.13.3",
     "winston": "^3.7.2"
   },
   "devDependencies": {
