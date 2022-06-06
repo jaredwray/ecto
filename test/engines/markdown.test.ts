@@ -8,29 +8,23 @@ test("Markdown - Default Name markdown", () => {
     expect(engine.names.toString()).toContain("markdown");
 });
 
-test("Markdown - Opts should be defined by default", () => {
-    let engine = new Markdown();
-    expect(engine.opts).toStrictEqual({
-        pedantic: false,
-        gfm: true,
-        breaks: false,
-        sanitize: false,
-        smartLists: true,
-        smartypants: false,
-        xhtml: false
-      });
-});
-
 test("Markdown - Setting Opts on the Constructor", () => {
-    let opts = { html: true, linkify: true, typographer: true };
+    let opts = {
+        variables: {
+            name: 'Variable1',
+            frontmatter: {
+                title: 'Variable content'
+            }
+        },
+    }
     let engine = new Markdown(opts);
-    expect(engine.opts.html).toBe(true);
+    expect(engine.opts).toBe(opts);
 });
 
 test("Markdown - Rendering with default Opts", async () => {
     let engine = new Markdown();
     engine.opts = undefined;
-    expect(await engine.render(exampleSource1)).toContain("<h1 id=\"markdown-rulezz\">markdown rulezz!</h1>");
+    expect(await engine.render(exampleSource1)).toContain("<h1>markdown rulezz!</h1>");
 });
 
 test("Markdown - Extension should be a count of 2", () => {
@@ -45,6 +39,6 @@ test("Markdown - Rendering a simple string", async () => {
 
 test("Markdown - Rendering a simple string after inital render", async () => {
     let engine = new Markdown();
-    expect(await engine.render(exampleSource1)).toContain("<h1 ");
+    expect(await engine.render(exampleSource1)).toContain("<h1");
     expect(await engine.render(exampleSource2)).toContain("<em>");
 });

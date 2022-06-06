@@ -35,13 +35,13 @@
     "build": "rm -rf ./dist && npm i && npm run test && npm run compile"
   },
   "dependencies": {
+    "@markdoc/markdoc": "^0.1.2",
     "ejs": "^3.1.8",
     "fs-extra": "^10.1.0",
     "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "helper-date": "^1.0.1",
     "liquidjs": "^9.37.0",
-    "marked": "^4.0.16",
     "nunjucks": "^3.2.3",
     "pug": "^3.0.2",
     "underscore": "^1.13.3",
