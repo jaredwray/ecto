@@ -1,4 +1,4 @@
-name: ecto-build
+name: build
 
 on:
   push:
