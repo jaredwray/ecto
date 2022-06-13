@@ -207,7 +207,3 @@ export class Ecto {
         return result;
     }
 }
-
-export function create(opts?:any): Ecto {
-    return new Ecto(opts);
-}
