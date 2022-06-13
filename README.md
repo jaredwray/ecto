@@ -2,8 +2,8 @@
 
 ## Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Mustache, and Handlebars
 
-[![Build Status](https://github.com/jaredwray/ecto/workflows/ecto-build/badge.svg)](https://github.com/jaredwray/ecto/actions)
-[![Release Status](https://github.com/jaredwray/ecto/workflows/ecto-release/badge.svg)](https://github.com/jaredwray/ecto/actions)
+[![Build Status](https://github.com/jaredwray/ecto/workflows/build/badge.svg)](https://github.com/jaredwray/ecto/actions)
+[![Release Status](https://github.com/jaredwray/ecto/workflows/release/badge.svg)](https://github.com/jaredwray/ecto/actions)
 [![GitHub license](https://img.shields.io/github/license/jaredwray/ecto)](https://github.com/jaredwray/ecto/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/jaredwray/ecto/branch/main/graph/badge.svg?token=dpbFqSW5Kh)](https://codecov.io/gh/jaredwray/ecto)
 [![npm](https://img.shields.io/npm/dm/ecto)](https://npmjs.com/package/ecto)
@@ -24,46 +24,27 @@ Ecto is a modern template consolidation engine that works with the top template 
 
 ## Getting Started
 
-Follow these steps to add Ecto to a new or existing JavaScript project:
-
-1. Ensure Node.js is installed. For macOS and Linux, you can install Node.js in the terminal using Homebrew:
-
-```
-brew install node
-```
-
 The [Node.js package manager documentation](https://nodejs.org/en/download/package-manager/) provides the commands needed to complete the install on Windows and other operating systems.
 
-2. Open the terminal for your project and run `npm install ` to ensure all project dependencies are correctly installed.
+1. Open the terminal for your project and run `npm install` to ensure all project dependencies are correctly installed.
 
 ```
-npm install
+npm install ecto
 ```
 
-3. Add Ecto to your Project. `yarn` is a package manager you can learn about [here.](https://yarnpkg.com/)
-
-```
-yarn add ecto
-```
-
-4.  Declare and Initialize.
+2.  Declare and Initialize.
 
 ```javascript
-const Ecto = require("ecto").Ecto;
-let ecto = new Ecto();
-```
+import { Ecto } from `ecto`;
 
-OR 
-
-```javascript
-const ecto = require("ecto").create();
+const ecto = new Ecto();
 ```
 
 5. Render via String for EJS ([Default Engine](#default-engine))
 
 ```javascript
-let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
-let data = {firstName: "John", lastName: "Doe"}
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = {firstName: "John", lastName: "Doe"}
 ecto.render(source, data).then((output) => {
     console.log(output);
 });
@@ -140,8 +121,7 @@ _The `Extensions` are listed above for when we [Render from File](#render-from-f
 The API is focused on using the main Ecto class:
 
 ```javascript
-const Ecto = require("Ecto").Ecto;
-let ecto = new Ecto();
+const ecto = new Ecto();
 //ecto.<API> -- functions and parameters
 ```
 
@@ -170,10 +150,10 @@ render (`async`) - Render from a string. Here is the render function with all po
 Here is the simplest example of a render function. We are also showing the required steps you need to take beforehand such as setting up Ecto.
 
 ```javascript
-let ecto = require("ecto").create();
+const ecto = new Ecto();
 
-let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
-let data = {firstName: "John", lastName: "Doe"};
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = {firstName: "John", lastName: "Doe"};
 ecto.render(source, data).then((output) => {
     console.log(output);
 });
@@ -182,10 +162,10 @@ ecto.render(source, data).then((output) => {
 Now let's say your desired engine is not [EJS](https://www.npmjs.com/package/ejs), you will need to specify it explicitly. You can either set the [defaultEngine](#default-engine) parameter, or simply pass it in the `render` function. In this case with the popular engine, [Handlebars](https://www.npmjs.com/package/handlebars):
 
 ```javascript
-let ecto = require("ecto").create();
+const ecto = new Ecto();
 
-let source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
-let data = {firstName: "John", lastName: "Doe"}
+const source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
+const data = {firstName: "John", lastName: "Doe"}
 ecto.render(source, data, "handlebars").then((output) => {
     console.log(output);
 });
@@ -195,10 +175,10 @@ ecto.render(source, data, "handlebars").then((output) => {
 The `render` function also can handle partial files for standard engines (markdown excluded) by simply adding the `rootTemplatePath`:
 
 ```javascript
-let ecto = require("ecto").create();
+const ecto = new Ecto();
 
-let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1><%- include('/relative/path/to/partial'); %>";
-let data = {firstName: "John", lastName: "Doe"};
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1><%- include('/relative/path/to/partial'); %>";
+const data = {firstName: "John", lastName: "Doe"};
 ecto.render(source, data, undefined, "./path/to/templates").then((output) => {
     console.log(output);
 });
@@ -208,10 +188,10 @@ ecto.render(source, data, undefined, "./path/to/templates").then((output) => {
 With `render` you can also write to a file. This is accomplished by specifying the `filePathOutput` parameter as below. It will still return the output as a `string`:
 
 ```javascript
-let ecto = require("ecto").create();
+const ecto = new Ecto();
 
-let source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
-let data = {firstName: "John", lastName: "Doe"};
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = {firstName: "John", lastName: "Doe"};
 ecto.render(source, data, undefined, undefined, "./path/to/output/file.html").then((output) => {
     console.log(output);
 });
@@ -240,16 +220,16 @@ This simple example showing the `renderFromFile` function shows you the bare min
 One of the main benefits is that it will automatically select the correct engine based on the file extension.
 
 ```javascript
-let ecto = require("ecto").create();
-let data = { firstName: "John", lastName: "Doe"};
+const ecto = new Ecto();
+const data = { firstName: "John", lastName: "Doe"};
 
 ecto.renderFromFile("./path/to/template.ejs", data).then((output) => {console.log(output)});
 ```
 In this example, we are writing the output to a HTML file:
 
 ```javascript
-let ecto = require("ecto").create();
-let data = { firstName: "John", lastName: "Doe"};
+const ecto = new Ecto();
+const data = { firstName: "John", lastName: "Doe"};
 
 ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html")
 ```
@@ -259,8 +239,8 @@ Notice that in these examples it is using the `./path/to/template.ejs` to specif
 You can override the auto-selected engine by passing in the string value of a template engine as a parameter into the `renderFromFile` function. We pass in `pug`, which states we want to render the template using the [Pug](https://www.npmjs.com/package/pug) engine.
 
 ```javascript
-let ecto = require("ecto").create();
-let data = { firstName: "John", lastName: "Doe"};
+const ecto = new Ecto();
+const data = { firstName: "John", lastName: "Doe"};
 
 ecto.renderFromFile("./path/to/template.ejs", data, undefined, 
 "./path/to/output/yourname.html", "pug")
@@ -276,29 +256,27 @@ This string parameter can be used to set the default template engine for an inst
 
 One option for setting the default engine, is to do so in the Ecto constructor:
 
-- `const ecto = require("ecto").create({defaultEngine: "ejs"});`
-- `const ecto = require("ecto").create({defaultEngine: "markdown"});`
-- `const ecto = require("ecto").create({defaultEngine: "pug"});`
-- `const ecto = require("ecto").create({defaultEngine: "nunjucks"});`
-- `const ecto = require("ecto").create({defaultEngine: "mustache"});`
-- `const ecto = require("ecto").create({defaultEngine: "handlebars"});`
-- `const ecto = require("ecto").create({defaultEngine: "liquid"});`
+- `const ecto = new Ecto({defaultEngine: "ejs"});`
+- `const ecto = new Ecto({defaultEngine: "markdown"});`
+- `const ecto = new Ecto({defaultEngine: "pug"});`
+- `const ecto = new Ecto({defaultEngine: "nunjucks"});`
+- `const ecto = new Ecto({defaultEngine: "mustache"});`
+- `const ecto = new Ecto({defaultEngine: "handlebars"});`
+- `const ecto = new Ecto({defaultEngine: "liquid"});`
 
 ##### Set the default engine as a parameter
 
 We can also set the default engine as a parameter, like so:
 
 ```javascript
-const Ecto = require("ecto").Ecto;
-let ecto = new Ecto();
+const ecto = new Ecto();
 ecto.defaultEngine = "mustache";
 ```
 
 Alternatively, we can set the engine directly on the constructor. This would make our previous example:
 
 ```javascript
-const Ecto = require("ecto").Ecto;
-let ecto = new Ecto({defaultEngine: "liquid"});
+const ecto = new Ecto({defaultEngine: "liquid"});
 ecto.defaultEngine = "mustache";
 ```
 
@@ -307,9 +285,9 @@ ecto.defaultEngine = "mustache";
 You can explicitly override the Ecto.defaultEngine parameter in the render function:
 
 ```javascript
-let ecto = require("ecto").create();
-let source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
-let data = {firstName: "John", lastName: "Doe"};
+const ecto = new Ecto();
+const source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
+const data = {firstName: "John", lastName: "Doe"};
 ecto.render(source, data, "handlebars").then((output) => {
     console.log(output);
 });
@@ -320,8 +298,8 @@ ecto.render(source, data, "handlebars").then((output) => {
 The `renderFromFile` function automatically decides on the template engine, based on the file extension in the file path you specify. However, you can also explicitly set the engine you would like to use. Here we set the engine to be Pug.
 
 ```javascript
-let ecto = new Ecto();
-let data = { firstName: "John", lastName: "Doe"};
+const ecto = new Ecto();
+const data = { firstName: "John", lastName: "Doe"};
 ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html", "pug").then((output) => {  
 	console.log(output)
 });
@@ -330,7 +308,7 @@ ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output
 To make it easier to access and change between engines, all supported engines are provided as parameters on the `Ecto` class as `Ecto.<EngineFullName>`
 
 ```javascript
-let ecto = Ecto();
+const ecto = Ecto();
 console.log(ecto.Handlebars.name); // will return "handlebars"
 console.log(ecto.Handlebars.opts); // will return "handlebars" options object
 ```
@@ -338,7 +316,7 @@ console.log(ecto.Handlebars.opts); // will return "handlebars" options object
 To access a specific engine you can do so by going to `ecto.<engine_name>.engine` and setting the [SafeString](https://handlebarsjs.com/api-reference/utilities.html#handlebars-safestring-string):
 
 ```javascript
-let ecto = Ecto();
+const ecto = Ecto();
 ecto.Handlebars.engine.SafeString("<div>HTML Content!</div>");
 ```
 
@@ -350,9 +328,9 @@ import { Ecto } from "ecto";
 
 and then simply call it like you do with standard javascript:
 ```javascript
-let ecto = Ecto();
-let source = "# markdown rulezz!";
-let output = await ecto.render(source, undefined, "markdown");
+const ecto = Ecto();
+const source = "# markdown rulezz!";
+const output = await ecto.render(source, undefined, "markdown");
 console.log(output) //should be <h1 id="markdown-rulezz">markdown rulezz!</h1>
 ```
 _NOTE: this example would be in an `async` function._
@@ -365,8 +343,8 @@ _NOTE: this example would be in an `async` function._
 Markdown does not contain complexities such as data objects, or partials and layouts. To render markdown its as simple as:
 
 ```javascript
-let ecto = Ecto();
-let source = "# markdown rulezz!";
+const ecto = Ecto();
+const source = "# markdown rulezz!";
 ecto.render(source, undefined, "markdown").then((output) => {
     console.log(output) //should be <h1 id="markdown-rulezz">markdown rulezz!</h1>
 });
@@ -374,25 +352,13 @@ ecto.render(source, undefined, "markdown").then((output) => {
 Render by Markdown file:
 
 ```javascript
-let ecto = Ecto();
+const ecto = Ecto();
 ecto.renderByFile("/path/to/file.md").then((output) => {
     console.log(output)
 });
 ```
 
-With Markdown we have added the following options as they are the most common:
-```javascript
-{
-    pedantic: false,
-    gfm: true,
-    breaks: false,
-    sanitize: false,
-    smartLists: true,
-    smartypants: false,
-    xhtml: false
-}
-```
-You can read more about them [here](https://marked.js.org/using_advanced#options).
+We are using [Markdoc](https://markdoc.io/) which has a ton of powerful features.
 
 #### Handlebars
 
@@ -401,8 +367,8 @@ In Ecto we use the [handlebars](https://www.npmjs.com/package/handlebars-helpers
 Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [handlebars-helpers](https://www.npmjs.com/package/handlebars-helpers) so you can format dates, and more. Here is an example using `Handlebars Helpers` in your template:
 
 ```javascript
-let ecto = Ecto();
-let source = "{{year}}";
+const ecto = Ecto();
+const source = "{{year}}";
 
 ecto.render(source, undefined, "handlebars").then((output) => {
     console.log(output)
@@ -520,8 +486,6 @@ Issues can be used to keep track of bugs, enhancements, or other requests. Issue
 3. Click New Issue.
 4. Enter the title and description for your issue, and click "Submit new issue".
 
-
-
 ## The Template Engines we support
 
 ### What is a Template Engine?
@@ -612,8 +576,8 @@ Handlebars is a fantastic template engine, and we've incorporated helpers to mak
 
 
 ```javascript
-let ecto = Ecto();
-let source = "{{year}}";
+const ecto = Ecto();
+const source = "{{year}}";
 
 ecto.render(source, undefined, "handlebars").then((output) => {
     console.log(output)
