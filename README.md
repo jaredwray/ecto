@@ -362,9 +362,9 @@ We are using [Markdoc](https://markdoc.io/) which has a ton of powerful features
 
 #### Handlebars
 
-In Ecto we use the [handlebars](https://www.npmjs.com/package/handlebars-helpers) engine to render `mustache` related templates. This is because handlebars is based on mustache with just more additional features.
+In Ecto we use the [handlebars](https://www.npmjs.com/package/handlebars) engine to render `mustache` related templates. This is because handlebars is based on mustache with just more additional features.
 
-Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [handlebars-helpers](https://www.npmjs.com/package/handlebars-helpers) so you can format dates, and more. Here is an example using `Handlebars Helpers` in your template:
+Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [helpers-for-handlebars](https://github.com/jaredwray/helpers-for-handlebars) so you can format dates, and more. Here is an example using `Handlebars Helpers` in your template:
 
 ```javascript
 const ecto = Ecto();
@@ -570,9 +570,9 @@ The way Handlebars works can be summarized as follows:
 2. This function is then executed by passing a JSON object as an argument. This JSON object is known as context and it contains the values of the variables used in the template.
 3. On its execution, the function returns the required HTML after replacing the variables of the template with their corresponding values.
 
-In Ecto, we use the [Handlebars](https://www.npmjs.com/package/handlebars-helpers) engine to render mustache-related templates.
+In Ecto, we use the [Handlebars](https://www.npmjs.com/package/handlebars) engine to render mustache-related templates.
 
-Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [handlebars-helpers](https://www.npmjs.com/package/handlebars-helpers) so you can format dates, and more. Here is an example using Handlebars Helpers in your template:
+Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [helpers-for-handlebars](https://github.com/jaredwray/helpers-for-handlebars) so you can format dates, and more. Here is an example using Handlebars Helpers in your template:
 
 
 ```javascript
