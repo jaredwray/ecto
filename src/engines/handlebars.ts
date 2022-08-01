@@ -1,6 +1,6 @@
 import { BaseEngine } from "../baseEngine";
 import * as handlebars from "handlebars";
-import * as helpers from "handlebars-helpers";
+import * as helpers from "helpers-for-handlebars";
 import * as fs from "fs-extra";
 import * as _ from "underscore";
 
