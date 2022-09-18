@@ -41,7 +41,7 @@
     "handlebars": "^4.7.7",
     "helper-date": "^1.0.1",
     "helpers-for-handlebars": "^0.10.4",
-    "liquidjs": "^9.40.0",
+    "liquidjs": "^9.42.0",
     "nunjucks": "^3.2.3",
     "pug": "^3.0.2",
     "underscore": "^1.13.4",
