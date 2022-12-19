@@ -37,7 +37,7 @@
   "dependencies": {
     "@markdoc/markdoc": "^0.2.1",
     "ejs": "^3.1.8",
-    "fs-extra": "^10.1.0",
+    "fs-extra": "^11.1.0",
     "handlebars": "^4.7.7",
     "helper-date": "^1.0.1",
     "helpers-for-handlebars": "^0.10.7",
