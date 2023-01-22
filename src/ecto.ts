@@ -128,7 +128,7 @@ export class Ecto {
     }
 
     private async writeFile(filePath?:string, source?:string) {
-        if(filePath) {
+        if(filePath && source) {
             await this.ensureFilePath(filePath);
             await fs.writeFile(filePath, source);
         }
