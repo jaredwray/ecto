@@ -40,7 +40,7 @@
     "fs-extra": "^11.1.0",
     "handlebars": "^4.7.7",
     "helper-date": "^1.0.1",
-    "helpers-for-handlebars": "^0.10.9",
+    "helpers-for-handlebars": "^0.10.10",
     "liquidjs": "^10.6.0",
     "nunjucks": "^3.2.3",
     "pug": "^3.0.2",
