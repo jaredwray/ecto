@@ -99,7 +99,7 @@ Next Steps:
 
 ## Only the Top Template Engines and Their Extensions
 
-We decided to focus on the most popular and well-maintained consolidation engines. Unfortunately other engines suffered from packages that were unsupported, making it difficult to validate them as working fully. Some engines also had limited types and lacked ease of use. 
+We focus on the most popular and well-maintained consolidation engines. Unfortunately other engines suffered from packages that were unsupported, making it difficult to validate them as working fully. Some engines also had limited types and lacked ease of use. 
 
 Our goal is to support the top engines, handling the vast majority of use cases. Here are the top engines that we support:
 
