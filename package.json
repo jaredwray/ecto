@@ -35,7 +35,7 @@
     "build": "rm -rf ./dist && npm i && npm run test && npm run compile"
   },
   "dependencies": {
-    "@markdoc/markdoc": "^0.2.2",
+    "@markdoc/markdoc": "^0.3.0",
     "ejs": "^3.1.9",
     "fs-extra": "^11.1.1",
     "handlebars": "^4.7.7",
