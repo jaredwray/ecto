@@ -50,7 +50,7 @@ ecto.render(source, data).then((output) => {
 });
 ```
 
-After running your program you should be greeted by the following output:
+After running your program you should see the following output:
 
 ```
 <h1>Hello John Doe!</h1>
