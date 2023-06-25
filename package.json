@@ -59,7 +59,7 @@
     "@types/nunjucks": "^3.2.2",
     "@types/pug": "^2.0.6",
     "@types/underscore": "^1.11.5",
-    "docula": "^0.3.0",
+    "docula": "^0.3.1",
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.1.3"
