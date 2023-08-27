@@ -1,6 +1,5 @@
 import { BaseEngine } from "../baseEngine";
-import * as handlebars from "handlebars";
-import * as helpers from "helpers-for-handlebars";
+import * as handlebars from "fumanchu";
 import * as fs from "fs-extra";
 import * as _ from "underscore";
 
@@ -25,7 +24,6 @@ export class Handlebars extends BaseEngine implements EngineInterface {
             this.registerPartials(this.rootTemplatePath+this.partialsPath);
         }
 
-        helpers({ handlebars: handlebars });
         let template = handlebars.compile(source, this.opts);
 
         let result = template(data, this.opts);
