@@ -1,5 +1,5 @@
 import { BaseEngine } from "../baseEngine";
-import * as handlebars from "fumanchu";
+import * as handlebars from "@jaredwray/fumanchu";
 import * as fs from "fs-extra";
 import * as _ from "underscore";
 

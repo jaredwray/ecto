@@ -37,10 +37,10 @@
     "website:serve": "npx docula serve"
   },
   "dependencies": {
+    "@jaredwray/fumanchu": "^1.0.1",
     "@markdoc/markdoc": "^0.3.2",
     "ejs": "^3.1.9",
     "fs-extra": "^11.1.1",
-    "fumanchu": "github:jaredwray/fumanchu",
     "helper-date": "^1.0.1",
     "liquidjs": "^10.9.1",
     "nunjucks": "^3.2.4",
