@@ -4,7 +4,10 @@
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
   "main": "./dist/ecto.js",
   "types": "./dist/ecto.d.ts",
-  "repository": "https://github.com/jaredwray/ecto.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaredwray/ecto.git"
+  },
   "author": "Jared Wray <me@jaredwray.com>",
   "license": "MIT",
   "keywords": [
