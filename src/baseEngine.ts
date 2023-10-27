@@ -1,34 +1,30 @@
 export class BaseEngine {
-    
-    private __extensions = Array<string>();
-    names = Array<string>();
-    opts?:any = undefined;
-    engine: any;
-    rootTemplatePath?: string = undefined;
+	private __extensions = new Array<string>();
+	names = new Array<string>();
+	opts?: any = undefined;
+	engine: any;
+	rootTemplatePath?: string = undefined;
 
-    getExtensions(): Array<string> {
-        return this.__extensions;
-    }
+	getExtensions(): string[] {
+		return this.__extensions;
+	}
 
-    setExtensions(extensions:Array<string>): void {
-        this.__extensions = new Array<string>();
+	setExtensions(extensions: string[]): void {
+		this.__extensions = new Array<string>();
 
-        extensions.forEach(ext => {
-            let newExt = ext.trim().toLowerCase();
-            if(!this.__extensions.includes(newExt)) {
-                this.__extensions.push(newExt);
-            }
-        });
+		for (const ext of extensions) {
+			const newExt = ext.trim().toLowerCase();
+			if (!this.__extensions.includes(newExt)) {
+				this.__extensions.push(newExt);
+			}
+		}
+	}
 
-    }
-
-    deleteExtension(name: string) {
-        
-        this.__extensions.forEach( (ext, index) => {
-            if(name.toLowerCase().trim() === ext) {
-                this.__extensions.splice(index, 1);
-            }
-        });
-    }
-
+	deleteExtension(name: string) {
+		for (const [index, ext] of this.__extensions.entries()) {
+			if (name.toLowerCase().trim() === ext) {
+				this.__extensions.splice(index, 1);
+			}
+		}
+	}
 }

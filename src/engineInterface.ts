@@ -1,7 +1,7 @@
-interface EngineInterface {
-    names: Array<string>;
-    engine: any;
-    opts?: any;
-    rootTemplatePath?: string;
-    render(source:string, data?:object): Promise<string>;
-}
+type EngineInterface = {
+	names: string[];
+	engine: any;
+	opts?: any;
+	rootTemplatePath?: string;
+	render(source: string, data?: Record<string, unknown>): Promise<string>;
+};

@@ -1,34 +1,32 @@
-import { BaseEngine } from "../baseEngine";
-import * as ejs from "ejs";
+import * as ejs from 'ejs';
+import {BaseEngine} from '../baseEngine';
 
 export class EJS extends BaseEngine implements EngineInterface {
+	constructor(options?: Record<string, unknown>) {
+		super();
 
-    constructor(opts?:object){
-        super();
+		this.names = ['ejs'];
 
-        this.names = ["ejs"];
+		if (options) {
+			this.opts = options;
+		}
 
-        if(opts) {
-            this.opts = opts;
-        }
+		this.setExtensions(['ejs']);
+	}
 
-        this.setExtensions(["ejs"]);
-    }
+	async render(source: string, data?: Record<string, unknown>): Promise<string> {
+		if (!this.engine) {
+			this.engine = ejs;
+		}
 
-    async render(source:string, data?:object): Promise<string> {
+		if (!this.opts) {
+			this.opts = {};
+		}
 
-        if(!this.engine) {
-            this.engine = ejs;
-        }
+		if (this.rootTemplatePath) {
+			this.opts.root = this.rootTemplatePath;
+		}
 
-        if(!this.opts) {
-            this.opts = {};
-        }
-
-        if(this.rootTemplatePath) {
-            this.opts.root = this.rootTemplatePath;
-        }
-
-        return ejs.render(source, data, this.opts);
-    }
-} 
+		return ejs.render(source, data, this.opts);
+	}
+}

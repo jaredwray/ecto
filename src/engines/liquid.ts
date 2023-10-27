@@ -1,34 +1,32 @@
-import { BaseEngine } from "../baseEngine";
-import { Liquid as LiquidEngine } from "liquidjs";
+import {Liquid as LiquidEngine} from 'liquidjs';
+import {BaseEngine} from '../baseEngine';
 
 export class Liquid extends BaseEngine implements EngineInterface {
+	constructor(options?: Record<string, unknown>) {
+		super();
 
-    constructor(opts?:object){
-        super();
+		this.names = ['liquid'];
 
-        this.names = ["liquid"];
+		if (options) {
+			this.opts = options;
+		}
 
-        if(opts) {
-            this.opts = opts;
-        }
+		this.setExtensions(['liquid']);
+	}
 
-        this.setExtensions(["liquid"]);
-    }
+	async render(source: string, data?: Record<string, unknown>): Promise<string> {
+		if (this.rootTemplatePath) {
+			if (!this.opts) {
+				this.opts = {};
+			}
 
-    async render(source:string, data?:object): Promise<string> {
+			this.opts.root = this.rootTemplatePath;
+		}
 
-        if(this.rootTemplatePath) {
-            if(!this.opts) {
-                this.opts = {};
-            }
+		if (!this.engine) {
+			this.engine = new LiquidEngine(this.opts);
+		}
 
-            this.opts.root = this.rootTemplatePath;
-        }
-
-        if(!this.engine) {
-            this.engine = new LiquidEngine(this.opts);
-        }
-
-        return await this.engine.parseAndRender(source, data);
-    }
-} 
+		return await this.engine.parseAndRender(source, data);
+	}
+}
