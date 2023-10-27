@@ -1,7 +1,7 @@
 import * as handlebars from '@jaredwray/fumanchu';
 import * as fs from 'fs-extra';
 import * as _ from 'underscore';
-import {BaseEngine} from '../baseEngine.js';
+import {BaseEngine} from '../base-engine.js';
 
 export class Handlebars extends BaseEngine implements EngineInterface {
 	public partialsPath = '/partials';

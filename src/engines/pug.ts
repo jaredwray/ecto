@@ -1,5 +1,5 @@
 import * as pug from 'pug';
-import {BaseEngine} from '../baseEngine.js';
+import {BaseEngine} from '../base-engine.js';
 
 export class Pug extends BaseEngine implements EngineInterface {
 	constructor(options?: Record<string, unknown>) {

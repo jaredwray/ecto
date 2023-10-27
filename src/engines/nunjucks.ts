@@ -1,5 +1,5 @@
 import * as nunjucks from 'nunjucks';
-import {BaseEngine} from '../baseEngine.js';
+import {BaseEngine} from '../base-engine.js';
 
 export class Nunjucks extends BaseEngine implements EngineInterface {
 	constructor(options?: Record<string, unknown>) {

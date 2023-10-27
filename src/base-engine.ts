@@ -1,9 +1,9 @@
 export class BaseEngine {
-	private __extensions = new Array<string>();
 	names = new Array<string>();
 	opts?: any = undefined;
 	engine: any;
 	rootTemplatePath?: string = undefined;
+	private __extensions = new Array<string>();
 
 	getExtensions(): string[] {
 		return this.__extensions;

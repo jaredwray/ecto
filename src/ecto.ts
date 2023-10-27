@@ -6,7 +6,7 @@ import {EJS} from './engines/ejs.js';
 import {Pug} from './engines/pug.js';
 import {Nunjucks} from './engines/nunjucks.js';
 import {Liquid} from './engines/liquid.js';
-import {type BaseEngine} from './baseEngine.js';
+import {type BaseEngine} from './base-engine.js';
 
 export class Ecto {
 	private readonly __mapping: EngineMap = new EngineMap();
@@ -119,13 +119,6 @@ export class Ecto {
 		return result;
 	}
 
-	private async writeFile(filePath?: string, source?: string) {
-		if (filePath && source) {
-			await this.ensureFilePath(filePath);
-			await fs.writeFile(filePath, source);
-		}
-	}
-
 	async ensureFilePath(path: string) {
 		const pathList = path.split('/');
 		pathList.pop();
@@ -141,7 +134,7 @@ export class Ecto {
 		let result = this.__defaultEngine;
 
 		if (filePath !== undefined) {
-			const ext = filePath.slice((filePath.lastIndexOf('.') - 1 >>> 0) + 2);
+			const ext = filePath.slice((filePath.lastIndexOf('.')));
 
 			const engExt = this.__mapping.getName(ext);
 			if (engExt !== undefined) {
@@ -174,6 +167,7 @@ export class Ecto {
 	getRenderEngine(engineName: string): EngineInterface {
 		let result = this.__ejs; // Setting default
 
+		// eslint-disable-next-line default-case
 		switch (engineName.trim().toLowerCase()) {
 			case 'markdown': {
 				result = this.__markdown;
@@ -207,5 +201,12 @@ export class Ecto {
 		}
 
 		return result;
+	}
+
+	private async writeFile(filePath?: string, source?: string) {
+		if (filePath && source) {
+			await this.ensureFilePath(filePath);
+			await fs.writeFile(filePath, source);
+		}
 	}
 }

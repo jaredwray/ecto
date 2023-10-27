@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
 import Markdoc from '@markdoc/markdoc';
-import {BaseEngine} from '../baseEngine.js';
+import {BaseEngine} from '../base-engine.js';
 
 export class Markdown extends BaseEngine implements EngineInterface {
 	constructor(options?: any) {
@@ -19,6 +20,6 @@ export class Markdown extends BaseEngine implements EngineInterface {
 	async render(source: string, data?: Record<string, unknown>): Promise<string> {
 		const ast = this.engine.parse(source);
 		const content = this.engine.transform(ast, this.opts);
-		return this.engine.renderers.html(content);
+		return this.engine.renderers.html(content) as string;
 	}
 }
