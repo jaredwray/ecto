@@ -1,3 +1,4 @@
+import {expect, it} from 'vitest';
 import * as fs from 'fs-extra';
 import {Pug} from '../../src/engines/pug.js';
 
@@ -8,38 +9,38 @@ const exampleData2 = {items: [1, 2, 3, 4, 5]};
 
 const testTemplateDir = './test/data/pug';
 
-test('Pug - Default Name Pug', () => {
+it('Pug - Default Name Pug', () => {
 	const engine = new Pug();
 	expect(engine.names.toString()).toContain('pug');
 });
 
-test('Pug - Opts should be undefined by default', () => {
+it('Pug - Opts should be undefined by default', () => {
 	const engine = new Pug();
 	expect(engine.opts).toBe(undefined);
 });
 
-test('Pug - Setting Opts on the Constructor', () => {
+it('Pug - Setting Opts on the Constructor', () => {
 	const options = {cool: true};
 	const engine = new Pug(options);
 	expect(engine.opts.cool).toBe(true);
 });
 
-test('Pug - Extension should be a count of 1', () => {
+it('Pug - Extension should be a count of 1', () => {
 	const engine = new Pug();
 	expect(engine.getExtensions().length).toBe(2);
 });
 
-test('Pug - Rendering a simple string', async () => {
+it('Pug - Rendering a simple string', async () => {
 	const engine = new Pug();
 	expect(await engine.render(exampleSource1, exampleData1)).toBe('<p>John Doe\'s Pug source code!</p>');
 });
 
-test('Pug - Rendering a list in html', async () => {
+it('Pug - Rendering a list in html', async () => {
 	const engine = new Pug();
 	expect(await engine.render(exampleSource2, exampleData2)).toBe('<ul></ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li>');
 });
 
-test('Pug - Rendering with Includes', async () => {
+it('Pug - Rendering with Includes', async () => {
 	const engine = new Pug();
 	const source = await fs.readFile(testTemplateDir + '/example1.pug', 'utf8');
 

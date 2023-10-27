@@ -134,7 +134,8 @@ export class Ecto {
 		let result = this.__defaultEngine;
 
 		if (filePath !== undefined) {
-			const ext = filePath.slice((filePath.lastIndexOf('.')));
+			// eslint-disable-next-line no-bitwise
+			const ext = filePath.slice((filePath.lastIndexOf('.') - 1 >>> 0) + 2);
 
 			const engExt = this.__mapping.getName(ext);
 			if (engExt !== undefined) {

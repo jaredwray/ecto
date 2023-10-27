@@ -1,46 +1,47 @@
+import {expect, it} from 'vitest';
 import {BaseEngine} from '../src/base-engine.js';
 
-test('BaseEngine - Default Name should be Blank', () => {
+it('BaseEngine - Default Name should be Blank', () => {
 	const be = new BaseEngine();
 	expect(be.names.toString()).toBe('');
 });
 
-test('BaseEngine - Default Name should be Foo', () => {
+it('BaseEngine - Default Name should be Foo', () => {
 	const be = new BaseEngine();
 	be.names = ['foo'];
 	expect(be.names.toString()).toBe('foo');
 });
 
-test('BaseEngine - Opts should be undefined', () => {
+it('BaseEngine - Opts should be undefined', () => {
 	const be = new BaseEngine();
 	expect(be.opts).toBe(undefined);
 });
 
-test('BaseEngine - Opts should Have Data', () => {
+it('BaseEngine - Opts should Have Data', () => {
 	const be = new BaseEngine();
 	const options = {isValid: true};
 	be.opts = options;
 	expect(be.opts).toBe(options);
 });
 
-test('BaseEngine - getExtensions should be 0', () => {
+it('BaseEngine - getExtensions should be 0', () => {
 	const be = new BaseEngine();
 	expect(be.getExtensions().length).toBe(0);
 });
 
-test('BaseEngine - setExtensions should be 2', () => {
+it('BaseEngine - setExtensions should be 2', () => {
 	const be = new BaseEngine();
 	be.setExtensions(['md', 'markdown']);
 	expect(be.getExtensions().length).toBe(2);
 });
 
-test('BaseEngine - setExtensions should be 2 with duplicate', () => {
+it('BaseEngine - setExtensions should be 2 with duplicate', () => {
 	const be = new BaseEngine();
 	be.setExtensions(['md', 'markdown', 'markdown']);
 	expect(be.getExtensions().length).toBe(2);
 });
 
-test('BaseEngine - deleteExtension should be 1', () => {
+it('BaseEngine - deleteExtension should be 1', () => {
 	const be = new BaseEngine();
 	be.setExtensions(['md', 'markdown']);
 	expect(be.getExtensions().length).toBe(2);
@@ -48,7 +49,7 @@ test('BaseEngine - deleteExtension should be 1', () => {
 	expect(be.getExtensions().length).toBe(1);
 });
 
-test('BaseEngine - deleteExtension should be 1 with case', () => {
+it('BaseEngine - deleteExtension should be 1 with case', () => {
 	const be = new BaseEngine();
 	be.setExtensions(['md', 'markdown']);
 	expect(be.getExtensions().length).toBe(2);

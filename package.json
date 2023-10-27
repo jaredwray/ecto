@@ -33,7 +33,7 @@
   "scripts": {
     "watch": "tsc -w -p .",
     "clean": "rimraf ./dist && rimraf yarn.lock && rimraf package-lock.json && rimraf ./coverage && rimraf ./node_modules",
-    "test": "xo --fix && jest --coverage",
+    "test": "xo --fix && vitest run --coverage",
     "compile": "tsc -p .",
     "build": "rimraf ./dist && npm i && npm run test && npm run compile",
     "website:build": "npx docula",
@@ -60,11 +60,13 @@
     "@types/nunjucks": "^3.2.4",
     "@types/pug": "^2.0.7",
     "@types/underscore": "^1.11.9",
+    "@vitest/coverage-v8": "^0.34.6",
     "docula": "^0.3.6",
     "jest": "^29.7.0",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
+    "vitest": "^0.34.6",
     "webpack": "^5.89.0",
     "xo": "^0.56.0"
   },
