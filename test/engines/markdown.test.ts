@@ -1,4 +1,4 @@
-import {Markdown} from '../../src/engines/markdown';
+import {Markdown} from '../../src/engines/markdown.js';
 
 const exampleSource1 = '# markdown rulezz!';
 const exampleSource2 = '_markdown_ rulezz!';

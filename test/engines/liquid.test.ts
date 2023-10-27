@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import {Liquid} from '../../src/engines/liquid';
+import {Liquid} from '../../src/engines/liquid.js';
 
 const exampleSource1 = '{{name | capitalize}}';
 const exampleData1 = {name: 'john'};

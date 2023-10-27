@@ -1,7 +1,7 @@
 import * as handlebars from '@jaredwray/fumanchu';
 import * as fs from 'fs-extra';
 import * as _ from 'underscore';
-import {BaseEngine} from '../baseEngine';
+import {BaseEngine} from '../baseEngine.js';
 
 export class Handlebars extends BaseEngine implements EngineInterface {
 	public partialsPath = '/partials';
@@ -22,8 +22,10 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 			this.registerPartials(this.rootTemplatePath + this.partialsPath);
 		}
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const template = handlebars.compile(source, this.opts);
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		let result = template(data, this.opts);
 		result = _.unescape(result);
 

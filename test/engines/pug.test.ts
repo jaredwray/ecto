@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import {Pug} from '../../src/engines/pug';
+import {Pug} from '../../src/engines/pug.js';
 
 const exampleSource1 = 'p #{name}\'s Pug source code!';
 const exampleData1 = {name: 'John Doe'};

@@ -2,8 +2,6 @@
 export class EngineMap {
 	private readonly _mappings: Map<string, string[]> = new Map<string, string[]>();
 
-	constructor() {}
-
 	set(name: string, extensions: string[]): void {
 		const engineName = name.trim().toLowerCase();
 		const engineExtensions = new Array<string>();
@@ -47,11 +45,11 @@ export class EngineMap {
 	getName(extension: string): string | undefined {
 		let engineName;
 
-		this._mappings.forEach((extensions, name, map) => {
+		for (const [name, extensions] of this._mappings) {
 			if (extensions.includes(extension.trim().toLowerCase())) {
 				engineName = name;
 			}
-		});
+		}
 
 		return engineName;
 	}

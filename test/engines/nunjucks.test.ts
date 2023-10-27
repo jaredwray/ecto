@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import {Nunjucks} from '../../src/engines/nunjucks';
+import {Nunjucks} from '../../src/engines/nunjucks.js';
 
 const exampleSource1 = 'Hello {{ username }}';
 const exampleData1 = {username: 'john.doe'};
@@ -51,7 +51,8 @@ test('Nunjucks - Rendering a list / ul html', async () => {
 
 test('Nunjucks - Rendering no data', async () => {
 	const engine = new Nunjucks();
-	expect(await engine.render(exampleSource2, [])).toBe('<h1>Posts</h1><ul><li>This would display if the \'item\' collection were empty</li></ul>');
+	const data = {items: []};
+	expect(await engine.render(exampleSource2, data)).toBe('<h1>Posts</h1><ul><li>This would display if the \'item\' collection were empty</li></ul>');
 });
 
 test('Nunjucks - Rendering with partial template', async () => {

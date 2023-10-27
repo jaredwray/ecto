@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import {Ecto} from '../src/ecto';
+import {Ecto} from '../src/ecto.js';
 
 const engines: string[] = ['ejs', 'markdown', 'pug', 'nunjucks', 'mustache', 'handlebars', 'liquid'];
 
@@ -108,7 +108,7 @@ test('registerEngineMappings should register mappings', () => {
 
 test('getRenderEngine should return the default ejs', () => {
 	const ecto = new Ecto();
-
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	expect(ecto.getRenderEngine('cool').names.toString()).toBe('ejs');
 });
 
@@ -116,6 +116,7 @@ test('getRenderEngine should return valid for each', () => {
 	const ecto = new Ecto();
 
 	for (const engine of engines) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		expect(ecto.getRenderEngine(engine).names.toString()).toContain(engine);
 	}
 });

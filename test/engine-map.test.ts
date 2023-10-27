@@ -1,4 +1,4 @@
-import {EngineMap} from '../src/engineMap';
+import {EngineMap} from '../src/engine-map.js';
 
 test('EngineMap - Default Name should be Blank', () => {
 	const mappings = new EngineMap();

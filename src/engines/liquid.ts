@@ -1,5 +1,5 @@
 import {Liquid as LiquidEngine} from 'liquidjs';
-import {BaseEngine} from '../baseEngine';
+import {BaseEngine} from '../baseEngine.js';
 
 export class Liquid extends BaseEngine implements EngineInterface {
 	constructor(options?: Record<string, unknown>) {

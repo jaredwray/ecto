@@ -1,5 +1,5 @@
 import Markdoc from '@markdoc/markdoc';
-import {BaseEngine} from '../baseEngine';
+import {BaseEngine} from '../baseEngine.js';
 
 export class Markdown extends BaseEngine implements EngineInterface {
 	constructor(options?: any) {

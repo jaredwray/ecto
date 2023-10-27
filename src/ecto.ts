@@ -1,12 +1,12 @@
 import * as fs from 'fs-extra';
-import {EngineMap} from './engineMap';
-import {Markdown} from './engines/markdown';
-import {Handlebars} from './engines/handlebars';
-import {EJS} from './engines/ejs';
-import {Pug} from './engines/pug';
-import {Nunjucks} from './engines/nunjucks';
-import {Liquid} from './engines/liquid';
-import {type BaseEngine} from './baseEngine';
+import {EngineMap} from './engine-map.js';
+import {Markdown} from './engines/markdown.js';
+import {Handlebars} from './engines/handlebars.js';
+import {EJS} from './engines/ejs.js';
+import {Pug} from './engines/pug.js';
+import {Nunjucks} from './engines/nunjucks.js';
+import {Liquid} from './engines/liquid.js';
+import {type BaseEngine} from './baseEngine.js';
 
 export class Ecto {
 	private readonly __mapping: EngineMap = new EngineMap();
@@ -30,8 +30,8 @@ export class Ecto {
 		this.registerEngineMappings();
 
 		// Set the options
-		if (options && this.isValidEngine(options.defaultEngine)) {
-			this.__defaultEngine = options.defaultEngine;
+		if (options !== undefined && this.isValidEngine(options.defaultEngine as string)) {
+			this.__defaultEngine = options.defaultEngine as string;
 		}
 	}
 
@@ -76,6 +76,7 @@ export class Ecto {
 	}
 
 	// String Render
+	// eslint-disable-next-line max-params
 	async render(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): Promise<string> {
 		let result = '';
 		let renderEngineName = this.__defaultEngine;
@@ -101,6 +102,7 @@ export class Ecto {
 	}
 
 	// Render from File
+	// eslint-disable-next-line max-params
 	async renderFromFile(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): Promise<string> {
 		let result = '';
 

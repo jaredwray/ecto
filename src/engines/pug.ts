@@ -1,5 +1,5 @@
 import * as pug from 'pug';
-import {BaseEngine} from '../baseEngine';
+import {BaseEngine} from '../baseEngine.js';
 
 export class Pug extends BaseEngine implements EngineInterface {
 	constructor(options?: Record<string, unknown>) {
@@ -25,6 +25,7 @@ export class Pug extends BaseEngine implements EngineInterface {
 			this.opts.basedir = this.rootTemplatePath;
 		}
 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		const template = pug.compile(source, this.opts);
 
 		return template(data);

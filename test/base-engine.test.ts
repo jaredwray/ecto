@@ -1,4 +1,4 @@
-import {BaseEngine} from '../src/baseEngine';
+import {BaseEngine} from '../src/baseEngine.js';
 
 test('BaseEngine - Default Name should be Blank', () => {
 	const be = new BaseEngine();

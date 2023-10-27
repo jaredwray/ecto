@@ -1,6 +1,7 @@
 import * as ejs from 'ejs';
-import {BaseEngine} from '../baseEngine';
+import {BaseEngine} from '../baseEngine.js';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export class EJS extends BaseEngine implements EngineInterface {
 	constructor(options?: Record<string, unknown>) {
 		super();
@@ -27,6 +28,6 @@ export class EJS extends BaseEngine implements EngineInterface {
 			this.opts.root = this.rootTemplatePath;
 		}
 
-		return ejs.render(source, data, this.opts);
+		return ejs.render(source, data, this.opts as ejs.Options);
 	}
 }

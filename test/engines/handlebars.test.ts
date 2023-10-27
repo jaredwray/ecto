@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import {Handlebars} from '../../src/engines/handlebars';
+import {Handlebars} from '../../src/engines/handlebars.js';
 
 const exampleSource1 = '<p>Hello, my name is {{name}}. I\'m from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>';
 const exampleSource2 = '<p>Hello, my name is {{name}}. I\'m from {{hometown}}. </p>';
