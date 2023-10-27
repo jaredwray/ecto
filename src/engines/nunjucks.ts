@@ -1,36 +1,34 @@
-import { BaseEngine } from "../baseEngine";
-import * as nunjucks from "nunjucks";
+import * as nunjucks from 'nunjucks';
+import {BaseEngine} from '../base-engine.js';
 
 export class Nunjucks extends BaseEngine implements EngineInterface {
+	constructor(options?: Record<string, unknown>) {
+		super();
 
-    constructor(opts?:object){
-        super();
+		this.names = ['nunjucks'];
 
-        this.names = ["nunjucks"];
+		this.engine = nunjucks;
 
-        this.engine = nunjucks;
+		this.opts = {autoescape: true}; // Default opts
 
-        this.opts = { autoescape: true }; //default opts
+		if (options) {
+			this.opts = options;
+		}
 
-        if(opts) {
-            this.opts = opts;
-        }
+		this.setExtensions(['njk']);
+	}
 
-        this.setExtensions(["njk"]);
-    }
+	async render(source: string, data?: Record<string, unknown>): Promise<string> {
+		if (this.rootTemplatePath) {
+			nunjucks.configure(this.rootTemplatePath, this.opts as nunjucks.ConfigureOptions);
+		} else {
+			nunjucks.configure(this.opts as nunjucks.ConfigureOptions);
+		}
 
-    async render(source:string, data?:object): Promise<string> {
+		if (!data) {
+			data = {};
+		}
 
-        if(this.rootTemplatePath){
-            nunjucks.configure(this.rootTemplatePath, this.opts);
-        } else {
-            nunjucks.configure(this.opts);  
-        }
-
-        if(!data) {
-            data = {};
-        }
-
-        return nunjucks.renderString(source, data);
-    }
-} 
+		return nunjucks.renderString(source, data);
+	}
+}

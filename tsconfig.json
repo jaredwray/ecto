@@ -8,7 +8,7 @@
     // "checkJs": true,                       /* Report errors in .js files. */
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     "declaration": true,                   /* Generates corresponding '.d.ts' file. */
-    "sourceMap": true,                     /* Generates corresponding '.map' file. */
+    //"sourceMap": true,                     /* Generates corresponding '.map' file. */
     //"outFile": "./dist/writr.js",                       /* Concatenate and emit output to single file. */
     "outDir": "./dist",                        /* Redirect output structure to the directory. */
     "skipLibCheck": true,
@@ -34,7 +34,7 @@
     // "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
 
     /* Module Resolution Options */
-    "moduleResolution": "node"            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+    "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
     // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
     // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
@@ -46,8 +46,8 @@
     /* Source Map Options */
     // "sourceRoot": "./",                    /* Specify the location where debugger should locate TypeScript files instead of source locations. */
     // "mapRoot": "./",                       /* Specify the location where debugger should locate map files instead of generated locations. */
-    // "inlineSourceMap": true,               /* Emit a single file with source maps instead of having a separate file. */
-    // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
+    "inlineSourceMap": true,               /* Emit a single file with source maps instead of having a separate file. */
+    "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
 
     /* Experimental Options */
     // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */

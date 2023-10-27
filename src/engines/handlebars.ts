@@ -1,54 +1,54 @@
-import { BaseEngine } from "../baseEngine";
-import * as handlebars from "@jaredwray/fumanchu";
-import * as fs from "fs-extra";
-import * as _ from "underscore";
+import * as handlebars from '@jaredwray/fumanchu';
+import * as fs from 'fs-extra';
+import * as _ from 'underscore';
+import {BaseEngine} from '../base-engine.js';
 
 export class Handlebars extends BaseEngine implements EngineInterface {
+	public partialsPath = '/partials';
 
-    public partialsPath: string = "/partials";
+	constructor(options?: Record<string, unknown>) {
+		super();
 
-    constructor(opts?:object){
-        super();
+		this.names = ['handlebars', 'mustache'];
+		this.opts = options;
+		this.engine = handlebars;
 
-        this.names = ["handlebars", "mustache"];
-        this.opts = opts;
-        this.engine = handlebars;
+		this.setExtensions(['hbs', 'hjs', 'handlebars', 'mustache']);
+	}
 
-        this.setExtensions(["hbs", "hjs", "handlebars", "mustache"]);
-    }
+	async render(source: string, data?: Record<string, unknown>): Promise<string> {
+		// Register partials
+		if (this.rootTemplatePath) {
+			this.registerPartials(this.rootTemplatePath + this.partialsPath);
+		}
 
-    async render(source:string, data?:object): Promise<string> {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const template = handlebars.compile(source, this.opts);
 
-        //register partials
-        if(this.rootTemplatePath) {
-            this.registerPartials(this.rootTemplatePath+this.partialsPath);
-        }
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		let result = template(data, this.opts);
+		result = _.unescape(result);
 
-        let template = handlebars.compile(source, this.opts);
+		return result;
+	}
 
-        let result = template(data, this.opts);
-        result = _.unescape(result);
+	registerPartials(partialsPath: string): boolean {
+		let result = false;
+		if (fs.pathExistsSync(partialsPath)) {
+			const partials = fs.readdirSync(partialsPath);
 
-        return result;
-    }
+			for (const p of partials) {
+				const source = fs.readFileSync(partialsPath + '/' + p).toString();
+				const name = p.split('.')[0];
 
-    registerPartials(partialsPath:string): boolean {
-        let result = false;
-        if(fs.pathExistsSync(partialsPath)) {
-            let partials = fs.readdirSync(partialsPath);
+				if (handlebars.partials[name] === undefined) {
+					handlebars.registerPartial(name, handlebars.compile(source));
+				}
+			}
 
-            partials.forEach(p => {
-                let source = fs.readFileSync(partialsPath + "/" + p).toString();
-                let name = p.split(".")[0];
+			result = true;
+		}
 
-                if(handlebars.partials[name] === undefined) {
-                    handlebars.registerPartial(name, handlebars.compile(source));
-                }
-
-            });
-            result = true;
-        }
-
-        return result;
-    }
+		return result;
+	}
 }

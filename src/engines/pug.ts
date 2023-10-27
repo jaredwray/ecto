@@ -1,33 +1,33 @@
-import { BaseEngine } from "../baseEngine";
-import * as pug from "pug";
+import * as pug from 'pug';
+import {BaseEngine} from '../base-engine.js';
 
 export class Pug extends BaseEngine implements EngineInterface {
+	constructor(options?: Record<string, unknown>) {
+		super();
 
-    constructor(opts?:object){
-        super();
+		this.names = ['pug'];
 
-        this.names = ["pug"];
+		this.engine = pug;
 
-        this.engine = pug;
+		if (options) {
+			this.opts = options;
+		}
 
-        if(opts) {
-            this.opts = opts;
-        }
+		this.setExtensions(['pug', 'jade']);
+	}
 
-        this.setExtensions(["pug", "jade"]);
-    }
+	async render(source: string, data?: Record<string, unknown>): Promise<string> {
+		if (this.rootTemplatePath) {
+			if (!this.opts) {
+				this.opts = {};
+			}
 
-    async render(source:string, data?:object): Promise<string> {
+			this.opts.basedir = this.rootTemplatePath;
+		}
 
-        if(this.rootTemplatePath) {
-            if(!this.opts) {
-                this.opts = {};
-            }
-            this.opts.basedir = this.rootTemplatePath;
-        }
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const template = pug.compile(source, this.opts);
 
-        let template = pug.compile(source, this.opts);
-
-        return template(data);
-    }
-} 
+		return template(data);
+	}
+}
