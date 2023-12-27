@@ -7,6 +7,7 @@ import {Pug} from './engines/pug.js';
 import {Nunjucks} from './engines/nunjucks.js';
 import {Liquid} from './engines/liquid.js';
 import {type BaseEngine} from './base-engine.js';
+import type {EngineInterface} from './engine-interface.js';
 
 export class Ecto {
 	private readonly __mapping: EngineMap = new EngineMap();

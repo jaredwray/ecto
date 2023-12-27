@@ -1,4 +1,4 @@
-type EngineInterface = {
+export type EngineInterface = {
 	names: string[];
 	engine: any;
 	opts?: any;

@@ -59,11 +59,11 @@
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
     "@types/underscore": "^1.11.15",
-    "@vitest/coverage-v8": "^0.34.6",
+    "@vitest/coverage-v8": "^1.1.0",
     "docula": "^0.3.6",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.2",
-    "vitest": "^0.34.6",
+    "vitest": "^1.1.0",
     "webpack": "^5.89.0",
     "xo": "^0.56.0"
   },

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
 import Markdoc from '@markdoc/markdoc';
 import {BaseEngine} from '../base-engine.js';
+import type {EngineInterface} from '../engine-interface.js';
 
 export class Markdown extends BaseEngine implements EngineInterface {
 	constructor(options?: any) {

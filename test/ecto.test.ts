@@ -109,7 +109,7 @@ it('registerEngineMappings should register mappings', () => {
 
 it('getRenderEngine should return the default ejs', () => {
 	const ecto = new Ecto();
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
 	expect(ecto.getRenderEngine('cool').names.toString()).toBe('ejs');
 });
 
@@ -117,7 +117,6 @@ it('getRenderEngine should return valid for each', () => {
 	const ecto = new Ecto();
 
 	for (const engine of engines) {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 		expect(ecto.getRenderEngine(engine).names.toString()).toContain(engine);
 	}
 });
