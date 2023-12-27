@@ -1,5 +1,6 @@
 import * as ejs from 'ejs';
 import {BaseEngine} from '../base-engine.js';
+import type {EngineInterface} from '../engine-interface.js';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class EJS extends BaseEngine implements EngineInterface {
