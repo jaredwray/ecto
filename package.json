@@ -60,7 +60,7 @@
     "@types/pug": "^2.0.10",
     "@types/underscore": "^1.11.15",
     "@vitest/coverage-v8": "^1.2.2",
-    "docula": "^0.3.6",
+    "docula": "^0.3.7",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
     "vitest": "^1.2.2",
