@@ -36,6 +36,7 @@
     "test": "xo --fix && vitest run --coverage",
     "compile": "tsc -p .",
     "build": "rimraf ./dist && yarn && yarn test && yarn compile",
+    "prepare": "rimraf ./dist && yarn compile",
     "website:build": "npx docula",
     "website:serve": "npx docula serve"
   },
