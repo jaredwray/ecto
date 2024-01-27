@@ -32,4 +32,18 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
 
 		return nunjucks.renderString(source, data);
 	}
+
+	renderSync(source: string, data?: Record<string, unknown>): string {
+		if (this.rootTemplatePath) {
+			nunjucks.configure(this.rootTemplatePath, this.opts as nunjucks.ConfigureOptions);
+		} else {
+			nunjucks.configure(this.opts as nunjucks.ConfigureOptions);
+		}
+
+		if (!data) {
+			data = {};
+		}
+
+		return nunjucks.renderString(source, data);
+	}
 }

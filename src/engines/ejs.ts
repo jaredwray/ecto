@@ -31,4 +31,20 @@ export class EJS extends BaseEngine implements EngineInterface {
 
 		return ejs.render(source, data, this.opts as ejs.Options);
 	}
+
+	renderSync(source: string, data?: Record<string, unknown>): string {
+		if (!this.engine) {
+			this.engine = ejs;
+		}
+
+		if (!this.opts) {
+			this.opts = {};
+		}
+
+		if (this.rootTemplatePath) {
+			this.opts.root = this.rootTemplatePath;
+		}
+
+		return ejs.render(source, data, this.opts as ejs.Options) as string;
+	}
 }

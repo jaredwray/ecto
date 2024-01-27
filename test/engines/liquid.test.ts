@@ -35,6 +35,11 @@ it('Liquid - Rendering a simple string', async () => {
 	expect(await engine.render(exampleSource1, exampleData1)).toBe('John');
 });
 
+it('Liquid - Rendering a simple string synchronous', () => {
+	const engine = new Liquid();
+	expect(engine.renderSync(exampleSource1, exampleData1)).toBe('John');
+});
+
 it('Liquid - Rendering a list in html', async () => {
 	const engine = new Liquid();
 	expect(await engine.render(exampleSource2, exampleData2)).toBe('<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>');

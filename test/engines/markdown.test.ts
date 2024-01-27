@@ -38,6 +38,11 @@ it('Markdown - Rendering a simple string', async () => {
 	expect(await engine.render(exampleSource1)).toContain('</h1>');
 });
 
+it('Markdown - Rendering a simple string synchronous', () => {
+	const engine = new Markdown();
+	expect(engine.renderSync(exampleSource1)).toContain('</h1>');
+});
+
 it('Markdown - Rendering a simple string after inital render', async () => {
 	const engine = new Markdown();
 	expect(await engine.render(exampleSource1)).toContain('<h1');

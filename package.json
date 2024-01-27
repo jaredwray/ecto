@@ -67,6 +67,11 @@
     "webpack": "^5.90.0",
     "xo": "^0.56.0"
   },
+  "xo": {
+    "ignores": [
+      "vitest.config.js"
+    ]
+  },
   "files": [
     "dist",
     "bin"

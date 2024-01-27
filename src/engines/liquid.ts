@@ -32,4 +32,22 @@ export class Liquid extends BaseEngine implements EngineInterface {
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
 		return this.engine.parseAndRender(source, data);
 	}
+
+	renderSync(source: string, data?: Record<string, unknown>): string {
+		if (this.rootTemplatePath) {
+			if (!this.opts) {
+				this.opts = {};
+			}
+
+			this.opts.root = this.rootTemplatePath;
+		}
+
+		if (!this.engine) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			this.engine = new LiquidEngine(this.opts);
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+		return this.engine.parseAndRenderSync(source, data) as string;
+	}
 }

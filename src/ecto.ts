@@ -102,6 +102,32 @@ export class Ecto {
 		return result;
 	}
 
+	// Render Sync
+	// eslint-disable-next-line max-params
+	renderSync(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): string {
+		let result = '';
+		let renderEngineName = this.__defaultEngine;
+
+		// Set the render engine
+		if (this.isValidEngine(engineName) && engineName !== undefined) {
+			renderEngineName = engineName;
+		}
+
+		// Get the render engine
+		const renderEngine = this.getRenderEngine(renderEngineName);
+
+		// Set the root template path
+		renderEngine.rootTemplatePath = rootTemplatePath;
+
+		// Get the output
+		result = renderEngine.renderSync(source, data);
+
+		// Write out the file
+		this.writeFileSync(filePathOutput, result);
+
+		return result;
+	}
+
 	// Render from File
 	// eslint-disable-next-line max-params
 	async renderFromFile(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): Promise<string> {
@@ -120,6 +146,24 @@ export class Ecto {
 		return result;
 	}
 
+	// Render from File Sync
+	// eslint-disable-next-line max-params
+	renderFromFileSync(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): string {
+		let result = '';
+
+		// Select which engine
+		if (!engineName) {
+			engineName = this.getEngineByFilePath(filePath);
+		}
+
+		// Get the source
+		const source = fs.readFileSync(filePath, 'utf8');
+
+		result = this.renderSync(source, data, engineName, rootTemplatePath, filePathOutput);
+
+		return result;
+	}
+
 	async ensureFilePath(path: string) {
 		const pathList = path.split('/');
 		pathList.pop();
@@ -128,6 +172,17 @@ export class Ecto {
 
 		if (!fs.existsSync(dir)) {
 			await fs.ensureDir(dir);
+		}
+	}
+
+	ensureFilePathSync(path: string) {
+		const pathList = path.split('/');
+		pathList.pop();
+
+		const dir = pathList.join('/');
+
+		if (!fs.existsSync(dir)) {
+			fs.ensureDirSync(dir);
 		}
 	}
 
@@ -208,6 +263,13 @@ export class Ecto {
 		if (filePath && source) {
 			await this.ensureFilePath(filePath);
 			await fs.writeFile(filePath, source);
+		}
+	}
+
+	private writeFileSync(filePath?: string, source?: string) {
+		if (filePath && source) {
+			this.ensureFilePathSync(filePath);
+			fs.writeFileSync(filePath, source);
 		}
 	}
 }

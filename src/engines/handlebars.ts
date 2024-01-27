@@ -33,6 +33,22 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		return result;
 	}
 
+	renderSync(source: string, data?: Record<string, unknown>): string {
+		// Register partials
+		if (this.rootTemplatePath) {
+			this.registerPartials(this.rootTemplatePath + this.partialsPath);
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const template = handlebars.compile(source, this.opts);
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		let result = template(data, this.opts);
+		result = _.unescape(result);
+
+		return result;
+	}
+
 	registerPartials(partialsPath: string): boolean {
 		let result = false;
 		if (fs.pathExistsSync(partialsPath)) {
