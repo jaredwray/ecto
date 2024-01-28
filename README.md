@@ -137,7 +137,7 @@ mappings:EngineMap - [Mapping class](#mappings) of all the engines registered in
 
 As we have shown in [Getting Started -- It's that Easy!](#getting-started) You can render in only a couple of lines of code.
 
-render (`async`) - Render from a string. Here is the render function with all possible arguments shown:
+render and renderSync (`async`) - Render from a string. Here is the render function with all possible arguments shown:
 
 | Name             | Type   | Description                                                  |
 | ---------------- | ------ | ------------------------------------------------------------ |
@@ -154,9 +154,16 @@ const ecto = new Ecto();
 
 const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 const data = {firstName: "John", lastName: "Doe"};
-ecto.render(source, data).then((output) => {
-    console.log(output);
-});
+await ecto.render(source, data); //returns <h1>Hello John Doe!</h1>
+```
+
+If you want to do synchronous rendering, you can do so by using the `renderSync` function. This function takes the same parameters as the `render` function.
+
+```javascript
+const ecto = new Ecto();
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = {firstName: "John", lastName: "Doe"};
+ecto.renderSync(source, data); //returns <h1>Hello John Doe!</h1>
 ```
 
 Now let's say your desired engine is not [EJS](https://www.npmjs.com/package/ejs), you will need to specify it explicitly. You can either set the [defaultEngine](#default-engine) parameter, or simply pass it in the `render` function. In this case with the popular engine, [Handlebars](https://www.npmjs.com/package/handlebars):
@@ -172,7 +179,7 @@ ecto.render(source, data, "handlebars").then((output) => {
 
 ```
 
-The `render` function also can handle partial files for standard engines (markdown excluded) by simply adding the `rootTemplatePath`:
+The `render` and `renderSync` function also can handle partial files for standard engines (markdown excluded) by simply adding the `rootTemplatePath`:
 
 ```javascript
 const ecto = new Ecto();
@@ -185,7 +192,7 @@ ecto.render(source, data, undefined, "./path/to/templates").then((output) => {
 
 ```
 
-With `render` you can also write to a file. This is accomplished by specifying the `filePathOutput` parameter as below. It will still return the output as a `string`:
+With `render` and `renderSync` you can also write to a file. This is accomplished by specifying the `filePathOutput` parameter as below. It will still return the output as a `string`:
 
 ```javascript
 const ecto = new Ecto();
@@ -203,9 +210,9 @@ Notice the `undefined` value passed into the `engineName` parameter. This is don
 
 ## Render From File
 
-To render via a template file, it is as simple as calling the `renderFromFile` function with a couple of simple parameters passed in. 
+To render via a template file, it is as simple as calling the `renderFromFile` or `renderFromFileSync` function with a couple of simple parameters passed in. 
 
-renderFromFile (`async`) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a `Promise<string>` of the rendered output. One of the main benefits is that it will automatically select the correct engine based on the file extension. The renderFromFile function takes the following parameters:
+renderFromFile (`async`) or renderFromFileSync (`synchronous`) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a `Promise<string>` of the rendered output. One of the main benefits is that it will automatically select the correct engine based on the file extension. The renderFromFile function takes the following parameters:
 
 | Name             | Type   | Description                                                  |
 | ---------------- | ------ | ------------------------------------------------------------ |
@@ -215,7 +222,7 @@ renderFromFile (`async`) - Renders from a file path and will auto-select what en
 | filePathOutput   | string | Used to specify the file path if you want to write the rendered output to a file. |
 | engineName       | string | Used to to override the auto-selection of the `engineName`.  |
 
-This simple example showing the `renderFromFile` function shows you the bare minimum required to execute this function successfully, we are passing in the template and it will return a `string`. 
+This simple example showing the `renderFromFile` or `renderFromFileSync` function shows you the bare minimum required to execute this function successfully, we are passing in the template and it will return a `string`. 
 
 One of the main benefits is that it will automatically select the correct engine based on the file extension.
 
@@ -223,8 +230,18 @@ One of the main benefits is that it will automatically select the correct engine
 const ecto = new Ecto();
 const data = { firstName: "John", lastName: "Doe"};
 
-ecto.renderFromFile("./path/to/template.ejs", data).then((output) => {console.log(output)});
+await ecto.renderFromFile("./path/to/template.ejs", data); // returns <h1>Hello John Doe!</h1>
 ```
+
+To do this synchronously, you can use the `renderFromFileSync` function. This function takes the same parameters as the `renderFromFile` function.
+
+```javascript
+const ecto = new Ecto();
+const data = { firstName: "John", lastName: "Doe"};
+
+ecto.renderFromFileSync("./path/to/template.ejs", data); // returns <h1>Hello John Doe!</h1>
+```
+
 In this example, we are writing the output to a HTML file:
 
 ```javascript
