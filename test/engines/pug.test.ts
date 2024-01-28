@@ -40,6 +40,13 @@ it('Pug - Rendering a simple string synchronous', () => {
 	expect(engine.renderSync(exampleSource1, exampleData1)).toBe('<p>John Doe\'s Pug source code!</p>');
 });
 
+it('Pug - Render Sync with Root Template Path', () => {
+	const engine = new Pug();
+	engine.rootTemplatePath = testTemplateDir;
+	expect(engine.renderSync(exampleSource1, exampleData1)).toBe('<p>John Doe\'s Pug source code!</p>');
+	expect(engine.opts.basedir).toBe(testTemplateDir);
+});
+
 it('Pug - Rendering a list in html', async () => {
 	const engine = new Pug();
 	expect(await engine.render(exampleSource2, exampleData2)).toBe('<ul></ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li>');
