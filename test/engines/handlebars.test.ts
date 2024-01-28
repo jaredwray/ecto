@@ -34,6 +34,11 @@ it('Handlebars - Rendering a simple string', async () => {
 	expect(await engine.render(exampleSource1, exampleData1)).toContain('Alan O\'Connor');
 });
 
+it('Handlebars - Rendering a simple string synchronous', () => {
+	const engine = new Handlebars();
+	expect(engine.renderSync(exampleSource1, exampleData1)).toContain('Alan O\'Connor');
+});
+
 it('Handlebars - Rendering a simple string after inital render', async () => {
 	const engine = new Handlebars();
 	expect(await engine.render(exampleSource1, exampleData1)).toContain('Alan O\'Connor');
@@ -61,4 +66,13 @@ it('Handlebars - Rendering with Partials', async () => {
 
 	expect(await engine.render(source, exampleData1)).toContain('Alan O\'Connor');
 	expect(await engine.render(source, exampleData1)).toContain('Foo!');
+});
+
+it('Handlebars - Render Sync with Partials', () => {
+	const engine = new Handlebars();
+	const source = fs.readFileSync(testTemplateDir + '/example1.hbs', 'utf8');
+	engine.rootTemplatePath = testTemplateDir;
+
+	expect(engine.renderSync(source, exampleData1)).toContain('Alan O\'Connor');
+	expect(engine.renderSync(source, exampleData1)).toContain('Foo!');
 });

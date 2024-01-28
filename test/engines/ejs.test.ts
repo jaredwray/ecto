@@ -36,6 +36,12 @@ it('EJS - Rendering a simple string', async () => {
 	expect(await engine.render(exampleSource1, data)).toContain('Joe');
 });
 
+it('EJS - Rendering a simple string synchronous', () => {
+	const engine = new EJS();
+	const data = {user: {name: 'Joe'}};
+	expect(engine.renderSync(exampleSource1, data)).toContain('Joe');
+});
+
 it('EJS - Rendering a simple string after inital render', async () => {
 	const engine = new EJS();
 	const data = {user: {name: 'Joe'}, test: {foo: 'bar'}};

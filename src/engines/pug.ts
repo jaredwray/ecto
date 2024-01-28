@@ -31,4 +31,19 @@ export class Pug extends BaseEngine implements EngineInterface {
 
 		return template(data);
 	}
+
+	renderSync(source: string, data?: Record<string, unknown>): string {
+		if (this.rootTemplatePath) {
+			if (!this.opts) {
+				this.opts = {};
+			}
+
+			this.opts.basedir = this.rootTemplatePath;
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		const template = pug.compile(source, this.opts);
+
+		return template(data);
+	}
 }

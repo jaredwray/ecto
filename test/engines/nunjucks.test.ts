@@ -40,6 +40,17 @@ it('Nunjucks - Rendering a simple string', async () => {
 	expect(await engine.render(exampleSource1, exampleData1)).toContain('john.doe');
 });
 
+it('Nunjucks - Rendering a simple string synchronous', () => {
+	const engine = new Nunjucks();
+	expect(engine.renderSync(exampleSource1, exampleData1)).toContain('john.doe');
+});
+
+it('Nunjucks - Render Sync with Root Template Path and No Data', () => {
+	const engine = new Nunjucks();
+	engine.rootTemplatePath = testTemplateDir;
+	expect(engine.renderSync(exampleSource1, undefined)).toContain('Hello');
+});
+
 it('Nunjucks - Rendering a simple string with no data', async () => {
 	const engine = new Nunjucks();
 	expect(await engine.render(exampleSource1, undefined)).toBe('Hello ');

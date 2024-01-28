@@ -36,6 +36,7 @@
     "test": "xo --fix && vitest run --coverage",
     "compile": "tsc -p .",
     "build": "rimraf ./dist && yarn && yarn test && yarn compile",
+    "prepare": "rimraf ./dist && yarn compile",
     "website:build": "npx docula",
     "website:serve": "npx docula serve"
   },
@@ -66,6 +67,11 @@
     "vitest": "^1.2.2",
     "webpack": "^5.90.0",
     "xo": "^0.56.0"
+  },
+  "xo": {
+    "ignores": [
+      "vitest.config.js"
+    ]
   },
   "files": [
     "dist",

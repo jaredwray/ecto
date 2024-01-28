@@ -23,4 +23,10 @@ export class Markdown extends BaseEngine implements EngineInterface {
 		const content = this.engine.transform(ast, this.opts);
 		return this.engine.renderers.html(content) as string;
 	}
+
+	renderSync(source: string, data?: Record<string, unknown>): string {
+		const ast = this.engine.parse(source);
+		const content = this.engine.transform(ast, this.opts);
+		return this.engine.renderers.html(content) as string;
+	}
 }
