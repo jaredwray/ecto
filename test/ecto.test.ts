@@ -1,4 +1,4 @@
-import {expect, it} from 'vitest';
+import {expect, it, test} from 'vitest';
 import * as fs from 'fs-extra';
 import {Ecto} from '../src/ecto.js';
 
@@ -149,6 +149,22 @@ it('render via ejs synchronous', () => {
 	const ecto = new Ecto();
 
 	expect(ecto.renderSync(ejsExampleSource, ejsExampleData)).toBe('<h2>bar</h2>');
+});
+
+it('render via ejs synchronous with file', () => {
+	const ecto = new Ecto();
+	const filePath = testOutputDir + '/ejs/ecto-ejs-test.html';
+
+	if (fs.pathExistsSync(filePath)) {
+		fs.removeSync(testOutputDir);
+	}
+
+	const content = ecto.renderSync(ejsExampleSource, ejsExampleData, undefined, undefined, filePath);
+
+	expect(content).toBe('<h2>bar</h2>');
+	expect(fs.pathExistsSync(filePath)).toBe(true);
+
+	fs.removeSync(testOutputDir);
 });
 
 it('render via ejs hello from docs', async () => {
