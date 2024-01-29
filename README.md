@@ -61,24 +61,22 @@ After running your program you should see the following output:
 You can easily set a different [defaultEngine](#default-engine), here we use Handlebars.
 
 ```javascript
-let ecto = require("ecto").create({defaultEngine: "handlebars"});
+import { Ecto } from `ecto`;
+const ecto = new Ecto({defaultEngine: "handlebars"});
 
 let source = "<h1>Hello {{ firstName }} {{ lastName }}!</h1>";
 let data = {firstName: "John", lastName: "Doe"};
-ecto.render(source, data).then((output) => {
-    console.log(output);
-});
+await ecto.render(source, data); //returns <h1>Hello John Doe!</h1>
 ```
 
 To render from a template file, Ecto uses the `renderFromFile` function. This performs an automatic selection of the engine based on the file extension.
 
 ```javascript
-let ecto = require("ecto").create();
+import { Ecto } from `ecto`;
+const ecto = new Ecto();
 let data = { firstName: "John", lastName: "Doe"};
 //async renderFromFile(filePath:string, data?:object, rootTemplatePath?:string, filePathOutput?:string, engineName?:string): Promise<string>
-ecto.renderFromFile("./path/to/template.ejs", data).then((output) => {
-    console.log(output)
-});
+await ecto.renderFromFile("./path/to/template.ejs", data); // returns <h1>Hello John Doe!</h1>
 ```
 
 Next Steps:
@@ -239,7 +237,7 @@ To do this synchronously, you can use the `renderFromFileSync` function. This fu
 const ecto = new Ecto();
 const data = { firstName: "John", lastName: "Doe"};
 
-ecto.renderFromFileSync("./path/to/template.ejs", data); // returns <h1>Hello John Doe!</h1>
+await ecto.renderFromFileSync("./path/to/template.ejs", data); // returns <h1>Hello John Doe!</h1>
 ```
 
 In this example, we are writing the output to a HTML file:
@@ -248,7 +246,7 @@ In this example, we are writing the output to a HTML file:
 const ecto = new Ecto();
 const data = { firstName: "John", lastName: "Doe"};
 
-ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html")
+await ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html")
 ```
 
 Notice that in these examples it is using the `./path/to/template.ejs` to specify [EJS](https://www.npmjs.com/package/ejs) for the rendering. 
@@ -259,8 +257,7 @@ You can override the auto-selected engine by passing in the string value of a te
 const ecto = new Ecto();
 const data = { firstName: "John", lastName: "Doe"};
 
-ecto.renderFromFile("./path/to/template.ejs", data, undefined, 
-"./path/to/output/yourname.html", "pug")
+ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html", "pug");
 ```
 
 ## Default Engine
@@ -305,9 +302,7 @@ You can explicitly override the Ecto.defaultEngine parameter in the render funct
 const ecto = new Ecto();
 const source = "<h1>Hello {{firstName}} {{lastName}}!</h1>";
 const data = {firstName: "John", lastName: "Doe"};
-ecto.render(source, data, "handlebars").then((output) => {
-    console.log(output);
-});
+await ecto.render(source, data, "handlebars"); //returns <h1>Hello John Doe!</h1>
 ```
 
 ##### Override the auto selection on renderFromFile
@@ -317,9 +312,7 @@ The `renderFromFile` function automatically decides on the template engine, base
 ```javascript
 const ecto = new Ecto();
 const data = { firstName: "John", lastName: "Doe"};
-ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html", "pug").then((output) => {  
-	console.log(output)
-});
+await ecto.renderFromFile("./path/to/template.ejs", data, undefined, "./path/to/output/yourname.html", "pug"); // returns <h1>Hello John Doe!</h1>
 ```
 
 To make it easier to access and change between engines, all supported engines are provided as parameters on the `Ecto` class as `Ecto.<EngineFullName>`
@@ -362,17 +355,13 @@ Markdown does not contain complexities such as data objects, or partials and lay
 ```javascript
 const ecto = Ecto();
 const source = "# markdown rulezz!";
-ecto.render(source, undefined, "markdown").then((output) => {
-    console.log(output) //should be <h1 id="markdown-rulezz">markdown rulezz!</h1>
-});
+await ecto.render(source, undefined, "markdown"); //should be <h1 id="markdown-rulezz">markdown rulezz!</h1>
 ```
 Render by Markdown file:
 
 ```javascript
 const ecto = Ecto();
-ecto.renderByFile("/path/to/file.md").then((output) => {
-    console.log(output)
-});
+await ecto.renderByFile("/path/to/file.md");
 ```
 
 We are using [Markdoc](https://markdoc.io/) which has a ton of powerful features.
@@ -571,34 +560,14 @@ Mustache is not actually a templating engine. Mustache is a specification for a 
 
 ### Handlebars
 
-Handlebars is a logic-less templating engine that dynamically generates your HTML page. It is an extension of Mustache with a few additional features. Mustache is fully logic-less but Handlebars adds minimal logic thanks to the use of some helpers. These include logic and keywords such as `if`, `with`, `unless`, `each,` and more.
-
-Handlebars can be loaded into the browser just like any other JavaScript file:
-
-
-```html
-<script src="/path/to/handlebars.min.js"></script>
-```
-
-
-The way Handlebars works can be summarized as follows:
-
-1. Handlebars takes a template containing the variables and compiles it into a function.
-2. This function is then executed by passing a JSON object as an argument. This JSON object is known as context and it contains the values of the variables used in the template.
-3. On its execution, the function returns the required HTML after replacing the variables of the template with their corresponding values.
-
-In Ecto, we use the [Handlebars](https://www.npmjs.com/package/handlebars) engine to render mustache-related templates.
-
-Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [helpers-for-handlebars](https://github.com/jaredwray/helpers-for-handlebars) so you can format dates, and more. Here is an example using Handlebars Helpers in your template:
+Handlebars is a simple templating language. It uses a template and an input object to generate HTML or other text formats. Handlebars templates look like regular text with embedded Handlebars expressions. Handlebars expressions are wrapped in double curly braces, like this: `{{expression}}`. We use `@jaredwray/fumanchu` as it contains handbars and helpers.
 
 
 ```javascript
 const ecto = Ecto();
 const source = "{{year}}";
 
-ecto.render(source, undefined, "handlebars").then((output) => {
-    console.log(output)
-});
+await ecto.render(source, undefined, "handlebars"); //returns current year as a number
 ```
 
 #### Liquid
