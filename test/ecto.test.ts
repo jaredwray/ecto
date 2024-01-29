@@ -243,3 +243,24 @@ it('Render from Template - Handlebars', async () => {
 
 	expect(source).toContain('<title>Alan O\'Connor - Header Title </title>');
 });
+
+it('Find Template without Extension', async () => {
+	const ecto = new Ecto();
+	const templatePath = testRootDir + '/find-templates';
+	const filePath = await ecto.findTemplateWithoutExtension(templatePath, 'bar');
+	expect(filePath).toBe(templatePath + '/bar.njk');
+});
+
+it('Find Template without Extension Sync', () => {
+	const ecto = new Ecto();
+	const templatePath = testRootDir + '/find-templates';
+	const filePath = ecto.findTemplateWithoutExtensionSync(templatePath, 'bar');
+	expect(filePath).toBe(templatePath + '/bar.njk');
+});
+
+it('Find Template without Extension on duplicate Sync', async () => {
+	const ecto = new Ecto();
+	const templatePath = testRootDir + '/find-templates';
+	const filePath = await ecto.findTemplateWithoutExtension(templatePath, 'foo');
+	expect(filePath).toBe(templatePath + '/foo.ejs');
+});
