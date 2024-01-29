@@ -201,6 +201,36 @@ export class Ecto {
 		return result;
 	}
 
+	async findTemplateWithoutExtension(path: string, templateName: string): Promise<string> {
+		let result = '';
+
+		const files = await fs.readdir(path);
+
+		for (const file of files) {
+			if (file.startsWith(templateName + '.')) {
+				result = path + '/' + file;
+				break;
+			}
+		}
+
+		return result;
+	}
+
+	findTemplateWithoutExtensionSync(path: string, templateName: string): string {
+		let result = '';
+
+		const files = fs.readdirSync(path);
+
+		for (const file of files) {
+			if (file.startsWith(templateName + '.')) {
+				result = path + '/' + file;
+				break;
+			}
+		}
+
+		return result;
+	}
+
 	// Engines
 	isValidEngine(engineName?: string): boolean {
 		let result = false;

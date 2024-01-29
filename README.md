@@ -330,6 +330,22 @@ const ecto = Ecto();
 ecto.Handlebars.engine.SafeString("<div>HTML Content!</div>");
 ```
 
+### Find Template Without Extension - Helper Methods
+
+We have added in a couple of helper methods to make it easier to find a template without the extension. This is useful when you want to find a template without the extension. For example, if you have a template called `template.ejs` and you want to find it without the extension, you can use the `findTemplateWithoutExtension` for async or `findTemplateWithoutExtensionSync` function. This function takes two parameters:
+
+| Name             | Type   | Description                                                  |
+| ---------------- | ------ | ------------------------------------------------------------ |
+| filePath         | string | The file that you would like to find without the extension.  |
+| templateName     | string | The name of the template you would like to find.             |
+
+```javascript
+const ecto = new Ecto();
+const templateFilePath = ecto.findTemplateWithoutExtensionSync("./path/to/", "index");
+```
+
+This will return the full path of the template based on what extension is there such as `./path/to/index.ejs`.
+
 ### Using Typescript
 Typescript is the language Ecto is already written in and while many of these examples are in `javascript` they should be compatible with `typescript`. To use Ecto just do an import:
 ```javascript
