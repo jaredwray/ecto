@@ -63,9 +63,11 @@ it('Handlebars - Rendering with Partials', async () => {
 	const engine = new Handlebars();
 	const source = await fs.readFile(testTemplateDir + '/example1.hbs', 'utf8');
 	engine.rootTemplatePath = testTemplateDir;
+	const result = await engine.render(source, exampleData1);
 
-	expect(await engine.render(source, exampleData1)).toContain('Alan O\'Connor');
-	expect(await engine.render(source, exampleData1)).toContain('Foo!');
+	expect(result).toContain('Alan O\'Connor');
+	expect(result).toContain('Foo!');
+	expect(result).toContain('ux layout');
 });
 
 it('Handlebars - Render Sync with Partials', () => {
