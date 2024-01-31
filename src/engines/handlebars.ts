@@ -5,7 +5,7 @@ import {BaseEngine} from '../base-engine.js';
 import type {EngineInterface} from '../engine-interface.js';
 
 export class Handlebars extends BaseEngine implements EngineInterface {
-	public partialsPath = '/partials';
+	public partialsPath = ['partials', 'includes', 'templates'];
 
 	constructor(options?: Record<string, unknown>) {
 		super();
@@ -20,7 +20,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 	async render(source: string, data?: Record<string, unknown>): Promise<string> {
 		// Register partials
 		if (this.rootTemplatePath) {
-			this.registerPartials(this.rootTemplatePath + this.partialsPath);
+			this.initPartials();
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -36,7 +36,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 	renderSync(source: string, data?: Record<string, unknown>): string {
 		// Register partials
 		if (this.rootTemplatePath) {
-			this.registerPartials(this.rootTemplatePath + this.partialsPath);
+			this.initPartials();
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -49,17 +49,36 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		return result;
 	}
 
+	initPartials(): void {
+		for (const path of this.partialsPath) {
+			const fullPath = `${this.rootTemplatePath}/${path}`;
+			this.registerPartials(fullPath);
+		}
+	}
+
 	registerPartials(partialsPath: string): boolean {
 		let result = false;
 		if (fs.pathExistsSync(partialsPath)) {
 			const partials = fs.readdirSync(partialsPath);
 
 			for (const p of partials) {
-				const source = fs.readFileSync(partialsPath + '/' + p).toString();
-				const name = p.split('.')[0];
+				if (fs.statSync(partialsPath + '/' + p).isDirectory()) {
+					const dirPartials = fs.readdirSync(partialsPath + '/' + p);
+					for (const dp of dirPartials) {
+						const source = fs.readFileSync(partialsPath + '/' + p + '/' + dp).toString();
+						const name = p + '/' + dp.split('.')[0];
+						console.log(name);
+						if (handlebars.partials[name] === undefined) {
+							handlebars.registerPartial(name, handlebars.compile(source));
+						}
+					}
+				} else {
+					const source = fs.readFileSync(partialsPath + '/' + p).toString();
+					const name = p.split('.')[0];
 
-				if (handlebars.partials[name] === undefined) {
-					handlebars.registerPartial(name, handlebars.compile(source));
+					if (handlebars.partials[name] === undefined) {
+						handlebars.registerPartial(name, handlebars.compile(source));
+					}
 				}
 			}
 

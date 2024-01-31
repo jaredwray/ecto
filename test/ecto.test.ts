@@ -242,6 +242,7 @@ it('Render from Template - Handlebars', async () => {
 	const source = await ecto.renderFromFile(testRootDir + '/handlebars/example1.hbs', handlebarsExampleData, testRootDir + '/handlebars');
 
 	expect(source).toContain('<title>Alan O\'Connor - Header Title </title>');
+	expect(source).toContain('Foo!');
 });
 
 it('Find Template without Extension', async () => {
