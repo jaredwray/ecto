@@ -16,14 +16,25 @@ export class Ecto {
 	private __defaultEngine = 'ejs';
 
 	// Engines
-	private readonly __ejs: EJS = new EJS();
-	private readonly __markdown: Markdown = new Markdown();
-	private readonly __pug: Pug = new Pug();
-	private readonly __nunjucks: Nunjucks = new Nunjucks();
-	private readonly __handlebars: Handlebars = new Handlebars();
-	private readonly __liquid: Liquid = new Liquid();
+	private readonly __ejs: EJS;
+	private readonly __markdown: Markdown;
+	private readonly __pug: Pug;
+	private readonly __nunjucks: Nunjucks;
+	private readonly __handlebars: Handlebars;
+	private readonly __liquid: Liquid;
 
-	constructor(options?: any) {
+	constructor(options?: Record<string, unknown>) {
+		const engineOptions = {...options};
+		delete engineOptions.defaultEngine;
+
+		// Engines
+		this.__ejs = new EJS(engineOptions);
+		this.__markdown = new Markdown(engineOptions);
+		this.__pug = new Pug(engineOptions);
+		this.__nunjucks = new Nunjucks(engineOptions);
+		this.__handlebars = new Handlebars(engineOptions);
+		this.__liquid = new Liquid(engineOptions);
+
 		// Register engines
 		this.__engines.push(this.__ejs, this.__markdown, this.__pug, this.__nunjucks, this.__handlebars, this.__liquid);
 
