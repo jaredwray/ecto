@@ -32,13 +32,13 @@
   ],
   "scripts": {
     "watch": "tsc -w -p .",
-    "clean": "rimraf ./dist && rimraf yarn.lock && rimraf package-lock.json && rimraf ./coverage && rimraf ./node_modules",
+    "clean": "rimraf ./dist yarn.lock package-lock.json ./coverage ./node_modules ./site/readme.md",
     "test": "xo --fix && vitest run --coverage",
     "compile": "tsc -p .",
     "build": "rimraf ./dist && yarn && yarn test && yarn compile",
     "prepare": "rimraf ./dist && yarn compile",
-    "website:build": "npx docula",
-    "website:serve": "npx docula serve"
+    "website:build": "rimraf ./site/readme.md && npx writr build -s ./site -o ./dist-site",
+    "website:serve": "rimraf ./site/readme.md && npx writr serve -s ./site -o ./dist-site"
   },
   "dependencies": {
     "@jaredwray/fumanchu": "^1.1.2",
@@ -66,11 +66,12 @@
     "typescript": "^5.3.3",
     "vitest": "^1.2.2",
     "webpack": "^5.90.0",
+    "writr": "^2.0.3",
     "xo": "^0.56.0"
   },
   "xo": {
     "ignores": [
-      "vitest.config.js"
+      "vitest.config.mjs"
     ]
   },
   "files": [
