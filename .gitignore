@@ -108,3 +108,5 @@ testing/output
 # package managers
 yarn.lock
 package-lock.json
+site/README.md
+dist-site/
