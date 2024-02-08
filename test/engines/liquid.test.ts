@@ -7,7 +7,7 @@ const exampleData1 = {name: 'john'};
 const exampleSource2 = '<ul> {% for todo in todos %} <li>{{forloop.index}} - {{todo}}</li> {% endfor %}</ul>';
 const exampleData2 = {todos: ['unit tests', 'wash car', 'go running', 'bycicle'], name: 'John Doe'};
 
-const testTemplateDir = './test/data/liquid';
+const testTemplateDirectory = './test/data/liquid';
 
 it('Liquid - Default Name Liquid', () => {
 	const engine = new Liquid();
@@ -42,7 +42,7 @@ it('Liquid - Rendering a simple string synchronous', () => {
 
 it('Liquid - Render Sync with Root Template Path', () => {
 	const engine = new Liquid();
-	engine.rootTemplatePath = testTemplateDir;
+	engine.rootTemplatePath = testTemplateDirectory;
 	expect(engine.renderSync(exampleSource1, exampleData1)).toBe('John');
 });
 
@@ -53,9 +53,9 @@ it('Liquid - Rendering a list in html', async () => {
 
 it('Liquid - Rendering Partials', async () => {
 	const engine = new Liquid();
-	const source = await fs.readFile(testTemplateDir + '/example1.liquid', 'utf8');
+	const source = await fs.readFile(testTemplateDirectory + '/example1.liquid', 'utf8');
 
-	engine.rootTemplatePath = testTemplateDir;
+	engine.rootTemplatePath = testTemplateDirectory;
 
 	const output = await engine.render(source, exampleData2);
 

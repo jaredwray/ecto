@@ -26,9 +26,7 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
 			nunjucks.configure(this.opts as nunjucks.ConfigureOptions);
 		}
 
-		if (!data) {
-			data = {};
-		}
+		data ||= {};
 
 		return nunjucks.renderString(source, data);
 	}
@@ -40,9 +38,7 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
 			nunjucks.configure(this.opts as nunjucks.ConfigureOptions);
 		}
 
-		if (!data) {
-			data = {};
-		}
+		data ||= {};
 
 		return nunjucks.renderString(source, data);
 	}

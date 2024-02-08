@@ -7,7 +7,7 @@ const exampleData1 = {username: 'john.doe'};
 const exampleSource2 = '<h1>Posts</h1><ul>{% for item in items %}<li>{{ item.title }}</li>{% else %}<li>This would display if the \'item\' collection were empty</li>{% endfor %}</ul>';
 const exampleData2 = {items: [{title: 'foo', id: 1}, {title: 'bar', id: 2}]};
 
-const testTemplateDir = './test/data/nunjucks';
+const testTemplateDirectory = './test/data/nunjucks';
 
 it('Nunjucks - Default Name Nunjucks', () => {
 	const engine = new Nunjucks();
@@ -47,7 +47,7 @@ it('Nunjucks - Rendering a simple string synchronous', () => {
 
 it('Nunjucks - Render Sync with Root Template Path and No Data', () => {
 	const engine = new Nunjucks();
-	engine.rootTemplatePath = testTemplateDir;
+	engine.rootTemplatePath = testTemplateDirectory;
 	expect(engine.renderSync(exampleSource1, undefined)).toContain('Hello');
 });
 
@@ -69,9 +69,9 @@ it('Nunjucks - Rendering no data', async () => {
 
 it('Nunjucks - Rendering with partial template', async () => {
 	const engine = new Nunjucks();
-	engine.rootTemplatePath = testTemplateDir;
+	engine.rootTemplatePath = testTemplateDirectory;
 
-	const source = await fs.readFile(testTemplateDir + '/example1.njk', 'utf8');
+	const source = await fs.readFile(testTemplateDirectory + '/example1.njk', 'utf8');
 	const output = await engine.render(source, exampleData2);
 
 	expect(output).toContain('<h1>Posts</h1><ul><li>foo</li><li>bar</li></ul>');

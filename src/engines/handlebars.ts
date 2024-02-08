@@ -63,8 +63,8 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
 			for (const p of partials) {
 				if (fs.statSync(partialsPath + '/' + p).isDirectory()) {
-					const dirPartials = fs.readdirSync(partialsPath + '/' + p);
-					for (const dp of dirPartials) {
+					const directoryPartials = fs.readdirSync(partialsPath + '/' + p);
+					for (const dp of directoryPartials) {
 						const source = fs.readFileSync(partialsPath + '/' + p + '/' + dp).toString();
 						const name = p + '/' + dp.split('.')[0];
 						// eslint-disable-next-line max-depth

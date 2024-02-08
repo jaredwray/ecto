@@ -7,7 +7,7 @@ const exampleSource2 = '<% if (test) { %><h2><%= test.foo %></h2><% } %>';
 
 const exampleData1 = {fruits: ['Apple', 'Pear', 'Orange', 'Lemon'], user: {name: 'John Doe'}};
 
-const testTemplateDir = './test/data/ejs';
+const testTemplateDirectory = './test/data/ejs';
 
 it('EJS - Default Name ejs', () => {
 	const engine = new EJS();
@@ -52,9 +52,9 @@ it('EJS - Rendering a simple string after inital render', async () => {
 it('EJS - Rendering with partial', async () => {
 	const engine = new EJS();
 
-	const source = await fs.readFile(testTemplateDir + '/example2.ejs', 'utf8');
+	const source = await fs.readFile(testTemplateDirectory + '/example2.ejs', 'utf8');
 
-	engine.rootTemplatePath = testTemplateDir;
+	engine.rootTemplatePath = testTemplateDirectory;
 
 	expect(await engine.render(source, exampleData1)).toContain('John Doe');
 });

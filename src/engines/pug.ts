@@ -19,9 +19,7 @@ export class Pug extends BaseEngine implements EngineInterface {
 
 	async render(source: string, data?: Record<string, unknown>): Promise<string> {
 		if (this.rootTemplatePath) {
-			if (!this.opts) {
-				this.opts = {};
-			}
+			this.opts ||= {};
 
 			this.opts.basedir = this.rootTemplatePath;
 		}
@@ -34,9 +32,7 @@ export class Pug extends BaseEngine implements EngineInterface {
 
 	renderSync(source: string, data?: Record<string, unknown>): string {
 		if (this.rootTemplatePath) {
-			if (!this.opts) {
-				this.opts = {};
-			}
+			this.opts ||= {};
 
 			this.opts.basedir = this.rootTemplatePath;
 		}

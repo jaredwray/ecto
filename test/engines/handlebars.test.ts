@@ -6,7 +6,7 @@ const exampleSource1 = '<p>Hello, my name is {{name}}. I\'m from {{hometown}}. I
 const exampleSource2 = '<p>Hello, my name is {{name}}. I\'m from {{hometown}}. </p>';
 const exampleData1 = {name: 'Alan O\'Connor', hometown: 'Somewhere, TX', kids: [{name: 'Jimmy', age: '12'}, {name: 'Sally', age: '4'}]};
 
-const testTemplateDir = './test/data/handlebars';
+const testTemplateDirectory = './test/data/handlebars';
 
 it('Handlebars - Default Name ejs', () => {
 	const engine = new Handlebars();
@@ -61,8 +61,8 @@ it('Handlebars - Test Rendering Helper isEmpty Array', async () => {
 
 it('Handlebars - Rendering with Partials', async () => {
 	const engine = new Handlebars();
-	const source = await fs.readFile(testTemplateDir + '/example1.hbs', 'utf8');
-	engine.rootTemplatePath = testTemplateDir;
+	const source = await fs.readFile(testTemplateDirectory + '/example1.hbs', 'utf8');
+	engine.rootTemplatePath = testTemplateDirectory;
 	const result = await engine.render(source, exampleData1);
 
 	expect(result).toContain('Alan O\'Connor');
@@ -72,8 +72,8 @@ it('Handlebars - Rendering with Partials', async () => {
 
 it('Handlebars - Render Sync with Partials', () => {
 	const engine = new Handlebars();
-	const source = fs.readFileSync(testTemplateDir + '/example1.hbs', 'utf8');
-	engine.rootTemplatePath = testTemplateDir;
+	const source = fs.readFileSync(testTemplateDirectory + '/example1.hbs', 'utf8');
+	engine.rootTemplatePath = testTemplateDirectory;
 
 	expect(engine.renderSync(source, exampleData1)).toContain('Alan O\'Connor');
 	expect(engine.renderSync(source, exampleData1)).toContain('Foo!');

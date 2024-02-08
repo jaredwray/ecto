@@ -11,8 +11,8 @@ const ejsExampleData2 = {fruits: ['Apple', 'Pear', 'Orange', 'Lemon'], user: {na
 const handlebarsExampleSource = '<p>Hello, my name is {{name}}. I\'m from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>';
 const handlebarsExampleData = {name: 'Alan O\'Connor', hometown: 'Somewhere, TX', kids: [{name: 'Jimmy', age: '12'}, {name: 'Sally', age: '4'}]};
 
-const testOutputDir = './test/output';
-const testRootDir = './test/data';
+const testOutputDirectory = './test/output';
+const testRootDirectory = './test/data';
 
 it('Init and Verify defaultEngine', () => {
 	const ecto = new Ecto();
@@ -153,10 +153,10 @@ it('render via ejs synchronous', () => {
 
 it('render via ejs synchronous with file', () => {
 	const ecto = new Ecto();
-	const filePath = testOutputDir + '/ejs/ecto-ejs-test.html';
+	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
 
 	if (fs.pathExistsSync(filePath)) {
-		fs.removeSync(testOutputDir);
+		fs.removeSync(testOutputDirectory);
 	}
 
 	const content = ecto.renderSync(ejsExampleSource, ejsExampleData, undefined, undefined, filePath);
@@ -164,7 +164,7 @@ it('render via ejs synchronous with file', () => {
 	expect(content).toBe('<h2>bar</h2>');
 	expect(fs.pathExistsSync(filePath)).toBe(true);
 
-	fs.removeSync(testOutputDir);
+	fs.removeSync(testOutputDirectory);
 });
 
 it('render via ejs hello from docs', async () => {
@@ -188,7 +188,7 @@ it('render via handlebars and not define engineName', async () => {
 
 it('write via ejs', async () => {
 	const ecto = new Ecto();
-	const filePath = testOutputDir + '/ejs/ecto-ejs-test.html';
+	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
 	if (await fs.pathExists(filePath)) {
 		await fs.remove(filePath);
 	}
@@ -198,12 +198,12 @@ it('write via ejs', async () => {
 
 	expect(fileSource).toBe('<h2>bar</h2>');
 
-	await fs.remove(testOutputDir);
+	await fs.remove(testOutputDirectory);
 });
 
 it('write via ejs with long path', async () => {
 	const ecto = new Ecto();
-	const filePath = testOutputDir + '/ejs/foo/wow/ecto-ejs-test.html';
+	const filePath = testOutputDirectory + '/ejs/foo/wow/ecto-ejs-test.html';
 	if (await fs.pathExists(filePath)) {
 		await fs.remove(filePath);
 	}
@@ -213,33 +213,33 @@ it('write via ejs with long path', async () => {
 
 	expect(fileSource).toBe('<h2>bar</h2>');
 
-	await fs.remove(testOutputDir);
+	await fs.remove(testOutputDirectory);
 });
 
 it('Render from Template - EJS', async () => {
 	const ecto = new Ecto();
-	const source = await ecto.renderFromFile(testRootDir + '/ejs/example1.ejs', ejsExampleData2, testRootDir + '/ejs');
+	const source = await ecto.renderFromFile(testRootDirectory + '/ejs/example1.ejs', ejsExampleData2, testRootDirectory + '/ejs');
 
 	expect(source).toContain('Oranges');
 });
 
 it('Render from Template - EJS synchronous', () => {
 	const ecto = new Ecto();
-	const source = ecto.renderFromFileSync(testRootDir + '/ejs/example1.ejs', ejsExampleData2, testRootDir + '/ejs');
+	const source = ecto.renderFromFileSync(testRootDirectory + '/ejs/example1.ejs', ejsExampleData2, testRootDirectory + '/ejs');
 
 	expect(source).toContain('Oranges');
 });
 
 it('Render from Template - Default to EJS', async () => {
 	const ecto = new Ecto();
-	const source = await ecto.renderFromFile(testRootDir + '/ejs/example1.html', ejsExampleData2, testRootDir + '/ejs');
+	const source = await ecto.renderFromFile(testRootDirectory + '/ejs/example1.html', ejsExampleData2, testRootDirectory + '/ejs');
 
 	expect(source).toContain('Oranges');
 });
 
 it('Render from Template - Handlebars', async () => {
 	const ecto = new Ecto();
-	const source = await ecto.renderFromFile(testRootDir + '/handlebars/example1.hbs', handlebarsExampleData, testRootDir + '/handlebars');
+	const source = await ecto.renderFromFile(testRootDirectory + '/handlebars/example1.hbs', handlebarsExampleData, testRootDirectory + '/handlebars');
 
 	expect(source).toContain('<title>Alan O\'Connor - Header Title </title>');
 	expect(source).toContain('Foo!');
@@ -247,21 +247,21 @@ it('Render from Template - Handlebars', async () => {
 
 it('Find Template without Extension', async () => {
 	const ecto = new Ecto();
-	const templatePath = testRootDir + '/find-templates';
+	const templatePath = testRootDirectory + '/find-templates';
 	const filePath = await ecto.findTemplateWithoutExtension(templatePath, 'bar');
 	expect(filePath).toBe(templatePath + '/bar.njk');
 });
 
 it('Find Template without Extension Sync', () => {
 	const ecto = new Ecto();
-	const templatePath = testRootDir + '/find-templates';
+	const templatePath = testRootDirectory + '/find-templates';
 	const filePath = ecto.findTemplateWithoutExtensionSync(templatePath, 'bar');
 	expect(filePath).toBe(templatePath + '/bar.njk');
 });
 
 it('Find Template without Extension on duplicate Sync', async () => {
 	const ecto = new Ecto();
-	const templatePath = testRootDir + '/find-templates';
+	const templatePath = testRootDirectory + '/find-templates';
 	const filePath = await ecto.findTemplateWithoutExtension(templatePath, 'foo');
 	expect(filePath).toBe(templatePath + '/foo.ejs');
 });

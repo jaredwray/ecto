@@ -12,17 +12,17 @@ export class BaseEngine {
 	setExtensions(extensions: string[]): void {
 		this.__extensions = new Array<string>();
 
-		for (const ext of extensions) {
-			const newExt = ext.trim().toLowerCase();
-			if (!this.__extensions.includes(newExt)) {
-				this.__extensions.push(newExt);
+		for (const extension of extensions) {
+			const newExtension = extension.trim().toLowerCase();
+			if (!this.__extensions.includes(newExtension)) {
+				this.__extensions.push(newExtension);
 			}
 		}
 	}
 
 	deleteExtension(name: string) {
-		for (const [index, ext] of this.__extensions.entries()) {
-			if (name.toLowerCase().trim() === ext) {
+		for (const [index, extension] of this.__extensions.entries()) {
+			if (name.toLowerCase().trim() === extension) {
 				this.__extensions.splice(index, 1);
 			}
 		}

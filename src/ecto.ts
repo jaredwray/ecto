@@ -145,9 +145,7 @@ export class Ecto {
 		let result = '';
 
 		// Select which engine
-		if (!engineName) {
-			engineName = this.getEngineByFilePath(filePath);
-		}
+		engineName ||= this.getEngineByFilePath(filePath);
 
 		// Get the source
 		const source = await fs.readFile(filePath, 'utf8');
@@ -163,9 +161,7 @@ export class Ecto {
 		let result = '';
 
 		// Select which engine
-		if (!engineName) {
-			engineName = this.getEngineByFilePath(filePath);
-		}
+		engineName ||= this.getEngineByFilePath(filePath);
 
 		// Get the source
 		const source = fs.readFileSync(filePath, 'utf8');
@@ -179,10 +175,10 @@ export class Ecto {
 		const pathList = path.split('/');
 		pathList.pop();
 
-		const dir = pathList.join('/');
+		const directory = pathList.join('/');
 
-		if (!fs.existsSync(dir)) {
-			await fs.ensureDir(dir);
+		if (!fs.existsSync(directory)) {
+			await fs.ensureDir(directory);
 		}
 	}
 
@@ -190,10 +186,10 @@ export class Ecto {
 		const pathList = path.split('/');
 		pathList.pop();
 
-		const dir = pathList.join('/');
+		const directory = pathList.join('/');
 
-		if (!fs.existsSync(dir)) {
-			fs.ensureDirSync(dir);
+		if (!fs.existsSync(directory)) {
+			fs.ensureDirSync(directory);
 		}
 	}
 
@@ -201,11 +197,11 @@ export class Ecto {
 		let result = this.__defaultEngine;
 
 		if (filePath !== undefined) {
-			const ext = filePath.lastIndexOf('.') >= 0 ? filePath.slice(filePath.lastIndexOf('.') + 1) : '';
+			const extension = filePath.lastIndexOf('.') >= 0 ? filePath.slice(filePath.lastIndexOf('.') + 1) : '';
 
-			const engExt = this.__mapping.getName(ext);
-			if (engExt !== undefined) {
-				result = engExt;
+			const engExtension = this.__mapping.getName(extension);
+			if (engExtension !== undefined) {
+				result = engExtension;
 			}
 		}
 
@@ -264,8 +260,8 @@ export class Ecto {
 	getRenderEngine(engineName: string): EngineInterface {
 		let result = this.__ejs; // Setting default
 
-		// eslint-disable-next-line default-case
-		switch (engineName.trim().toLowerCase()) {
+		const cleanEngineName = engineName.trim().toLowerCase();
+		switch (cleanEngineName) {
 			case 'markdown': {
 				result = this.__markdown;
 				break;
@@ -293,6 +289,11 @@ export class Ecto {
 
 			case 'liquid': {
 				result = this.__liquid;
+				break;
+			}
+
+			default: {
+				result = this.__ejs;
 				break;
 			}
 		}
