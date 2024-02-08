@@ -7,7 +7,7 @@ const exampleData1 = {name: 'John Doe'};
 const exampleSource2 = 'ul\neach val in items\n\tli= val';
 const exampleData2 = {items: [1, 2, 3, 4, 5]};
 
-const testTemplateDir = './test/data/pug';
+const testTemplateDirectory = './test/data/pug';
 
 it('Pug - Default Name Pug', () => {
 	const engine = new Pug();
@@ -42,9 +42,9 @@ it('Pug - Rendering a simple string synchronous', () => {
 
 it('Pug - Render Sync with Root Template Path', () => {
 	const engine = new Pug();
-	engine.rootTemplatePath = testTemplateDir;
+	engine.rootTemplatePath = testTemplateDirectory;
 	expect(engine.renderSync(exampleSource1, exampleData1)).toBe('<p>John Doe\'s Pug source code!</p>');
-	expect(engine.opts.basedir).toBe(testTemplateDir);
+	expect(engine.opts.basedir).toBe(testTemplateDirectory);
 });
 
 it('Pug - Rendering a list in html', async () => {
@@ -54,9 +54,9 @@ it('Pug - Rendering a list in html', async () => {
 
 it('Pug - Rendering with Includes', async () => {
 	const engine = new Pug();
-	const source = await fs.readFile(testTemplateDir + '/example1.pug', 'utf8');
+	const source = await fs.readFile(testTemplateDirectory + '/example1.pug', 'utf8');
 
-	engine.rootTemplatePath = testTemplateDir;
+	engine.rootTemplatePath = testTemplateDirectory;
 
 	const output = await engine.render(source, exampleData1);
 

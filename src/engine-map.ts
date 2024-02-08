@@ -8,10 +8,10 @@ export class EngineMap {
 
 		if (extensions.length > 0 && name !== '') {
 			// Clean engine extensions
-			for (let ext of extensions) {
-				ext = ext.trim().toLowerCase();
-				if (!engineExtensions.includes(ext)) {
-					engineExtensions.push(ext);
+			for (let extension of extensions) {
+				extension = extension.trim().toLowerCase();
+				if (!engineExtensions.includes(extension)) {
+					engineExtensions.push(extension);
 				}
 			}
 
@@ -28,9 +28,9 @@ export class EngineMap {
 		const extensions = this._mappings.get(engineName);
 		if (extensions) {
 			const engineExtensions = new Array<string>();
-			for (const ext of extensions) {
-				if (ext !== extension.trim().toLowerCase()) {
-					engineExtensions.push(ext);
+			for (const extension_ of extensions) {
+				if (extension_ !== extension.trim().toLowerCase()) {
+					engineExtensions.push(extension_);
 				}
 			}
 
