@@ -71,7 +71,7 @@
   },
   "xo": {
     "ignores": [
-      "vitest.config.js"
+      "vitest.config.mjs"
     ]
   },
   "files": [
