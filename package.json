@@ -37,8 +37,8 @@
     "compile": "tsc -p .",
     "build": "rimraf ./dist && yarn && yarn test && yarn compile",
     "prepare": "rimraf ./dist && yarn compile",
-    "website:build": "rimraf ./site/readme.md && npx -y writr build -s ./site -o ./dist-site",
-    "website:serve": "rimraf ./site/readme.md && npx -y writr serve -s ./site -o ./dist-site"
+    "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
+    "website:serve": "rimraf ./site/readme.md && npx -y docula serve -s ./site -o ./dist-site"
   },
   "dependencies": {
     "@jaredwray/fumanchu": "^1.1.2",
@@ -57,11 +57,12 @@
     "@types/express": "^4.17.21",
     "@types/fs-extra": "^11.0.4",
     "@types/mustache": "^4.2.5",
+    "@types/node": "^20.11.20",
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
     "@types/underscore": "^1.11.15",
     "@vitest/coverage-v8": "^1.2.2",
-    "docula": "^0.3.7",
+    "docula": "^0.4.0",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
     "vitest": "^1.2.2",
