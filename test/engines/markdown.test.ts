@@ -25,7 +25,7 @@ it('Markdown - Setting Opts on the Constructor', () => {
 it('Markdown - Rendering with default Opts', async () => {
 	const engine = new Markdown();
 	engine.opts = undefined;
-	expect(await engine.render(exampleSource1)).toContain('<h1>markdown rulezz!</h1>');
+	expect(await engine.render(exampleSource1)).toContain('<h1 id="markdown-rulezz">markdown rulezz!</h1>');
 });
 
 it('Markdown - Extension should be a count of 2', () => {
