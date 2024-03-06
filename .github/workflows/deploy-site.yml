@@ -24,13 +24,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install Dependencies  
-      run: yarn
+      run: npm install
       
     - name: Build Website
-      run: yarn build
+      run: npm run build
     
     - name: Build Website
-      run: yarn website:build
+      run: npm run website:build
 
     - name: Publish to Cloudflare Pages
       uses: cloudflare/pages-action@1
