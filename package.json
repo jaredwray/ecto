@@ -1,15 +1,29 @@
 {
   "name": "ecto",
-  "version": "2.5.0",
+  "version": "3.0.0",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
+  "type": "module",
   "main": "./dist/ecto.js",
   "types": "./dist/ecto.d.ts",
+  "engines": {
+    "node": ">=18"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jaredwray/ecto.git"
   },
   "author": "Jared Wray <me@jaredwray.com>",
   "license": "MIT",
+  "scripts": {
+    "watch": "tsc -w -p .",
+    "clean": "rimraf ./dist yarn.lock package-lock.json ./coverage ./node_modules ./site/readme.md",
+    "test": "xo --fix && vitest run --coverage",
+    "compile": "tsc -p .",
+    "build": "rimraf ./dist && npm install && npm run test && npm run compile",
+    "prepare": "rimraf ./dist && npm run compile",
+    "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
+    "website:serve": "rimraf ./site/readme.md && npx -y docula serve -s ./site -o ./dist-site"
+  },
   "keywords": [
     "templates",
     "generator",
@@ -30,16 +44,6 @@
     "liquid",
     "liquidjs"
   ],
-  "scripts": {
-    "watch": "tsc -w -p .",
-    "clean": "rimraf ./dist yarn.lock package-lock.json ./coverage ./node_modules ./site/readme.md",
-    "test": "xo --fix && vitest run --coverage",
-    "compile": "tsc -p .",
-    "build": "rimraf ./dist && yarn && yarn test && yarn compile",
-    "prepare": "rimraf ./dist && yarn compile",
-    "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
-    "website:serve": "rimraf ./site/readme.md && npx -y docula serve -s ./site -o ./dist-site"
-  },
   "dependencies": {
     "@jaredwray/fumanchu": "^1.1.3",
     "@markdoc/markdoc": "^0.4.0",
