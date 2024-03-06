@@ -1,9 +1,9 @@
 {
   "name": "ecto",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
   "type": "module",
-  "main": "./dist/ecto.js",
+  "exports": "./dist/ecto.js",
   "types": "./dist/ecto.d.ts",
   "engines": {
     "node": ">=18"
