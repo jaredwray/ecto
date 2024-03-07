@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {{> header }}
+  <title>{{siteTitle}} Releases</title>
+</head>
+
+<body>
+  {{> landing/hero }}
+  <a class="github-fork-ribbon" href="https://github.com/jaredwray/docula" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+  <main class="home-container">
+    <div class="content-container versions-container">
+      <h2 class="home-title">Releases</h2>
+      {{#if github}}
+        {{#if github.releases}}
+          {{#each github.releases as |release|}}
+            <div class="release">
+              <div class="release-header">
+                <a
+                    class="release-title"
+                    href="{{release.html_url}}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >{{release.name}}</a>
+                <span class="release-date">{{#moment
+                    release.published_at "MMMM DD, yyyy"
+                  }}{{/moment}}
+                </span>
+              </div>
+              <div class="release-body">
+                {{#if release.body}}
+                  {{#markdown}}{{release.body}}{{/markdown}}
+                {{/if}}
+              </div>
+            </div>
+          {{/each}}
+        {{/if}}
+      {{/if}}
+    </div>
+  </main>
+  {{> footer}}
+
+  {{> scripts }}
+</body>
+</html>

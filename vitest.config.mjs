@@ -8,6 +8,7 @@ export default defineConfig({
 				'**/engine-interface**',
 				'dist-site/**',
 				'site/**',
+				'test/data/**',
 			],
 		},
 	},

@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import {expect, it} from 'vitest';
-import * as fs from 'fs-extra';
 import {Nunjucks} from '../../src/engines/nunjucks.js';
 
 const exampleSource1 = 'Hello {{ username }}';
@@ -71,7 +71,7 @@ it('Nunjucks - Rendering with partial template', async () => {
 	const engine = new Nunjucks();
 	engine.rootTemplatePath = testTemplateDirectory;
 
-	const source = await fs.readFile(testTemplateDirectory + '/example1.njk', 'utf8');
+	const source = await fs.promises.readFile(testTemplateDirectory + '/example1.njk', 'utf8');
 	const output = await engine.render(source, exampleData2);
 
 	expect(output).toContain('<h1>Posts</h1><ul><li>foo</li><li>bar</li></ul>');

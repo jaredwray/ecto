@@ -1,6 +1,7 @@
-import * as handlebars from '@jaredwray/fumanchu';
-import * as fs from 'fs-extra';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument */
+import fs from 'node:fs';
 import * as _ from 'underscore';
+import fumanchu from '@jaredwray/fumanchu';
 import {BaseEngine} from '../base-engine.js';
 import type {EngineInterface} from '../engine-interface.js';
 
@@ -12,7 +13,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
 		this.names = ['handlebars', 'mustache'];
 		this.opts = options;
-		this.engine = handlebars;
+		this.engine = fumanchu;
 
 		this.setExtensions(['hbs', 'hjs', 'handlebars', 'mustache']);
 	}
@@ -23,10 +24,8 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 			this.initPartials();
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		const template = handlebars.compile(source, this.opts);
+		const template = this.engine.compile(source, this.opts);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		let result = template(data, this.opts);
 		result = _.unescape(result);
 
@@ -39,10 +38,8 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 			this.initPartials();
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-		const template = handlebars.compile(source, this.opts);
+		const template = this.engine.compile(source, this.opts);
 
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		let result = template(data, this.opts);
 		result = _.unescape(result);
 
@@ -58,27 +55,22 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
 	registerPartials(partialsPath: string): boolean {
 		let result = false;
-		if (fs.pathExistsSync(partialsPath)) {
-			const partials = fs.readdirSync(partialsPath);
+
+		if (fs.existsSync(partialsPath)) {
+			const partials = fs.readdirSync(partialsPath, {recursive: true, encoding: 'utf8'});
 
 			for (const p of partials) {
 				if (fs.statSync(partialsPath + '/' + p).isDirectory()) {
-					const directoryPartials = fs.readdirSync(partialsPath + '/' + p);
+					const directoryPartials = fs.readdirSync(partialsPath + '/' + p, {recursive: true, encoding: 'utf8'});
 					for (const dp of directoryPartials) {
 						const source = fs.readFileSync(partialsPath + '/' + p + '/' + dp).toString();
 						const name = p + '/' + dp.split('.')[0];
-						// eslint-disable-next-line max-depth
-						if (handlebars.partials[name] === undefined) {
-							handlebars.registerPartial(name, handlebars.compile(source));
-						}
+						this.engine.registerPartial(name, this.engine.compile(source));
 					}
 				} else {
-					const source = fs.readFileSync(partialsPath + '/' + p).toString();
+					const source = fs.readFileSync(partialsPath + '/' + p, 'utf8');
 					const name = p.split('.')[0];
-
-					if (handlebars.partials[name] === undefined) {
-						handlebars.registerPartial(name, handlebars.compile(source));
-					}
+					this.engine.registerPartial(name, this.engine.compile(source));
 				}
 			}
 

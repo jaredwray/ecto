@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import {expect, it} from 'vitest';
-import * as fs from 'fs-extra';
 import {Liquid} from '../../src/engines/liquid.js';
 
 const exampleSource1 = '{{name | capitalize}}';
@@ -53,7 +53,7 @@ it('Liquid - Rendering a list in html', async () => {
 
 it('Liquid - Rendering Partials', async () => {
 	const engine = new Liquid();
-	const source = await fs.readFile(testTemplateDirectory + '/example1.liquid', 'utf8');
+	const source = await fs.promises.readFile(testTemplateDirectory + '/example1.liquid', 'utf8');
 
 	engine.rootTemplatePath = testTemplateDirectory;
 

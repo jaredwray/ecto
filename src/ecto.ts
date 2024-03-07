@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import fs from 'node:fs';
 import {EngineMap} from './engine-map.js';
 import {Markdown} from './engines/markdown.js';
 import {Handlebars} from './engines/handlebars.js';
@@ -148,7 +148,7 @@ export class Ecto {
 		engineName ||= this.getEngineByFilePath(filePath);
 
 		// Get the source
-		const source = await fs.readFile(filePath, 'utf8');
+		const source = await fs.promises.readFile(filePath, 'utf8');
 
 		result = await this.render(source, data, engineName, rootTemplatePath, filePathOutput);
 
@@ -178,7 +178,7 @@ export class Ecto {
 		const directory = pathList.join('/');
 
 		if (!fs.existsSync(directory)) {
-			await fs.ensureDir(directory);
+			fs.mkdirSync(directory, {recursive: true});
 		}
 	}
 
@@ -189,7 +189,7 @@ export class Ecto {
 		const directory = pathList.join('/');
 
 		if (!fs.existsSync(directory)) {
-			fs.ensureDirSync(directory);
+			fs.mkdirSync(directory, {recursive: true});
 		}
 	}
 
@@ -211,7 +211,7 @@ export class Ecto {
 	async findTemplateWithoutExtension(path: string, templateName: string): Promise<string> {
 		let result = '';
 
-		const files = await fs.readdir(path);
+		const files = await fs.promises.readdir(path);
 
 		for (const file of files) {
 			if (file.startsWith(templateName + '.')) {
@@ -304,7 +304,7 @@ export class Ecto {
 	private async writeFile(filePath?: string, source?: string) {
 		if (filePath && source) {
 			await this.ensureFilePath(filePath);
-			await fs.writeFile(filePath, source);
+			await fs.promises.writeFile(filePath, source);
 		}
 	}
 

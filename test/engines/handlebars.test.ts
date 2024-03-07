@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import {expect, it} from 'vitest';
-import * as fs from 'fs-extra';
 import {Handlebars} from '../../src/engines/handlebars.js';
 
 const exampleSource1 = '<p>Hello, my name is {{name}}. I\'m from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>';
@@ -61,7 +61,7 @@ it('Handlebars - Test Rendering Helper isEmpty Array', async () => {
 
 it('Handlebars - Rendering with Partials', async () => {
 	const engine = new Handlebars();
-	const source = await fs.readFile(testTemplateDirectory + '/example1.hbs', 'utf8');
+	const source = await fs.promises.readFile(testTemplateDirectory + '/example1.hbs', 'utf8');
 	engine.rootTemplatePath = testTemplateDirectory;
 	const result = await engine.render(source, exampleData1);
 
@@ -77,4 +77,13 @@ it('Handlebars - Render Sync with Partials', () => {
 
 	expect(engine.renderSync(source, exampleData1)).toContain('Alan O\'Connor');
 	expect(engine.renderSync(source, exampleData1)).toContain('Foo!');
+});
+
+it('Handlebars - Rendering with Partials - Docula', async () => {
+	const engine = new Handlebars();
+	const source = await fs.promises.readFile('./test/data/docula/template/index.hbs', 'utf8');
+	engine.rootTemplatePath = './test/data/docula/template';
+	const result = await engine.render(source, exampleData1);
+
+	expect(result).toContain('<img src="/logo.svg" alt="logo" />');
 });
