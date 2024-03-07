@@ -1,5 +1,6 @@
+import fsPromise from 'node:fs/promises';
+import fs from 'node:fs';
 import {expect, it} from 'vitest';
-import * as fs from 'fs-extra';
 import {EJS} from '../../src/engines/ejs.js';
 
 const exampleSource1 = '<% if (user) { %><h2><%= user.name %></h2><% } %>';
@@ -52,7 +53,7 @@ it('EJS - Rendering a simple string after inital render', async () => {
 it('EJS - Rendering with partial', async () => {
 	const engine = new EJS();
 
-	const source = await fs.readFile(testTemplateDirectory + '/example2.ejs', 'utf8');
+	const source = await fs.promises.readFile(testTemplateDirectory + '/example2.ejs', 'utf8');
 
 	engine.rootTemplatePath = testTemplateDirectory;
 

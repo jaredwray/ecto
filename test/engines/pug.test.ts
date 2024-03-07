@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import {expect, it} from 'vitest';
-import * as fs from 'fs-extra';
 import {Pug} from '../../src/engines/pug.js';
 
 const exampleSource1 = 'p #{name}\'s Pug source code!';
@@ -54,7 +54,7 @@ it('Pug - Rendering a list in html', async () => {
 
 it('Pug - Rendering with Includes', async () => {
 	const engine = new Pug();
-	const source = await fs.readFile(testTemplateDirectory + '/example1.pug', 'utf8');
+	const source = await fs.promises.readFile(testTemplateDirectory + '/example1.pug', 'utf8');
 
 	engine.rootTemplatePath = testTemplateDirectory;
 

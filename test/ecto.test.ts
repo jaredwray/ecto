@@ -1,5 +1,5 @@
+import fs from 'node:fs';
 import {expect, it, test} from 'vitest';
-import * as fs from 'fs-extra';
 import {Ecto} from '../src/ecto.js';
 
 const engines: string[] = ['ejs', 'markdown', 'pug', 'nunjucks', 'mustache', 'handlebars', 'liquid'];
@@ -155,16 +155,16 @@ it('render via ejs synchronous with file', () => {
 	const ecto = new Ecto();
 	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
 
-	if (fs.pathExistsSync(filePath)) {
-		fs.removeSync(testOutputDirectory);
+	if (fs.existsSync(filePath)) {
+		fs.rmSync(testOutputDirectory, {recursive: true, force: true});
 	}
 
 	const content = ecto.renderSync(ejsExampleSource, ejsExampleData, undefined, undefined, filePath);
 
 	expect(content).toBe('<h2>bar</h2>');
-	expect(fs.pathExistsSync(filePath)).toBe(true);
+	expect(fs.existsSync(filePath)).toBe(true);
 
-	fs.removeSync(testOutputDirectory);
+	fs.rmdirSync(testOutputDirectory, {recursive: true});
 });
 
 it('render via ejs hello from docs', async () => {
@@ -189,31 +189,31 @@ it('render via handlebars and not define engineName', async () => {
 it('write via ejs', async () => {
 	const ecto = new Ecto();
 	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
-	if (await fs.pathExists(filePath)) {
-		await fs.remove(filePath);
+	if (fs.existsSync(filePath)) {
+		fs.rmSync(filePath);
 	}
 
 	await ecto.render(ejsExampleSource, ejsExampleData, 'ejs', undefined, filePath);
-	const fileSource = await fs.readFile(filePath, 'utf8');
+	const fileSource = await fs.promises.readFile(filePath, 'utf8');
 
 	expect(fileSource).toBe('<h2>bar</h2>');
 
-	await fs.remove(testOutputDirectory);
+	await fs.promises.rmdir(testOutputDirectory, {recursive: true});
 });
 
 it('write via ejs with long path', async () => {
 	const ecto = new Ecto();
 	const filePath = testOutputDirectory + '/ejs/foo/wow/ecto-ejs-test.html';
-	if (await fs.pathExists(filePath)) {
-		await fs.remove(filePath);
+	if (fs.existsSync(filePath)) {
+		fs.rmSync(filePath);
 	}
 
 	await ecto.render(ejsExampleSource, ejsExampleData, 'ejs', undefined, filePath);
-	const fileSource = await fs.readFile(filePath, 'utf8');
+	const fileSource = await fs.promises.readFile(filePath, 'utf8');
 
 	expect(fileSource).toBe('<h2>bar</h2>');
 
-	await fs.remove(testOutputDirectory);
+	await fs.promises.rmdir(testOutputDirectory, {recursive: true});
 });
 
 it('Render from Template - EJS', async () => {

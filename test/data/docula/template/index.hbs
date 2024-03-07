@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{> header }}
+    <title>{{ siteTitle }}</title>
+  </head>
+
+  <body>
+    {{> landing/hero }}
+    <a class="github-fork-ribbon" href="https://github.com/{{ githubPath }}" data-ribbon="Fork me on GitHub" title="Fork me on GitHub">Fork me on GitHub</a>
+    {{> landing/content }}
+    {{> footer}}
+
+    {{> scripts }}
+  </body>
+</html>
