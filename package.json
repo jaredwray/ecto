@@ -1,6 +1,6 @@
 {
   "name": "ecto",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
   "type": "module",
   "exports": "./dist/ecto.js",
@@ -45,7 +45,7 @@
     "liquidjs"
   ],
   "dependencies": {
-    "@jaredwray/fumanchu": "^1.2.0",
+    "@jaredwray/fumanchu": "^1.2.1",
     "@markdoc/markdoc": "^0.4.0",
     "ejs": "^3.1.9",
     "handlebars": "^4.7.8",
