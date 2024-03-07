@@ -125,7 +125,7 @@ const ecto = new Ecto();
 
 When looking at the API there are two main methods to make note of:
 [render](#render-from-string) (async) - Render from a string.
-[renderFromFile](#render-from-file) (async) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a Promise<string> of the rendered output.
+[renderFromFile](#render-from-file) (async) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a `Promise<string>` of the rendered output.
 
 Two key parameters to know are:
 defaultEngine:string - the [default engine](#default-engine) to use and set by default to ejs.
