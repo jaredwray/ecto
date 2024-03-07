@@ -46,7 +46,6 @@
   ],
   "dependencies": {
     "@jaredwray/fumanchu": "^1.2.1",
-    "@markdoc/markdoc": "^0.4.0",
     "ejs": "^3.1.9",
     "handlebars": "^4.7.8",
     "handlebars-helpers": "^0.10.0",
