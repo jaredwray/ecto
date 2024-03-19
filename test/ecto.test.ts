@@ -265,3 +265,11 @@ it('Find Template without Extension on duplicate Sync', async () => {
 	const filePath = await ecto.findTemplateWithoutExtension(templatePath, 'foo');
 	expect(filePath).toBe(templatePath + '/foo.ejs');
 });
+
+it('Render with Configuration via Nunjucks', async () => {
+	const ecto = new Ecto({defaultEngine: 'nunjucks', autoescape: false});
+	const userInput = '<script>alert(\'XSS\')</script>';
+	const source = await ecto.renderFromFile(testRootDirectory + '/nunjucks/example2.njk', {name: userInput});
+
+	expect(source).toContain('Hello <script>alert(\'XSS\')</script>');
+});

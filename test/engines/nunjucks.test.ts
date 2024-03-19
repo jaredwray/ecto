@@ -77,3 +77,16 @@ it('Nunjucks - Rendering with partial template', async () => {
 	expect(output).toContain('<h1>Posts</h1><ul><li>foo</li><li>bar</li></ul>');
 	expect(output).toContain('Item!');
 });
+
+it('Nunjucks - Rendering with configuration', async () => {
+	const options = {autoescape: true};
+	const engine = new Nunjucks(options);
+	engine.rootTemplatePath = testTemplateDirectory;
+
+	const userInput = '<script>alert(\'XSS\')</script>';
+
+	const source = 'Hello {{ userInput }}';
+	const output = await engine.render(source, {userInput});
+
+	expect(output).toContain('Hello &lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;');
+});
