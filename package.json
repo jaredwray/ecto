@@ -47,10 +47,7 @@
   "dependencies": {
     "@jaredwray/fumanchu": "^1.2.1",
     "ejs": "^3.1.9",
-    "handlebars": "^4.7.8",
-    "handlebars-helpers": "^0.10.0",
-    "helper-date": "^1.0.1",
-    "liquidjs": "^10.10.1",
+    "liquidjs": "^10.10.2",
     "nunjucks": "^3.2.4",
     "pug": "^3.0.2",
     "underscore": "^1.13.6",
@@ -59,8 +56,6 @@
   "devDependencies": {
     "@types/ejs": "^3.1.5",
     "@types/express": "^4.17.21",
-    "@types/handlebars-helpers": "^0.5.6",
-    "@types/mustache": "^4.2.5",
     "@types/node": "^20.11.30",
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
