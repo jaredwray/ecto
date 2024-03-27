@@ -380,13 +380,11 @@ const ecto = Ecto();
 await ecto.renderByFile("/path/to/file.md");
 ```
 
-We are using [Markdoc](https://markdoc.io/) which has a ton of powerful features.
+We are using [Writr](https://writr.org/) which is remark with all the plugins and features you need.
 
 #### Handlebars
 
-In Ecto we use the [handlebars](https://www.npmjs.com/package/handlebars) engine to render `mustache` related templates. This is because handlebars is based on mustache with just more additional features.
-
-Handlebars is a fantastic template engine, and we've incorporated helpers to make it even better. We added in [helpers-for-handlebars](https://github.com/jaredwray/helpers-for-handlebars) so you can format dates, and more. Here is an example using `Handlebars Helpers` in your template:
+In Ecto we use the [Fumanchu](https://www.npmjs.com/package/@jaredwray/fumanchu) engine to render `mustache` and `handlebars` related templates. This is because handlebars is based on mustache with just more additional features. Fumanchu includes handlebar engine with helpers.
 
 ```javascript
 const ecto = Ecto();
@@ -598,4 +596,4 @@ The double curly brace delimiters `{{ }}` denote output, and the curly brace per
 
 # License
 
-[MIT License - Copyright (c) 2021-2022 Jared Wray](LICENSE)
+[MIT License - Copyright (c) Jared Wray](LICENSE)
