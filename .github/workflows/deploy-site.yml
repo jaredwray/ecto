@@ -39,5 +39,5 @@ jobs:
         accountId: b09b24c345713c704e71dea8bd81f713
         projectName: ecto
         directory: dist-site
-        branch: production
+        branch: main
         gitHubToken: ${{ secrets.GH_TOKEN }}
