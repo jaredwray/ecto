@@ -1,6 +1,6 @@
 {
   "name": "ecto",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
   "type": "module",
   "exports": "./dist/ecto.js",
@@ -19,7 +19,7 @@
     "clean": "rimraf ./dist yarn.lock package-lock.json pnpm-lock.yaml ./coverage ./node_modules ./site/readme.md ./dist-site",
     "test": "xo --fix && vitest run --coverage",
     "compile": "tsc -p .",
-    "build": "rimraf ./dist && npm install && npm run test && npm run compile",
+    "build": "rimraf ./dist && npm run compile",
     "prepare": "rimraf ./dist && npm run compile",
     "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
     "website:serve": "rimraf ./site/readme.md && npx -y docula serve -s ./site -o ./dist-site"
