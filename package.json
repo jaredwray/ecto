@@ -60,10 +60,10 @@
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
     "@types/underscore": "^1.11.15",
-    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/coverage-v8": "^1.5.2",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.3",
-    "vitest": "^1.4.0",
+    "vitest": "^1.5.2",
     "webpack": "^5.91.0",
     "xo": "^0.58.0"
   },
