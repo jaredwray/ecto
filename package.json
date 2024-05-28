@@ -51,7 +51,7 @@
     "nunjucks": "^3.2.4",
     "pug": "^3.0.2",
     "underscore": "^1.13.6",
-    "writr": "^3.2.2"
+    "writr": "^3.2.3"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
