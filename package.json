@@ -45,7 +45,7 @@
     "liquidjs"
   ],
   "dependencies": {
-    "@jaredwray/fumanchu": "^1.4.1",
+    "@jaredwray/fumanchu": "^1.5.0",
     "ejs": "^3.1.10",
     "liquidjs": "^10.16.1",
     "nunjucks": "^3.2.4",
