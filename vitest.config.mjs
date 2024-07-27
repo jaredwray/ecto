@@ -8,7 +8,9 @@ export default defineConfig({
 				'**/engine-interface**',
 				'dist-site/**',
 				'site/**',
-				'test/data/**',
+				'test/**',
+				'dist/**',
+				'vitest.config.mjs'
 			],
 		},
 	},
