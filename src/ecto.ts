@@ -197,7 +197,7 @@ export class Ecto {
 		let result = this.__defaultEngine;
 
 		if (filePath !== undefined) {
-			const extension = filePath.lastIndexOf('.') >= 0 ? filePath.slice(filePath.lastIndexOf('.') + 1) : '';
+			const extension = filePath.includes('.') ? filePath.slice(filePath.lastIndexOf('.') + 1) : '';
 
 			const engExtension = this.__mapping.getName(extension);
 			if (engExtension !== undefined) {
