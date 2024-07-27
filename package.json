@@ -50,7 +50,7 @@
     "liquidjs": "^10.14.0",
     "nunjucks": "^3.2.4",
     "pug": "^3.0.3",
-    "underscore": "^1.13.6",
+    "underscore": "^1.13.7",
     "writr": "^3.2.3"
   },
   "devDependencies": {
