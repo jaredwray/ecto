@@ -2,7 +2,7 @@
 
 ## Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Mustache, and Handlebars
 
-[![Build Status](https://github.com/jaredwray/ecto/workflows/build/badge.svg)](https://github.com/jaredwray/ecto/actions)
+[![tests](https://github.com/jaredwray/ecto/actions/workflows/tests.yml/badge.svg)](https://github.com/jaredwray/ecto/actions/workflows/tests.yml)
 [![Release Status](https://github.com/jaredwray/ecto/workflows/release/badge.svg)](https://github.com/jaredwray/ecto/actions)
 [![GitHub license](https://img.shields.io/github/license/jaredwray/ecto)](https://github.com/jaredwray/ecto/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/jaredwray/ecto/branch/main/graph/badge.svg?token=dpbFqSW5Kh)](https://codecov.io/gh/jaredwray/ecto)
