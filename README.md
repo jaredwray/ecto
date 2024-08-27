@@ -1,4 +1,4 @@
-![Ecto](ecto_logo.png "Ecto")
+![Ecto](site/logo.svg "Ecto")
 
 ## Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Mustache, and Handlebars
 
