@@ -164,7 +164,7 @@ it('render via ejs synchronous with file', () => {
 	expect(content).toBe('<h2>bar</h2>');
 	expect(fs.existsSync(filePath)).toBe(true);
 
-	fs.rmdirSync(testOutputDirectory, {recursive: true});
+	fs.rmSync(testOutputDirectory, {recursive: true, force: true});
 });
 
 it('render via ejs hello from docs', async () => {

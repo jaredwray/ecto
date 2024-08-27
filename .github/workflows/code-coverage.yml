@@ -1,12 +1,14 @@
-name: release
+name: code-coverage
 
 on:
   workflow_dispatch:
-  release:
-    types: [released]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  code-coverage:
 
     runs-on: ubuntu-latest
 
@@ -30,10 +32,7 @@ jobs:
     - name: Testing    
       run: npm run test
 
-    - name: Publish
-      run: |
-        npm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-        npm publish --ignore-scripts
-      env:
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
+    - name: Code Coverage
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_KEY }}
