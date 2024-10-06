@@ -20,6 +20,10 @@ Ecto is a modern template consolidation engine that enables the best template en
 * [Only the Top Template Engines](#only-the-top-template-engines-and-their-extensions): EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars.
 * Maintained with Monthly Updates! 
 
+## ESM and Node Version Support
+
+This package is ESM only and tested on the current lts version and its previous. Please don't open issues for questions regarding CommonJS / ESM or previous Nodejs versions. To learn more about using ESM please read this from `sindresorhus`: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
 -----
 
 ## Getting Started
