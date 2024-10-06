@@ -3,12 +3,11 @@
   "version": "4.1.0",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
   "type": "module",
-  "main": "./dist/ecto.cjs",
+  "main": "./dist/ecto.js",
   "module": "./dist/ecto.js",
   "types": "./dist/ecto.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/ecto.cjs",
       "import": "./dist/ecto.js"
     }
   },
@@ -22,7 +21,7 @@
     "watch": "tsc -w -p .",
     "clean": "rimraf ./dist yarn.lock package-lock.json pnpm-lock.yaml ./coverage ./node_modules ./site/readme.md ./dist-site",
     "test": "xo --fix && vitest run --coverage",
-    "compile": "rimraf ./dist && tsup src/ecto.ts --format cjs,esm --dts --clean",
+    "compile": "rimraf ./dist && tsup src/ecto.ts --format esm --dts --clean",
     "build": "rimraf ./dist && npm run compile",
     "prepare": "rimraf ./dist && npm run compile",
     "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
@@ -49,13 +48,13 @@
     "liquidjs"
   ],
   "dependencies": {
-    "@jaredwray/fumanchu": "^2.0.0",
+    "@jaredwray/fumanchu": "^2.1.0",
     "ejs": "^3.1.10",
     "liquidjs": "^10.17.0",
     "nunjucks": "^3.2.4",
     "pug": "^3.0.3",
     "underscore": "^1.13.7",
-    "writr": "^4.1.0"
+    "writr": "^4.1.1"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
