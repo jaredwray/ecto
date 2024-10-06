@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument */
 import fs from 'node:fs';
 import * as _ from 'underscore';
-import fumanchu from '@jaredwray/fumanchu';
+import fumanchu, {handlebarHelpers} from '@jaredwray/fumanchu';
 import {BaseEngine} from '../base-engine.js';
 import type {EngineInterface} from '../engine-interface.js';
 
@@ -19,6 +19,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 	}
 
 	async render(source: string, data?: Record<string, unknown>): Promise<string> {
+		handlebarHelpers({handlebars: fumanchu});
 		// Register partials
 		if (this.rootTemplatePath) {
 			this.initPartials();
@@ -33,6 +34,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 	}
 
 	renderSync(source: string, data?: Record<string, unknown>): string {
+		handlebarHelpers({handlebars: fumanchu});
 		// Register partials
 		if (this.rootTemplatePath) {
 			this.initPartials();
