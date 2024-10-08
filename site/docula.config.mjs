@@ -1,15 +1,15 @@
-const path = require('node:path');
-const process = require('node:process');
-const fs = require('node:fs');
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
 
-module.exports.options = {
+export const options = {
 	githubPath: 'jaredwray/ecto',
 	siteTitle: 'Ecto',
 	siteDescription: 'Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Mustache, and Handlebars',
 	siteUrl: 'https://ecto.org',
 };
 
-module.exports.onPrepare = async config => {
+export const onPrepare = async config => {
 	const readmePath = path.join(process.cwd(), './README.md');
 	const readmeSitePath = path.join(config.sitePath, 'README.md');
 	const readme = await fs.promises.readFile(readmePath, 'utf8');
