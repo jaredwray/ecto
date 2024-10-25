@@ -602,6 +602,8 @@ The double curly brace delimiters `{{ }}` denote output, and the curly brace per
 Ecto has added in some helper functions for frontmatter in markdown files. Frontmatter is metadata that is at the top of a markdown file. It is used to store information about the file such as the author, date, tags, and license.
 
 * `.hasFrontMatter(source: string): boolean` - This function checks if the markdown file has frontmatter. It takes in a string and returns a boolean value.
+* `.getFrontMatter(source: string): object` - This function gets the frontmatter from the markdown file. It takes in a string and returns an object.
+* `.removeFrontMatter(source: string): string` - This function removes the frontmatter from the markdown file. It takes in a string and returns a string.
 
 # License
 

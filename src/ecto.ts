@@ -304,8 +304,8 @@ export class Ecto {
 
 	/**
 	 * Checks if the source has front matter
-	 * @param source 
-	 * @returns 
+	 * @param {string} source
+	 * @returns {boolean}
 	 */
 	public hasFrontMatter(source: string): boolean {
 		const writr = new Writr(source);
@@ -314,6 +314,26 @@ export class Ecto {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the Front Matter from the source
+	 * @param {string} source
+	 * @returns {Record<string, unknown>}
+	 */
+	public getFrontMatter(source: string): Record<string, unknown> {
+		const writr = new Writr(source);
+		return writr.frontMatter;
+	}
+
+	/**
+	 * Remove the Front Matter from the source
+	 * @param {string} source
+	 * @returns {string}
+	 */
+	public removeFrontMatter(source: string): string {
+		const writr = new Writr(source);
+		return writr.body;
 	}
 
 	private async writeFile(filePath?: string, source?: string) {
