@@ -485,30 +485,6 @@ This will return the string “handlebars”, which is the corresponding engine 
 
 Gaining an understanding of this class will provide you with more options and possibilities when using Ecto.
 
-## How to Contribute
-
-This is an open-source project under MIT License. If you would like to get involved and contribute to this project, simply follow these steps:
-
-1. Create a fork of this project, this will act as your copy of a GitHub repository allowing you to make changes to code without affecting the original project.
-2. Clone this fork to create a local repository.
-3. Make the desired changes to your copy of the project, commit, and push those changes when ready.
-4. Finally, create a pull request to suggest your changes to the original project.
-
-### Pull Requests
-
-Pull requests are used in open-source projects or in some corporate workflows to manage changes from contributors and to initiate code review before such changes are merged.
-
-By creating a pull request, you tell others about the changes you've pushed to your fork of a GitHub repository, so that the maintainers of the original repository can review your changes, discuss them, and integrate them into the base branch.
-
-## How to Submit an Issue
-
-Issues can be used to keep track of bugs, enhancements, or other requests. Issues can be created based on code from pull requests, comments, or created from the main repository page. 
-
-1. Navigate to the [main page for this repository.](https://github.com/jaredwray/ecto)
-2. Under the repository name, jaredwray/ecto, click the "Issues" tab.
-3. Click New Issue.
-4. Enter the title and description for your issue, and click "Submit new issue".
-
 ## The Template Engines we support
 
 ### What is a Template Engine?
@@ -604,6 +580,10 @@ Ecto has added in some helper functions for frontmatter in markdown files. Front
 * `.hasFrontMatter(source: string): boolean` - This function checks if the markdown file has frontmatter. It takes in a string and returns a boolean value.
 * `.getFrontMatter(source: string): object` - This function gets the frontmatter from the markdown file. It takes in a string and returns an object.
 * `.removeFrontMatter(source: string): string` - This function removes the frontmatter from the markdown file. It takes in a string and returns a string.
+
+# How to Contribute
+
+To contribute please ready our [CONTRIBUTING.md](CONTRIBUTING.md) guide. Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 # License
 
