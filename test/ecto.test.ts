@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import {expect, it, test} from 'vitest';
+import {expect, it} from 'vitest';
 import {Ecto} from '../src/ecto.js';
 
 const engines: string[] = ['ejs', 'markdown', 'pug', 'nunjucks', 'mustache', 'handlebars', 'liquid'];
