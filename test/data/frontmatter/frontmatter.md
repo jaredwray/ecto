@@ -2,16 +2,16 @@
 title: "Project Title"
 description: "A brief description of the project."
 author: 
-	- name: "Author One"
-		email: "author.one@example.com"
-	- name: "Author Two"
-		email: "author.two@example.com"
+ - name: "Author One"
+   email: "author.one@example.com"
+ - name: "Author Two"
+   email: "author.two@example.com"
 date: "2023-10-01"
 version: "1.0.0"
 tags: 
-	- project
-	- documentation
-	- example
+ - project
+ - documentation
+ - example
 license: "MIT"
 ---
 

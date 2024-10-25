@@ -15,4 +15,19 @@ describe('Ecto FrontMatter', async () => {
 		const ecto = new Ecto();
 		expect(ecto.hasFrontMatter(noFrontMatterDocument)).toBe(false);
 	});
+
+	test('should get the front matter', async () => {
+		const ecto = new Ecto();
+		const frontMatter = ecto.getFrontMatter(frontMatterDocument);
+		expect(frontMatter?.date).toEqual('2023-10-01');
+		expect(frontMatter?.title).toEqual('Project Title');
+		expect(frontMatter?.tags).toEqual(['project', 'documentation', 'example']);
+	});
+
+	test('should remove the front matter', async () => {
+		const ecto = new Ecto();
+		const content = ecto.removeFrontMatter(frontMatterDocument);
+		console.log(content);
+		expect(ecto.hasFrontMatter(content)).toBe(false);
+	});
 });
