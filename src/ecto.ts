@@ -48,10 +48,17 @@ export class Ecto {
 		}
 	}
 
+	/**
+	 * Get the default engine
+	 */
 	get defaultEngine(): string {
 		return this.__defaultEngine;
 	}
 
+	/**
+	 * Set the default engine
+	 * @param {string} value the engine name such as 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
+	 */
 	set defaultEngine(value: string) {
 		value = value.toLowerCase().trim();
 		if (this.isValidEngine(value)) {
@@ -59,36 +66,71 @@ export class Ecto {
 		}
 	}
 
+	/**
+	 * Get the Engine Mappings. This is used to map file extensions to engines
+	 * @returns {EngineMap}
+	 */
 	get mappings(): EngineMap {
 		return this.__mapping;
 	}
 
-	// Engines
+	/**
+	 * Get the EJS Engine
+	 * @returns {EJS}
+	 */
 	get ejs(): EJS {
 		return this.__ejs;
 	}
 
+	/**
+	 * Get the Markdown Engine
+	 * @returns {Markdown}
+	 */
 	get markdown(): Markdown {
 		return this.__markdown;
 	}
 
+	/**
+	 * Get the Pug Engine
+	 * @returns {Pug}
+	 */
 	get pug(): Pug {
 		return this.__pug;
 	}
 
+	/**
+	 * Get the Nunjucks Engine
+	 * @returns {Nunjucks}
+	 */
 	get nunjucks(): Nunjucks {
 		return this.__nunjucks;
 	}
 
+	/**
+	 * Get the Handlebars Engine
+	 * @returns {Handlebars}
+	 */
 	get handlebars(): Handlebars {
 		return this.__handlebars;
 	}
 
+	/**
+	 * Get the Liquid Engine
+	 * @returns {Liquid}
+	 */
 	get liquid(): Liquid {
 		return this.__liquid;
 	}
 
-	// String Render
+	/**
+	 * Async render the source with the data
+	 * @param {string} source - The source to render
+	 * @param {Record<string, unknown} data - data to render with the source
+	 * @param {string} [engineName] - The engine to use for rendering
+	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
+	 * @param {string} [filePathOutput] - The file path to write the output
+	 * @returns {Promise<string>} 
+	 */
 	// eslint-disable-next-line max-params
 	async render(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): Promise<string> {
 		let result = '';
@@ -114,7 +156,15 @@ export class Ecto {
 		return result;
 	}
 
-	// Render Sync
+	/**
+	 * Synchronously render the source with the data
+	 * @param {string} source - The source to render
+	 * @param {Record<string, unknown} data - data to render with the source
+	 * @param {string} [engineName] - The engine to use for rendering
+	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
+	 * @param {string} [filePathOutput] - The file path to write the output
+	 * @returns {string}
+	 */
 	// eslint-disable-next-line max-params
 	renderSync(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): string {
 		let result = '';
@@ -140,7 +190,15 @@ export class Ecto {
 		return result;
 	}
 
-	// Render from File
+	/**
+	 * Render from a file path
+	 * @param {string} filePath - The file path to the source
+	 * @param {Record<string, unknown>} data - The data to render with the source
+	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
+	 * @param {string} [filePathOutput] - The file path to write the output
+	 * @param {string} [engineName] - The engine to use for rendering
+	 * @returns 
+	 */
 	// eslint-disable-next-line max-params
 	async renderFromFile(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): Promise<string> {
 		let result = '';
@@ -156,7 +214,15 @@ export class Ecto {
 		return result;
 	}
 
-	// Render from File Sync
+	/**
+	 * Sync render from a file path
+	 * @param {string} filePath - The file path to the source
+	 * @param {Record<string, unknown>} data - The data to render with the source
+	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
+	 * @param {string} [filePathOutput] - The file path to write the output
+	 * @param {string} [engineName] - The engine to use for rendering
+	 * @returns {string}
+	 */
 	// eslint-disable-next-line max-params
 	renderFromFileSync(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): string {
 		let result = '';
@@ -172,6 +238,11 @@ export class Ecto {
 		return result;
 	}
 
+	/**
+	 * Ensure the file path exists or create it
+	 * @param {string} path 
+	 * @returns {Promise<void>}
+	 */
 	async ensureFilePath(path: string) {
 		const pathList = path.split('/');
 		pathList.pop();
@@ -183,6 +254,11 @@ export class Ecto {
 		}
 	}
 
+	/**
+	 * Ensure the file path exists or create it synchronously
+	 * @param {string} path 
+	 * @returns {void}
+	 */
 	ensureFilePathSync(path: string) {
 		const pathList = path.split('/');
 		pathList.pop();
@@ -194,6 +270,11 @@ export class Ecto {
 		}
 	}
 
+	/**
+	 * Get the Engine By File Path
+	 * @param {string} filePath
+	 * @returns {string} - will return the engine name such as 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
+	 */
 	getEngineByFilePath(filePath: string): string {
 		let result = this.__defaultEngine;
 
@@ -209,6 +290,12 @@ export class Ecto {
 		return result;
 	}
 
+	/**
+	 * Find the template without the extension. This will look in a directory for a file that starts with the template name
+	 * @param {string} path - the path to look for the template file
+	 * @param {string} templateName 
+	 * @returns {Promise<string>} - the path to the template file
+	 */
 	async findTemplateWithoutExtension(path: string, templateName: string): Promise<string> {
 		let result = '';
 
@@ -224,6 +311,12 @@ export class Ecto {
 		return result;
 	}
 
+	/**
+	 * Syncronously find the template without the extension. This will look in a directory for a file that starts with the template name
+	 * @param {string} path - the path to look for the template file
+	 * @param {string} templateName 
+	 * @returns {string} - the path to the template file
+	 */
 	findTemplateWithoutExtensionSync(path: string, templateName: string): string {
 		let result = '';
 
@@ -239,7 +332,11 @@ export class Ecto {
 		return result;
 	}
 
-	// Engines
+	/**
+	 * Is it a valid engine that is registered in ecto
+	 * @param engineName 
+	 * @returns {boolean}
+	 */
 	isValidEngine(engineName?: string): boolean {
 		let result = false;
 
@@ -250,6 +347,10 @@ export class Ecto {
 		return result;
 	}
 
+	/**
+	 * Register the engine mappings
+	 * @returns {void}
+	 */
 	registerEngineMappings(): void {
 		for (const eng of this.__engines) {
 			for (const name of eng.names) {
@@ -258,6 +359,11 @@ export class Ecto {
 		}
 	}
 
+	/**
+	 * Get Render Engine by the engine name. Default is EJS
+	 * @param {string} engineName 
+	 * @returns {EngineInterface}
+	 */
 	getRenderEngine(engineName: string): EngineInterface {
 		let result = this.__ejs; // Setting default
 
