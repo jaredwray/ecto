@@ -1,6 +1,6 @@
 ![Ecto](site/logo.svg "Ecto")
 
-## Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Mustache, and Handlebars
+# Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Mustache, and Handlebars
 
 [![tests](https://github.com/jaredwray/ecto/actions/workflows/tests.yml/badge.svg)](https://github.com/jaredwray/ecto/actions/workflows/tests.yml)
 [![Release Status](https://github.com/jaredwray/ecto/workflows/release/badge.svg)](https://github.com/jaredwray/ecto/actions)
@@ -12,7 +12,30 @@
 
 Ecto is a modern template consolidation engine that enables the best template engines: EJS, Markdown, Pug, Nunjucks, Mustache, Handlebars, and Liquid. It consolidates these template engines to a single library, allowing you to use any of them with ease.
 
-## Features
+# Table of Contents
+* [Features](#features)
+* [ESM and Node Version Support](#esm-and-node-version-support)
+* [Getting Started](#getting-started)
+* [Only the Top Template Engines and Their Extensions](#only-the-top-template-engines-and-their-extensions)
+* [API - Methods and Parameters](#api---methods-and-parameters)
+  * [Render From String](#render-from-string)
+  * [Render From File](#render-from-file)
+  * [Default Engine](#default-engine)
+  * [Engine Mappings](#engine-mappings)
+  * [FrontMatter Helper Functions](#frontmatter-helper-functions)
+* [The Template Engines We Support](#the-template-engines-we-support)
+    * [EJS](#ejs)
+    * [Markdown](#markdown)
+    * [PUG](#pug)
+    * [Nunjucks](#nunjucks)
+    * [Mustache](#mustache)
+    * [Handlebars](#handlebars)
+    * [Liquid](#liquid)
+* [FrontMatter Helper Functions](#frontmatter-helper-functions)
+* [How to Contribute](#how-to-contribute)
+* [License](#license)
+
+# Features
 
 * Zero Config by default but all properties exposed for flexibility. Check out our easy [API.](#api)
 * Async `render` and `renderFromFile` functions for ES6 and Typescript. 
@@ -21,11 +44,11 @@ Ecto is a modern template consolidation engine that enables the best template en
 * FrontMatter Helpers `.hasFrontMatter`, `.getFrontMatter`, and `.removeFrontMatter` for Markdown files.
 * Maintained with Monthly Updates! 
 
-## ESM and Node Version Support
+# ESM and Node Version Support
 
 This package is ESM only and tested on the current lts version and its previous. Please don't open issues for questions regarding CommonJS / ESM or previous Nodejs versions. To learn more about using ESM please read this from `sindresorhus`: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 
-## Getting Started
+# Getting Started
 
 The [Node.js package manager documentation](https://nodejs.org/en/download/package-manager/) provides the commands needed to complete the install on Windows and other operating systems.
 
@@ -82,23 +105,7 @@ let data = { firstName: "John", lastName: "Doe"};
 await ecto.renderFromFile("./path/to/template.ejs", data); // returns <h1>Hello John Doe!</h1>
 ```
 
-Next Steps:
-* [More examples on Render from String](#render-from-string)
-* [More examples on Render from File](#render-from-file)
-* [Examples on setting the Default Engine](#default-engine)
-* [Examples by Specific Engines](#examples-by-specific-engines)
-* [Check out the entire API / Functions](#api)
-* [Learn more about Markdown](#markdown)
-* [Learn more about Handlebars / Mustache and Helpers that we added](#handlebars)
-* [More about the template engines we support](#the-template-engines-we-support)
-* [Learn about the Mappings](#mappings-class)
-* [How to Contribute](#how-to-contribute)
-* [How to Submit an Issue](#how-to-submit-an-issue)
-* [How to use Ecto in Typescript](#using-typescript)
-
------
-
-## Only the Top Template Engines and Their Extensions
+# Only the Top Template Engines and Their Extensions
 
 We focus on the most popular and well-maintained consolidation engines. Unfortunately other engines suffered from packages that were unsupported, making it difficult to validate them as working fully. Some engines also had limited types and lacked ease of use. 
 
@@ -116,9 +123,7 @@ Our goal is to support the top engines, handling the vast majority of use cases.
 
 _The `Extensions` are listed above for when we [Render from File](#render-from-file)._
 
------
-
-## API
+# API - Methods and Parameters
 The API is focused on using the main Ecto class:
 
 ```javascript
@@ -269,7 +274,7 @@ This string parameter can be used to set the default template engine for an inst
 
 `Ecto.defaultEngine` is set by default to EJS.If you would like to change the template engine there are several options available to users when setting the value of `defaultEngine`:
 
-##### Set the engine in the arguments of the Ecto constructor
+## Set the engine in the arguments of the Ecto constructor
 
 One option for setting the default engine, is to do so in the Ecto constructor:
 
@@ -281,7 +286,7 @@ One option for setting the default engine, is to do so in the Ecto constructor:
 - `const ecto = new Ecto({defaultEngine: "handlebars"});`
 - `const ecto = new Ecto({defaultEngine: "liquid"});`
 
-##### Set the default engine as a parameter
+## Set the default engine as a parameter
 
 We can also set the default engine as a parameter, like so:
 
@@ -297,7 +302,7 @@ const ecto = new Ecto({defaultEngine: "liquid"});
 ecto.defaultEngine = "mustache";
 ```
 
-##### Set the engine as a parameter on the render function
+## Set the engine as a parameter on the render function
 
 You can explicitly override the Ecto.defaultEngine parameter in the render function:
 
@@ -308,7 +313,7 @@ const data = {firstName: "John", lastName: "Doe"};
 await ecto.render(source, data, "handlebars"); //returns <h1>Hello John Doe!</h1>
 ```
 
-##### Override the auto selection on renderFromFile
+## Override the auto selection on renderFromFile
 
 The `renderFromFile` function automatically decides on the template engine, based on the file extension in the file path you specify. However, you can also explicitly set the engine you would like to use. Here we set the engine to be Pug.
 
@@ -333,7 +338,7 @@ const ecto = Ecto();
 ecto.Handlebars.engine.SafeString("<div>HTML Content!</div>");
 ```
 
-### Find Template Without Extension - Helper Methods
+## Find Template Without Extension - Helper Methods
 
 We have added in a couple of helper methods to make it easier to find a template without the extension. This is useful when you want to find a template without the extension. For example, if you have a template called `template.ejs` and you want to find it without the extension, you can use the `findTemplateWithoutExtension` for async or `findTemplateWithoutExtensionSync` function. This function takes two parameters:
 
@@ -349,25 +354,7 @@ const templateFilePath = ecto.findTemplateWithoutExtensionSync("./path/to/", "in
 
 This will return the full path of the template based on what extension is there such as `./path/to/index.ejs`.
 
-### Using Typescript
-Typescript is the language Ecto is already written in and while many of these examples are in `javascript` they should be compatible with `typescript`. To use Ecto just do an import:
-```javascript
-import { Ecto } from "ecto";
-```
-
-and then simply call it like you do with standard javascript:
-```javascript
-const ecto = Ecto();
-const source = "# markdown rulezz!";
-const output = await ecto.render(source, undefined, "markdown");
-console.log(output) //should be <h1 id="markdown-rulezz">markdown rulezz!</h1>
-```
-_NOTE: this example would be in an `async` function._
-
-
-### Examples By Specific Engines
-
-#### Markdown
+# Markdown Example
 
 Markdown does not contain complexities such as data objects, or partials and layouts. To render markdown its as simple as:
 
@@ -385,7 +372,7 @@ await ecto.renderByFile("/path/to/file.md");
 
 We are using [Writr](https://writr.org/) which is remark with all the plugins and features you need.
 
-#### Handlebars
+# Handlebars Example
 
 In Ecto we use the [Fumanchu](https://www.npmjs.com/package/@jaredwray/fumanchu) engine to render `mustache` and `handlebars` related templates. This is because handlebars is based on mustache with just more additional features. Fumanchu includes handlebar engine with helpers.
 
@@ -398,11 +385,8 @@ ecto.render(source, undefined, "handlebars").then((output) => {
 });
 ```
 
-------
 
-
-
-## Mappings Class
+# Engine Mappings
 
 Ecto contains a mapping class containing all of the engines registered in the system. The class has been designed to allow users to edit existing engine mappings. Let us explore this class in detail.
 
@@ -414,7 +398,7 @@ The `Map` object has the following structure: `Map<string, Array<string>> `
 
 From here you can start setting and editing engine mappings.
 
-### Setting an engine mapping - set(name:string, extensions:Array&lt;string>): void
+## Setting an engine mapping - set(name:string, extensions:Array&lt;string>): void
 
 To set an engine mapping with extensions simply write:
 
@@ -430,7 +414,7 @@ This sets the handlebars engine to accept files with the following file extensio
 *   .hbs
 *   .hjs
 
-### Delete an engine mapping - delete(name:string): void
+## Delete an engine mapping - delete(name:string): void
 
 To delete a mapping entirely you can use the `delete` method.
 
@@ -440,7 +424,7 @@ mappings.delete("handlebars");
 
 This will remove this engine mapping entirely.
 
-### Delete an extension - deleteExtension(name:string, extension:string): void
+## Delete an extension - deleteExtension(name:string, extension:string): void
 
 To delete an extension for a particular engine mapping, you can use the `deleteExtension` method. This method takes two arguments:
 
@@ -449,17 +433,15 @@ To delete an extension for a particular engine mapping, you can use the `deleteE
 
 The following code deletes two of the extensions for our `handlebars` engine mapping. 
 
-
 ```
 mappings.deleteExtension("handlebars", "hbs","hjs");
 ```
-
 
 After executing this code the only accepted file extension for the Handlebars engine will be `handlebars`.
 
 Other useful methods include `get` and `getName`.
 
-### get method - get(name:string): Array&lt;string> | undefined
+## get method - get(name:string): Array&lt;string> | undefined
 
 The `get` method takes one argument, `name:string `, and will return the extensions for the name you specify. If extensions are found, they are returned as an `Array<string>`. If no engine mapping can be found for the name you specify, ` undefined` is returned. To use the `get` method simply write: 
 
@@ -471,27 +453,23 @@ mappings.get("handlebars")
 
 This will retrieve the array of extensions assigned to the Handlebars engine.
 
-### getName method - getName(extension:string): string | undefined
+## getName method - getName(extension:string): string | undefined
 
 The `getName` method takes a single argument, `extension:string`. If a valid extension is given, this method will return the name of the engine mapping that the extension belongs to. For example:
-
 
 ```
 mappings.getName("hjs")
 ```
 
-
 This will return the string “handlebars”, which is the corresponding engine for this extension. If no match can be found, this method will return `undefined`.
 
 Gaining an understanding of this class will provide you with more options and possibilities when using Ecto.
 
-## The Template Engines we support
-
-### What is a Template Engine?
+# The Template Engines We Support
 
 A template engine is a tool that allows developers to write HTML markup that contains the template engine’s defined tags and syntax. These tags are used to insert variables into the final output of the template, or run some programming logic at run-time before sending the final HTML to the browser for display.
 
-### EJS
+## EJS
 
 EJS stands for Embedded JavaScript. It is a templating engine that allows users to generate HTML using plain JavaScript.
 
@@ -499,7 +477,7 @@ You define HTML pages in the EJS syntax and specify where various data will be s
 
 It is a tool for generating web pages that can include dynamic data and can share templated pieces with other web pages. It is not a front-end framework. While EJS can be used by client-side Javascript to generate HTML on the client-side, it is typically used by your back-end to generate web pages in response to some URL request. EJS is not a client-side framework like Angular or React.
 
-### Markdown
+## Markdown
 
 Markdown is a lightweight markup language that you can use to add formatting elements to plaintext text documents. Markdown is now one of the world’s most popular markup languages.
 
@@ -513,7 +491,7 @@ There are several reasons why people might choose Markdown instead of standard t
 *   Markdown is future proof. Even if the application you’re using stops working at some point in the future, you’ll still be able to read your Markdown-formatted text using a text editing application.
 *   Markdown is widely supported. Websites like Reddit and GitHub support Markdown, along with many other desktop and web-based applications.
 
-### PUG
+## PUG
 
 Pug.js is an HTML templating engine that takes simple Pug code, which the Pug compiler will compile into HTML code that browsers can understand. Some features and advantages of the Pug template engine are as follows:
 
@@ -521,7 +499,7 @@ Pug.js is an HTML templating engine that takes simple Pug code, which the Pug co
 *   Pug supports JavaScript natively.
 *   Pug is excellent for handling dynamic, changing data. Imagine we have an email template, with certain fields to be customized depending on who you are sending the email to. Before sending the email we can compile the Pug code to HTML, using the user data to fill the gaps where the dynamic information should go. 
 
-### Nunjucks
+## Nunjucks
 
 Nunjucks is a rich and powerful template engine for JavaScript. Nunjucks is developed by Mozilla and maintained by the Node JS Foundation. Nunjucks can be used in both Node and the browser.
 
@@ -534,7 +512,7 @@ Some of the advantages of using Nunjucks for your project are:
 *   Easily extensible with custom filters and extensions.
 *   Available in Node and all modern web browsers, along with precompilation options.
 
-### Mustache
+## Mustache
 
 Mustache is a logic-less template syntax. It can be used for HTML, config files, source code, and more. It is often referred to as “logic-less” as there are no if statements, else clauses, or for loops. There are only tags. Tags are replaced with actual values at runtime.
 
@@ -551,7 +529,7 @@ We see two braces around `{{ name }}`. This is Mustache syntax to show that it i
 
 Mustache is not actually a templating engine. Mustache is a specification for a templating language. In general, we would write templates according to the Mustache specification, and they can then be compiled by a templating engine to be rendered, eventually creating an output.
 
-### Handlebars
+## Handlebars
 
 Handlebars is a simple templating language. It uses a template and an input object to generate HTML or other text formats. Handlebars templates look like regular text with embedded Handlebars expressions. Handlebars expressions are wrapped in double curly braces, like this: `{{expression}}`. We use `@jaredwray/fumanchu` as it contains handbars and helpers.
 
@@ -563,7 +541,7 @@ const source = "{{year}}";
 await ecto.render(source, undefined, "handlebars"); //returns current year as a number
 ```
 
-#### Liquid
+## Liquid
 
 Some refer to Liquid as a template language, while others may call it a template engine. It doesn't really matter which label you apply, in many ways both are right. It has a syntax (like traditional programming languages), has concepts such as output, logic, and loops, and it interacts with variables and data, just as you would with a language such as PHP.
 
