@@ -302,6 +302,11 @@ export class Ecto {
 		return result;
 	}
 
+	/**
+	 * Checks if the source has front matter
+	 * @param source 
+	 * @returns 
+	 */
 	public hasFrontMatter(source: string): boolean {
 		const writr = new Writr(source);
 		if (writr.frontMatterRaw !== '') {
