@@ -18,6 +18,7 @@ Ecto is a modern template consolidation engine that enables the best template en
 * Async `render` and `renderFromFile` functions for ES6 and Typescript. 
 * [Render via Template File](#render-from-file) with Automatic Engine Selection. No more selecting which engine to use, engine choice is automatically decided based on the file extension.
 * [Only the Top Template Engines](#only-the-top-template-engines-and-their-extensions): EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars.
+* FrontMatter Helpers `.hasFrontMatter`, `.getFrontMatter`, and `.removeFrontMatter` for Markdown files.
 * Maintained with Monthly Updates! 
 
 ## ESM and Node Version Support
@@ -595,6 +596,12 @@ Liquid, like the previous template engines, creates a bridge between an HTML fil
 Liquid files have the extension of `.liquid`. A liquid file is a mix of standard HTML code and Liquid constructs. Its clear syntax is easy to distinguish from HTML when working with a Liquid file. This is made even easier thanks to the use of two sets of delimiters.
 
 The double curly brace delimiters `{{ }}` denote output, and the curly brace percentage delimiters `{% %}` denote logic. You'll become very familiar with these as every Liquid construct begins with one, or the other. Another way of thinking of delimiters is as placeholders. A placeholder can be viewed as a piece of code that will ultimately be replaced by data when the compiled file is sent to the browser.
+
+# FrontMatter Helper Functions
+
+Ecto has added in some helper functions for frontmatter in markdown files. Frontmatter is metadata that is at the top of a markdown file. It is used to store information about the file such as the author, date, tags, and license.
+
+* `.hasFrontMatter(source: string): boolean` - This function checks if the markdown file has frontmatter. It takes in a string and returns a boolean value.
 
 # License
 
