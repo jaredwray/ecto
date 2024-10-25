@@ -3,8 +3,8 @@ import {describe, expect, test} from 'vitest';
 import {Ecto} from '../src/ecto.js';
 
 describe('Ecto FrontMatter', async () => {
-	const frontMatterDocument = await fs.promises.readFile('./test/data/frontmatter/frontmatter.md', 'utf8');
-	const noFrontMatterDocument = await fs.promises.readFile('./test/data/frontmatter/no-frontmatter.md', 'utf8');
+	const frontMatterDocument = await fs.promises.readFile('./test/data/markdown/frontmatter.md', 'utf8');
+	const noFrontMatterDocument = await fs.promises.readFile('./test/data/markdown/no-frontmatter.md', 'utf8');
 
 	test('should return true with frontMatter', async () => {
 		const ecto = new Ecto();
