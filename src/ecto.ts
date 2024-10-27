@@ -129,7 +129,7 @@ export class Ecto {
 	 * @param {string} [engineName] - The engine to use for rendering
 	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
 	 * @param {string} [filePathOutput] - The file path to write the output
-	 * @returns {Promise<string>} 
+	 * @returns {Promise<string>}
 	 */
 	// eslint-disable-next-line max-params
 	async render(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): Promise<string> {
@@ -197,7 +197,7 @@ export class Ecto {
 	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
 	 * @param {string} [filePathOutput] - The file path to write the output
 	 * @param {string} [engineName] - The engine to use for rendering
-	 * @returns 
+	 * @returns
 	 */
 	// eslint-disable-next-line max-params
 	async renderFromFile(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): Promise<string> {
@@ -240,7 +240,7 @@ export class Ecto {
 
 	/**
 	 * Ensure the file path exists or create it
-	 * @param {string} path 
+	 * @param {string} path
 	 * @returns {Promise<void>}
 	 */
 	async ensureFilePath(path: string) {
@@ -256,7 +256,7 @@ export class Ecto {
 
 	/**
 	 * Ensure the file path exists or create it synchronously
-	 * @param {string} path 
+	 * @param {string} path
 	 * @returns {void}
 	 */
 	ensureFilePathSync(path: string) {
@@ -293,7 +293,7 @@ export class Ecto {
 	/**
 	 * Find the template without the extension. This will look in a directory for a file that starts with the template name
 	 * @param {string} path - the path to look for the template file
-	 * @param {string} templateName 
+	 * @param {string} templateName
 	 * @returns {Promise<string>} - the path to the template file
 	 */
 	async findTemplateWithoutExtension(path: string, templateName: string): Promise<string> {
@@ -314,7 +314,7 @@ export class Ecto {
 	/**
 	 * Syncronously find the template without the extension. This will look in a directory for a file that starts with the template name
 	 * @param {string} path - the path to look for the template file
-	 * @param {string} templateName 
+	 * @param {string} templateName
 	 * @returns {string} - the path to the template file
 	 */
 	findTemplateWithoutExtensionSync(path: string, templateName: string): string {
@@ -334,7 +334,7 @@ export class Ecto {
 
 	/**
 	 * Is it a valid engine that is registered in ecto
-	 * @param engineName 
+	 * @param engineName
 	 * @returns {boolean}
 	 */
 	isValidEngine(engineName?: string): boolean {
@@ -361,7 +361,7 @@ export class Ecto {
 
 	/**
 	 * Get Render Engine by the engine name. Default is EJS
-	 * @param {string} engineName 
+	 * @param {string} engineName
 	 * @returns {EngineInterface}
 	 */
 	getRenderEngine(engineName: string): EngineInterface {
