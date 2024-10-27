@@ -27,7 +27,6 @@ describe('Ecto FrontMatter', async () => {
 	test('should remove the front matter', async () => {
 		const ecto = new Ecto();
 		const content = ecto.removeFrontMatter(frontMatterDocument);
-		console.log(content);
 		expect(ecto.hasFrontMatter(content)).toBe(false);
 	});
 });
