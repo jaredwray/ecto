@@ -22,13 +22,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install Dependencies
-      run: npm install
+      run: npm install -g pnpm && pnpm install
 
-    - name: Compile    
-      run: npm run compile
+    - name: Build    
+      run: pnpm build
 
     - name: Testing    
-      run: npm run test
+      run: pnpm test
 
     - name: Publish
       run: |
