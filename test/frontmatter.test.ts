@@ -29,4 +29,15 @@ describe('Ecto FrontMatter', async () => {
 		const content = ecto.removeFrontMatter(frontMatterDocument);
 		expect(ecto.hasFrontMatter(content)).toBe(false);
 	});
+
+	test('should add front matter', async () => {
+		const ecto = new Ecto();
+		const frontMatter = {
+			title: 'Project Title',
+			date: '2023-10-01',
+			tags: ['project', 'documentation', 'example'],
+		};
+		const content = ecto.setFrontMatter(noFrontMatterDocument, frontMatter);
+		expect(ecto.hasFrontMatter(content)).toBe(true);
+	});
 });

@@ -433,6 +433,18 @@ export class Ecto {
 	}
 
 	/**
+	 * Will set the front matter in the source and return the source
+	 * @param {string} source - The source to set the front matter
+	 * @param {Record<string, unknown>} data - The front matter data
+	 * @returns {string} - The source with the front matter
+	 */
+	public setFrontMatter(source: string, data: Record<string, unknown>): string {
+		const writr = new Writr(source);
+		writr.frontMatter = data;
+		return writr.content;
+	}
+
+	/**
 	 * Remove the Front Matter from the source
 	 * @param {string} source
 	 * @returns {string}
