@@ -53,12 +53,14 @@ describe('Ecto FrontMatter', async () => {
 
 		const updatedFrontMatter = {
 			title: 'Updated Project Title',
-			date: '2023-10-01',
-			tags: ['project', 'documentation', 'example'],
+			date: '2023-10-02',
+			tags: ['project', 'documentation'],
 		};
 
 		const updatedContent = ecto.setFrontMatter(content, updatedFrontMatter);
 		const updatedFrontMatterContent = ecto.getFrontMatter(updatedContent);
 		expect(updatedFrontMatterContent?.title).toEqual('Updated Project Title');
+		expect(updatedFrontMatterContent?.date).toEqual('2023-10-02');
+		expect(updatedFrontMatterContent?.tags).toEqual(['project', 'documentation']);
 	});
 });
