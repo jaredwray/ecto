@@ -29,4 +29,38 @@ describe('Ecto FrontMatter', async () => {
 		const content = ecto.removeFrontMatter(frontMatterDocument);
 		expect(ecto.hasFrontMatter(content)).toBe(false);
 	});
+
+	test('should add front matter', async () => {
+		const ecto = new Ecto();
+		const frontMatter = {
+			title: 'Project Title',
+			date: '2023-10-01',
+			tags: ['project', 'documentation', 'example'],
+		};
+		const content = ecto.setFrontMatter(noFrontMatterDocument, frontMatter);
+		expect(ecto.hasFrontMatter(content)).toBe(true);
+	});
+
+	test('should add / update front matter with already existing', async () => {
+		const ecto = new Ecto();
+		const frontMatter = {
+			title: 'Project Title',
+			date: '2023-10-01',
+			tags: ['project', 'documentation', 'example'],
+		};
+		const content = ecto.setFrontMatter('', frontMatter);
+		expect(ecto.hasFrontMatter(content)).toBe(true);
+
+		const updatedFrontMatter = {
+			title: 'Updated Project Title',
+			date: '2023-10-02',
+			tags: ['project', 'documentation'],
+		};
+
+		const updatedContent = ecto.setFrontMatter(content, updatedFrontMatter);
+		const updatedFrontMatterContent = ecto.getFrontMatter(updatedContent);
+		expect(updatedFrontMatterContent?.title).toEqual('Updated Project Title');
+		expect(updatedFrontMatterContent?.date).toEqual('2023-10-02');
+		expect(updatedFrontMatterContent?.tags).toEqual(['project', 'documentation']);
+	});
 });

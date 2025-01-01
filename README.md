@@ -557,6 +557,7 @@ Ecto has added in some helper functions for frontmatter in markdown files. Front
 
 * `.hasFrontMatter(source: string): boolean` - This function checks if the markdown file has frontmatter. It takes in a string and returns a boolean value.
 * `.getFrontMatter(source: string): object` - This function gets the frontmatter from the markdown file. It takes in a string and returns an object.
+* `setFrontMatter(source:string, data: Record<string, unknown>)` - This function sets the front matter even if it already exists and returns the full source with the new front matter. 
 * `.removeFrontMatter(source: string): string` - This function removes the frontmatter from the markdown file. It takes in a string and returns a string.
 
 # How to Contribute
