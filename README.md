@@ -131,13 +131,22 @@ const ecto = new Ecto();
 //ecto.<API> -- functions and parameters
 ```
 
+There are a couple of options that can be passed to the Ecto constructor:
+
+| Name             | Type   | Description                                                  |
+| ---------------- | ------ | ------------------------------------------------------------ |
+| defaultEngine    | string | This is the default engine to use if it is not set when doing rendering                   |
+| engineOptions    | Record<stirng, Record<string, unknown>> | The options for each engin that you can set initially.                        |
+
+here is an example of setting the default engine and also options for `nunjucks`:
+
+```javascript
+const ecto = new Ecto({defaultEngine: "nunjucks", engineOptions: {nunjucks: {autoescape: true}});
+```
+
 When looking at the API there are two main methods to make note of:
 [render](#render-from-string) (async) - Render from a string.
 [renderFromFile](#render-from-file) (async) - Renders from a file path and will auto-select what engine to use based on the file extension. It will return a `Promise<string>` of the rendered output.
-
-Two key parameters to know are:
-defaultEngine:string - the [default engine](#default-engine) to use and set by default to ejs.
-mappings:EngineMap - [Mapping class](#mappings) of all the engines registered in the system.
 
 ## Render From String
 
