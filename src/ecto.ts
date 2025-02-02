@@ -10,6 +10,30 @@ import {Liquid} from './engines/liquid.js';
 import {type BaseEngine} from './base-engine.js';
 import type {EngineInterface} from './engine-interface.js';
 
+export type EctoOptions = {
+	/**
+	 * The default engine to use. This can be 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
+	 * @default 'ejs'
+	 * @type {string}
+	 */
+	defaultEngine?: string;
+	/**
+	 * The engine options to pass to each engine
+	 * @type {Record<string, Record<string, unknown>>}
+	 * @default {}
+	 * @example
+	 * {
+	 * 	nunjucks: {
+	 * 		autoescape: true
+	 * 	},
+	 * 	markdown: {
+	 * 		html: true
+	 * 	}
+	 * }
+	 */
+	engineOptions?: Record<string, Record<string, unknown>>;
+};
+
 export class Ecto {
 	private readonly __mapping: EngineMap = new EngineMap();
 	private readonly __engines: BaseEngine[] = new Array<BaseEngine>();
@@ -24,17 +48,14 @@ export class Ecto {
 	private readonly __handlebars: Handlebars;
 	private readonly __liquid: Liquid;
 
-	constructor(options?: Record<string, unknown>) {
-		const engineOptions = {...options};
-		delete engineOptions.defaultEngine;
-
+	constructor(options?: EctoOptions) {
 		// Engines
-		this.__ejs = new EJS(engineOptions);
-		this.__markdown = new Markdown(engineOptions);
-		this.__pug = new Pug(engineOptions);
-		this.__nunjucks = new Nunjucks(engineOptions);
-		this.__handlebars = new Handlebars(engineOptions);
-		this.__liquid = new Liquid(engineOptions);
+		this.__ejs = new EJS(options?.engineOptions?.ejs);
+		this.__markdown = new Markdown(options?.engineOptions?.markdown);
+		this.__pug = new Pug(options?.engineOptions?.pug);
+		this.__nunjucks = new Nunjucks(options?.engineOptions?.nunjucks);
+		this.__handlebars = new Handlebars(options?.engineOptions?.handlebars);
+		this.__liquid = new Liquid(options?.engineOptions?.liquid);
 
 		// Register engines
 		this.__engines.push(this.__ejs, this.__markdown, this.__pug, this.__nunjucks, this.__handlebars, this.__liquid);
@@ -43,8 +64,8 @@ export class Ecto {
 		this.registerEngineMappings();
 
 		// Set the options
-		if (options !== undefined && this.isValidEngine(options.defaultEngine as string)) {
-			this.__defaultEngine = options.defaultEngine as string;
+		if (options !== undefined && this.isValidEngine(options.defaultEngine)) {
+			this.__defaultEngine = options.defaultEngine!;
 		}
 	}
 

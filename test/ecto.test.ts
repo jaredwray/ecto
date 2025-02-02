@@ -267,7 +267,9 @@ it('Find Template without Extension on duplicate Sync', async () => {
 });
 
 it('Render with Configuration via Nunjucks', async () => {
-	const ecto = new Ecto({defaultEngine: 'nunjucks', autoescape: false});
+	const nunjucksOptions = {autoescape: false};
+
+	const ecto = new Ecto({defaultEngine: 'nunjucks', engineOptions: {nunjucks: nunjucksOptions}});
 	const userInput = '<script>alert(\'XSS\')</script>';
 	const source = await ecto.renderFromFile(testRootDirectory + '/nunjucks/example2.njk', {name: userInput});
 
