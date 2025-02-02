@@ -198,7 +198,7 @@ it('write via ejs', async () => {
 
 	expect(fileSource).toBe('<h2>bar</h2>');
 
-	await fs.promises.rmdir(testOutputDirectory, {recursive: true});
+	await fs.promises.rm(testOutputDirectory, {recursive: true});
 });
 
 it('write via ejs with long path', async () => {
@@ -213,7 +213,7 @@ it('write via ejs with long path', async () => {
 
 	expect(fileSource).toBe('<h2>bar</h2>');
 
-	await fs.promises.rmdir(testOutputDirectory, {recursive: true});
+	await fs.promises.rm(testOutputDirectory, {recursive: true});
 });
 
 it('Render from Template - EJS', async () => {
