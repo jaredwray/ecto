@@ -135,8 +135,8 @@ There are a couple of options that can be passed to the Ecto constructor:
 
 | Name             | Type   | Description                                                  |
 | ---------------- | ------ | ------------------------------------------------------------ |
-| defaultEngine    | string | This is the default engine to use if it is not set when doing rendering                   |
-| engineOptions    | Record<stirng, Record<string, unknown>> | The options for each engin that you can set initially.                        |
+| defaultEngine    | string | This is the default engine to use if it is not set when doing rendering |
+| engineOptions    | object | The options for each engin that you can set initially. |
 
 here is an example of setting the default engine and also options for `nunjucks`:
 
