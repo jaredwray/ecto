@@ -12,8 +12,16 @@
 
 Ecto is a modern template consolidation engine that enables the best template engines: EJS, Markdown, Pug, Nunjucks, Mustache, Handlebars, and Liquid. It consolidates these template engines to a single library, allowing you to use any of them with ease.
 
+# Features
+
+* Zero Config by default but all properties exposed for flexibility. Check out our easy [API.](#api)
+* Async `render` and `renderFromFile` functions for ES6 and Typescript. 
+* [Render via Template File](#render-from-file) with Automatic Engine Selection. No more selecting which engine to use, engine choice is automatically decided based on the file extension.
+* [Only the Top Template Engines](#only-the-top-template-engines-and-their-extensions): EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars.
+* FrontMatter Helpers `.hasFrontMatter`, `.getFrontMatter`, and `.removeFrontMatter` for Markdown files.
+* Maintained with Monthly Updates! 
+
 # Table of Contents
-* [Features](#features)
 * [ESM and Node Version Support](#esm-and-node-version-support)
 * [Getting Started](#getting-started)
 * [Only the Top Template Engines and Their Extensions](#only-the-top-template-engines-and-their-extensions)
@@ -34,15 +42,6 @@ Ecto is a modern template consolidation engine that enables the best template en
 * [FrontMatter Helper Functions](#frontmatter-helper-functions)
 * [How to Contribute](#how-to-contribute)
 * [License](#license)
-
-# Features
-
-* Zero Config by default but all properties exposed for flexibility. Check out our easy [API.](#api)
-* Async `render` and `renderFromFile` functions for ES6 and Typescript. 
-* [Render via Template File](#render-from-file) with Automatic Engine Selection. No more selecting which engine to use, engine choice is automatically decided based on the file extension.
-* [Only the Top Template Engines](#only-the-top-template-engines-and-their-extensions): EJS, Markdown, Pug, Nunjucks, Mustache, Liquid, and Handlebars.
-* FrontMatter Helpers `.hasFrontMatter`, `.getFrontMatter`, and `.removeFrontMatter` for Markdown files.
-* Maintained with Monthly Updates! 
 
 # ESM and Node Version Support
 
