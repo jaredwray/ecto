@@ -22,7 +22,6 @@ Ecto is a modern template consolidation engine that enables the best template en
 * Maintained with Monthly Updates! 
 
 # Table of Contents
-* [ESM and Node Version Support](#esm-and-node-version-support)
 * [Getting Started](#getting-started)
 * [Only the Top Template Engines and Their Extensions](#only-the-top-template-engines-and-their-extensions)
 * [API - Methods and Parameters](#api---methods-and-parameters)
@@ -42,10 +41,6 @@ Ecto is a modern template consolidation engine that enables the best template en
 * [FrontMatter Helper Functions](#frontmatter-helper-functions)
 * [How to Contribute](#how-to-contribute)
 * [License](#license)
-
-# ESM and Node Version Support
-
-This package is ESM only and tested on the current lts version and its previous. Please don't open issues for questions regarding CommonJS / ESM or previous Nodejs versions. To learn more about using ESM please read this from `sindresorhus`: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 
 # Getting Started
 
