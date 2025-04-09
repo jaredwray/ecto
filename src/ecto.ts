@@ -71,6 +71,7 @@ export class Ecto {
 
 	/**
 	 * Get the default engine
+	 * @returns {string} - the engine name such as 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
 	 */
 	get defaultEngine(): string {
 		return this.__defaultEngine;
