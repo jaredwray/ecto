@@ -10,7 +10,7 @@ export default defineConfig({
 				'site/**',
 				'test/**',
 				'dist/**',
-				'vitest.config.mjs'
+				'vitest.config.ts',
 			],
 		},
 	},
