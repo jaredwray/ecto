@@ -18,11 +18,10 @@
   "author": "Jared Wray <me@jaredwray.com>",
   "license": "MIT",
   "scripts": {
-    "watch": "tsc -w -p .",
     "clean": "rimraf ./dist yarn.lock package-lock.json pnpm-lock.yaml ./coverage ./node_modules ./site/readme.md ./dist-site",
     "test": "xo --fix && vitest run --coverage",
     "build": "rimraf ./dist && tsup src/ecto.ts --format esm --dts --clean",
-    "prepare": "npm run build",
+    "prepare": "pnpm build",
     "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
     "website:serve": "rimraf ./site/readme.md && npx -y docula serve -s ./site -o ./dist-site"
   },
@@ -70,19 +69,9 @@
     "webpack": "^5.99.5",
     "xo": "^0.60.0"
   },
-  "xo": {
-    "ignores": [
-      "vitest.config.mjs"
-    ]
-  },
   "files": [
     "dist",
     "bin",
     "LISCENSE"
-  ],
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  }
+  ]
 }
