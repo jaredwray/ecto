@@ -48,6 +48,10 @@ export class Ecto {
 	private readonly __handlebars: Handlebars;
 	private readonly __liquid: Liquid;
 
+	/**
+	 * Ecto constructor
+	 * @param {EctoOptions} [options] - The options for the ecto engine
+	 */
 	constructor(options?: EctoOptions) {
 		// Engines
 		this.__ejs = new EJS(options?.engineOptions?.ejs);
