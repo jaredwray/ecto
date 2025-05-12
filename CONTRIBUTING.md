@@ -10,8 +10,8 @@ You can contribute changes to this repo by opening a pull request:
 
 1) After forking this repository to your Git account, make the proposed changes on your forked branch.
 2) Run tests and linting locally.
-	- Run `npm install`.
-	- Run `npm test`.
+	- Run `pnpm install`.
+	- Run `pnpm test`.
 3) Commit your changes and push them to your forked repository.
 4) Navigate to the main `Ecto` repository and select the *Pull Requests* tab.
 5) Click the *New pull request* button, then select the option "Compare across forks"
