@@ -177,7 +177,11 @@ it('render via ejs hello from docs', async () => {
 it('render via handlebars', async () => {
 	const ecto = new Ecto();
 
-	expect(await ecto.render(handlebarsExampleSource, handlebarsExampleData, 'handlebars')).toBe('<p>Hello, my name is Alan O\'Connor. I\'m from Somewhere, TX. I have 2 kids:</p> <ul><li>Jimmy is 12</li><li>Sally is 4</li></ul>');
+	expect(await ecto.render(
+		handlebarsExampleSource,
+		handlebarsExampleData,
+		'handlebars',
+	)).toBe('<p>Hello, my name is Alan O\'Connor. I\'m from Somewhere, TX. I have 2 kids:</p> <ul><li>Jimmy is 12</li><li>Sally is 4</li></ul>');
 });
 
 it('render via handlebars and not define engineName', async () => {

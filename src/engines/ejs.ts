@@ -17,9 +17,9 @@ export class EJS extends BaseEngine implements EngineInterface {
 	}
 
 	async render(source: string, data?: Record<string, unknown>): Promise<string> {
-		this.engine ||= ejs;
+		this.engine ??= ejs;
 
-		this.opts ||= {};
+		this.opts ??= {};
 
 		if (this.rootTemplatePath) {
 			this.opts.root = this.rootTemplatePath;
@@ -29,9 +29,9 @@ export class EJS extends BaseEngine implements EngineInterface {
 	}
 
 	renderSync(source: string, data?: Record<string, unknown>): string {
-		this.engine ||= ejs;
+		this.engine ??= ejs;
 
-		this.opts ||= {};
+		this.opts ??= {};
 
 		if (this.rootTemplatePath) {
 			this.opts.root = this.rootTemplatePath;
