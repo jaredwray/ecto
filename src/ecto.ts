@@ -230,7 +230,7 @@ export class Ecto {
 		let result = '';
 
 		// Select which engine
-		engineName ||= this.getEngineByFilePath(filePath);
+		engineName ??= this.getEngineByFilePath(filePath);
 
 		// Get the source
 		const source = await fs.promises.readFile(filePath, 'utf8');
@@ -254,7 +254,7 @@ export class Ecto {
 		let result = '';
 
 		// Select which engine
-		engineName ||= this.getEngineByFilePath(filePath);
+		engineName ??= this.getEngineByFilePath(filePath);
 
 		// Get the source
 		const source = fs.readFileSync(filePath, 'utf8');
