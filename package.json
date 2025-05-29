@@ -1,6 +1,6 @@
 {
   "name": "ecto",
-  "version": "4.2.3",
+  "version": "4.2.4",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
   "type": "module",
   "main": "./dist/ecto.js",
@@ -61,7 +61,7 @@
     "@types/pug": "^2.0.10",
     "@types/underscore": "^1.13.0",
     "@vitest/coverage-v8": "^3.1.4",
-    "docula": "^0.11.1",
+    "docula": "^0.12.1",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
