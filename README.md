@@ -566,7 +566,7 @@ Ecto has added in some helper functions for frontmatter in markdown files. Front
 
 # Caching on Rendering
 
-Ecto has a built-in caching mechanism that allows you to cache the rendered output of templates. This is useful for improving performance and reducing the number of times a template needs to be rendered. There are currently two caching engines available: `MemoryCache` and `FileCache`.
+Ecto has a built-in caching mechanism that is `disabled by default` that allows you to cache the rendered output of templates. This is useful for improving performance and reducing the number of times a template needs to be rendered. There are currently two caching engines available: `MemoryCache` and `FileCache`.
 * `cache` - This is the default caching engine and it uses in-memory by default but is called `async` so you can use a storage layer such as Redis or PostgreSQL. This is done using `Cacheable` which is a high performance caching library. 
 * `cacheSync` - This is the synchronous version of the `cache` engine and uses `CacheableMemory`. It is useful for when you need to render a template synchronously and cache the output.
 
