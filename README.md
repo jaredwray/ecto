@@ -39,6 +39,7 @@ Ecto is a modern template consolidation engine that enables the best template en
     * [Handlebars](#handlebars)
     * [Liquid](#liquid)
 * [FrontMatter Helper Functions](#frontmatter-helper-functions)
+* [Caching on Rendering](#caching-on-rendering)
 * [How to Contribute](#how-to-contribute)
 * [License](#license)
 
@@ -562,6 +563,50 @@ Ecto has added in some helper functions for frontmatter in markdown files. Front
 * `.getFrontMatter(source: string): object` - This function gets the frontmatter from the markdown file. It takes in a string and returns an object.
 * `setFrontMatter(source:string, data: Record<string, unknown>)` - This function sets the front matter even if it already exists and returns the full source with the new front matter. 
 * `.removeFrontMatter(source: string): string` - This function removes the frontmatter from the markdown file. It takes in a string and returns a string.
+
+# Caching on Rendering
+
+Ecto has a built-in caching mechanism that allows you to cache the rendered output of templates. This is useful for improving performance and reducing the number of times a template needs to be rendered. There are currently two caching engines available: `MemoryCache` and `FileCache`.
+* `cache` - This is the default caching engine and it uses in-memory by default but is called `async` so you can use a storage layer such as Redis or PostgreSQL. This is done using `Cacheable` which is a high performance caching library. 
+* `cacheSync` - This is the synchronous version of the `cache` engine and uses `CacheableMemory`. It is useful for when you need to render a template synchronously and cache the output.
+
+Here is an example of how to use the caching engine with `render`:
+
+```javascript
+import { Ecto } from 'ecto';
+
+const ecto = new Ecto({ cache: true });
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = { firstName: "John", lastName: "Doe" };
+const result = await ecto.render(source, data);
+console.log(result); // <h1>Hello John Doe!</h1>
+```
+
+You can also use the `cacheSync` engine with `renderSync`:
+
+```javascript
+import { Ecto } from 'ecto';
+const ecto = new Ecto({ cacheSync: true });
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = { firstName: "John", lastName: "Doe" };
+const result = ecto.renderSync(source, data);
+console.log(result); // <h1>Hello John Doe!</h1>
+```
+
+If you want to provide your own caching configuration, you can do so by passing `Cacheable` instance to the `Ecto` constructor:
+
+```javascript
+import { Ecto } from 'ecto';
+import { Cacheable } from 'cacheable';
+const cacheable = new Cacheable({
+    // Your caching configuration here
+});
+const ecto = new Ecto({ cache: cacheable });
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = { firstName: "John", lastName: "Doe" };
+const result = await ecto.render(source, data);
+console.log(result); // <h1>Hello John Doe!</h1>
+```
 
 # How to Contribute
 
