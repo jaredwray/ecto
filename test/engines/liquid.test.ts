@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
 import fs from 'node:fs';
 import {expect, it} from 'vitest';
 import {Liquid} from '../../src/engines/liquid.js';
@@ -57,6 +58,7 @@ it('Liquid - Rendering Partials', async () => {
 
 	engine.rootTemplatePath = testTemplateDirectory;
 
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 	const output = await engine.render(source, exampleData2);
 
 	expect(output).toContain('<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>');

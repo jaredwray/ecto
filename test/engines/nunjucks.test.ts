@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
 import fs from 'node:fs';
 import {expect, it} from 'vitest';
 import {Nunjucks} from '../../src/engines/nunjucks.js';
@@ -72,6 +73,7 @@ it('Nunjucks - Rendering with partial template', async () => {
 	engine.rootTemplatePath = testTemplateDirectory;
 
 	const source = await fs.promises.readFile(testTemplateDirectory + '/example1.njk', 'utf8');
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 	const output = await engine.render(source, exampleData2);
 
 	expect(output).toContain('<h1>Posts</h1><ul><li>foo</li><li>bar</li></ul>');

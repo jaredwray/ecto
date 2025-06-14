@@ -1,4 +1,4 @@
-import fsPromise from 'node:fs/promises';
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
 import fs from 'node:fs';
 import {expect, it} from 'vitest';
 import {EJS} from '../../src/engines/ejs.js';
@@ -57,5 +57,6 @@ it('EJS - Rendering with partial', async () => {
 
 	engine.rootTemplatePath = testTemplateDirectory;
 
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 	expect(await engine.render(source, exampleData1)).toContain('John Doe');
 });
