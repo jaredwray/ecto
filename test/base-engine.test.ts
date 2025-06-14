@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {expect, it} from 'vitest';
 import {BaseEngine} from '../src/base-engine.js';
 
