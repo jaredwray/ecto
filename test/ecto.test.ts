@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
 import fs from 'node:fs';
 import {expect, it} from 'vitest';
 import {Ecto} from '../src/ecto.js';
