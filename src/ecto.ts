@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import {Writr} from 'writr';
-import {Cacheable} from 'cacheable';
+import {Cacheable, CacheableMemory} from 'cacheable';
 import {EngineMap} from './engine-map.js';
 import {Markdown} from './engines/markdown.js';
 import {Handlebars} from './engines/handlebars.js';
@@ -35,12 +35,20 @@ export type EctoOptions = {
 	engineOptions?: Record<string, Record<string, unknown>>;
 
 	/**
-	 * Caching for rendered templates. If set to true, it will use the default cacheable options.
+	 * Caching for async rendered templates. If set to true, it will use the default cacheable options.
 	 * If set to Cacheable instantce, it will use the provided cacheable instance.
 	 * @type {boolean | Cacheable}
 	 * @default false
 	 */
 	cache?: boolean | Cacheable;
+
+	/**
+	 * If set to true, it will cache the rendered templates synchronously when running renderSync.
+	 * If set to CacheableMemory instance, it will use the provided cacheable memory instance.
+	 * @type {boolean | CacheableMemory}
+	 * @default false
+	 */
+	cacheSync?: boolean | CacheableMemory;
 };
 
 export class Ecto {
@@ -49,6 +57,7 @@ export class Ecto {
 
 	// Cacheable instance for caching rendered templates
 	private __cache: Cacheable | undefined;
+	private __cacheSync: CacheableMemory | undefined;
 
 	private __defaultEngine = 'ejs';
 
@@ -64,6 +73,7 @@ export class Ecto {
 	 * Ecto constructor
 	 * @param {EctoOptions} [options] - The options for the ecto engine
 	 */
+	// eslint-disable-next-line complexity
 	constructor(options?: EctoOptions) {
 		// Engines
 		this.__ejs = new EJS(options?.engineOptions?.ejs);
@@ -87,6 +97,17 @@ export class Ecto {
 				this.__cache = new Cacheable();
 			} else {
 				this.__cache = options.cache;
+			}
+		}
+
+		// Set the cacheable memory instance if caching is enabled
+		if (options?.cacheSync !== undefined) {
+			// eslint-disable-next-line unicorn/prefer-ternary
+			if (typeof options.cacheSync === 'boolean') {
+				// Set with default options
+				this.__cacheSync = new CacheableMemory();
+			} else {
+				this.__cacheSync = options.cacheSync;
 			}
 		}
 
@@ -129,6 +150,22 @@ export class Ecto {
 	 */
 	public set cache(value: Cacheable | undefined) {
 		this.__cache = value;
+	}
+
+	/**
+	 * Get the cacheable memory instance
+	 * @returns {CacheableMemory | undefined} - The cacheable memory instance or undefined if caching is disabled
+	 */
+	public get cacheSync(): CacheableMemory | undefined {
+		return this.__cacheSync;
+	}
+
+	/**
+	 * Set the cacheable memory instance
+	 * @param {CacheableMemory | undefined} value - The cacheable memory instance to set. If set to undefined, caching will be disabled.
+	 */
+	public set cacheSync(value: CacheableMemory | undefined) {
+		this.__cacheSync = value;
 	}
 
 	/**
@@ -248,6 +285,17 @@ export class Ecto {
 	 */
 	// eslint-disable-next-line max-params
 	public renderSync(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): string {
+		const cacheKey = `${engineName ?? this.__defaultEngine}-${source}-${JSON.stringify(data)}`;
+		if (this.__cacheSync) {
+			const cachedResult = this.__cacheSync.get<string>(cacheKey);
+			if (cachedResult) {
+				// Write out the file
+				this.writeFileSync(filePathOutput, cachedResult);
+				// Return the cached result
+				return cachedResult;
+			}
+		}
+
 		let result = '';
 		let renderEngineName = this.__defaultEngine;
 
@@ -264,6 +312,11 @@ export class Ecto {
 
 		// Get the output
 		result = renderEngine.renderSync(source, data);
+
+		// If caching is enabled, store the result in the cache
+		if (this.__cacheSync) {
+			this.__cacheSync.set(cacheKey, result);
+		}
 
 		// Write out the file
 		this.writeFileSync(filePathOutput, result);
