@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ESNext", // Compile down to a version of ECMAScript that supports ES Modules natively
-    "module": "ESNext", // Use native ECMAScript modules
-    "moduleResolution": "node", // Use Node.js module resolution mechanism
+    "module": "nodenext", // Use native ECMAScript modules
+    "moduleResolution": "nodenext", // Use Node.js module resolution mechanism
     "strict": true, // Enable all strict type-checking options
     "esModuleInterop": true, // Enables compatibility with CommonJS modules for default exports
     "forceConsistentCasingInFileNames": true, // Ensure case sensitivity for filenames

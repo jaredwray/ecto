@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
 import fs from 'node:fs';
 import {expect, it} from 'vitest';
 import {Handlebars} from '../../src/engines/handlebars.js';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
 import fs from 'node:fs';
 import {expect, it} from 'vitest';
 import {Pug} from '../../src/engines/pug.js';
@@ -58,6 +59,7 @@ it('Pug - Rendering with Includes', async () => {
 
 	engine.rootTemplatePath = testTemplateDirectory;
 
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 	const output = await engine.render(source, exampleData1);
 
 	expect(output).toContain('<h2>By John Doe</h2>');
