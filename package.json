@@ -47,7 +47,7 @@
   ],
   "dependencies": {
     "@jaredwray/fumanchu": "^3.1.1",
-    "cacheable": "^1.10.0",
+    "cacheable": "^1.10.1",
     "ejs": "^3.1.10",
     "liquidjs": "^10.21.1",
     "nunjucks": "^3.2.4",
