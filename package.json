@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
-    "@types/node": "^24.0.1",
+    "@types/node": "^24.0.14",
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
     "@types/underscore": "^1.13.0",
@@ -67,7 +67,7 @@
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "vitest": "^3.2.3",
-    "webpack": "^5.99.9",
+    "webpack": "^5.100.2",
     "xo": "^1.2.0"
   },
   "files": [
