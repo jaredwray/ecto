@@ -46,7 +46,7 @@
     "liquidjs"
   ],
   "dependencies": {
-    "@jaredwray/fumanchu": "^3.1.1",
+    "@jaredwray/fumanchu": "^3.1.2",
     "cacheable": "^1.10.1",
     "ejs": "^3.1.10",
     "liquidjs": "^10.21.1",
