@@ -40,6 +40,7 @@ Ecto is a modern template consolidation engine that enables the best template en
     * [Liquid](#liquid)
 * [FrontMatter Helper Functions](#frontmatter-helper-functions)
 * [Caching on Rendering](#caching-on-rendering)
+* [Emitting Events](#emitting-events)
 * [How to Contribute](#how-to-contribute)
 * [License](#license)
 
@@ -606,6 +607,39 @@ const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 const data = { firstName: "John", lastName: "Doe" };
 const result = await ecto.render(source, data);
 console.log(result); // <h1>Hello John Doe!</h1>
+```
+
+# Emitting Events
+
+Ecto has a built-in event emitter that allows you to listen for events that occur during the rendering process. This is useful for debugging and monitoring the rendering process. The following events are emitted:
+
+- `cacheHit` - Emitted when a cached result is found and returned.
+- `cacheMiss` - Emitted when a cached result is not found and the template needs to be rendered.
+- `info` - Emitted for informational messages.
+- `warn` - Emitted for warning messages.
+- `error` - Emitted for error messages.
+
+You can listen for these events by using the `on` method of the `Ecto` instance:
+
+```javascript
+import { Ecto } from 'ecto';
+const ecto = new Ecto();
+ecto.on('cacheHit', (data) => {
+    console.log('Cache hit:', data);
+});
+ecto.on('cacheMiss', (data) => {
+    console.log('Cache miss:', data);
+});
+ecto.on('warn', (data) => {
+    console.warn('Warning:', data);
+});
+ecto.on('error', (data) => {
+    console.error('Error:', data);
+});
+
+const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
+const data = { firstName: "John", lastName: "Doe" };
+await ecto.render(source, data); // <h1>Hello John Doe!</h1>
 ```
 
 # How to Contribute

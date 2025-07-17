@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {Hookified, type HookifiedOptions} from 'hookified';
 import {Writr} from 'writr';
 import {Cacheable, CacheableMemory} from 'cacheable';
 import {EngineMap} from './engine-map.js';
@@ -49,9 +50,16 @@ export type EctoOptions = {
 	 * @default false
 	 */
 	cacheSync?: boolean | CacheableMemory;
-};
+} & HookifiedOptions;
 
-export class Ecto {
+export enum EctoEvents {
+	cacheHit = 'cacheHit',
+	cacheMiss = 'cacheMiss',
+	warn = 'warn',
+	error = 'error',
+}
+
+export class Ecto extends Hookified {
 	private readonly __mapping: EngineMap = new EngineMap();
 	private readonly __engines: BaseEngine[] = new Array<BaseEngine>();
 
@@ -75,6 +83,7 @@ export class Ecto {
 	 */
 	// eslint-disable-next-line complexity
 	constructor(options?: EctoOptions) {
+		super();
 		// Engines
 		this.__ejs = new EJS(options?.engineOptions?.ejs);
 		this.__markdown = new Markdown(options?.engineOptions?.markdown);
@@ -133,6 +142,8 @@ export class Ecto {
 		value = value.toLowerCase().trim();
 		if (this.isValidEngine(value)) {
 			this.__defaultEngine = value;
+		} else {
+			this.emit(EctoEvents.warn, `Invalid engine name: ${value}. Defaulting to ${this.__defaultEngine}.`);
 		}
 	}
 
@@ -235,43 +246,52 @@ export class Ecto {
 	 */
 	// eslint-disable-next-line max-params
 	public async render(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): Promise<string> {
-		const cacheKey = `${engineName ?? this.__defaultEngine}-${source}-${JSON.stringify(data)}`;
-		if (this.__cache) {
-			const cachedResult = await this.__cache.get<string>(cacheKey);
-			if (cachedResult) {
-				// Write out the file
-				await this.writeFile(filePathOutput, cachedResult);
-				// Return the cached result
-				return cachedResult;
+		try {
+			const cacheKey = `${engineName ?? this.__defaultEngine}-${source}-${JSON.stringify(data)}`;
+			if (this.__cache) {
+				const cachedResult = await this.__cache.get<string>(cacheKey);
+				if (cachedResult) {
+					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
+					// Write out the file
+					await this.writeFile(filePathOutput, cachedResult);
+					// Return the cached result
+					return cachedResult;
+				}
+
+				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
 			}
+
+			let result = '';
+			let renderEngineName = this.__defaultEngine;
+
+			// Set the render engine
+			if (this.isValidEngine(engineName) && engineName !== undefined) {
+				renderEngineName = engineName;
+			}
+
+			// Get the render engine
+			const renderEngine = this.getRenderEngine(renderEngineName);
+
+			// Set the root template path
+			renderEngine.rootTemplatePath = rootTemplatePath;
+
+			// Get the output
+			result = await renderEngine.render(source, data);
+
+			// If caching is enabled, store the result in the cache
+			if (this.__cache) {
+				await this.__cache.set(cacheKey, result);
+			}
+
+			// Write out the file
+			await this.writeFile(filePathOutput, result);
+
+			return result;
+		} catch (error) {
+			/* c8 ignore next 3 */
+			this.emit(EctoEvents.error, error);
+			return '';
 		}
-
-		let result = '';
-		let renderEngineName = this.__defaultEngine;
-
-		// Set the render engine
-		if (this.isValidEngine(engineName) && engineName !== undefined) {
-			renderEngineName = engineName;
-		}
-
-		// Get the render engine
-		const renderEngine = this.getRenderEngine(renderEngineName);
-
-		// Set the root template path
-		renderEngine.rootTemplatePath = rootTemplatePath;
-
-		// Get the output
-		result = await renderEngine.render(source, data);
-
-		// If caching is enabled, store the result in the cache
-		if (this.__cache) {
-			await this.__cache.set(cacheKey, result);
-		}
-
-		// Write out the file
-		await this.writeFile(filePathOutput, result);
-
-		return result;
 	}
 
 	/**
@@ -285,43 +305,52 @@ export class Ecto {
 	 */
 	// eslint-disable-next-line max-params
 	public renderSync(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): string {
-		const cacheKey = `${engineName ?? this.__defaultEngine}-${source}-${JSON.stringify(data)}`;
-		if (this.__cacheSync) {
-			const cachedResult = this.__cacheSync.get<string>(cacheKey);
-			if (cachedResult) {
-				// Write out the file
-				this.writeFileSync(filePathOutput, cachedResult);
-				// Return the cached result
-				return cachedResult;
+		try {
+			const cacheKey = `${engineName ?? this.__defaultEngine}-${source}-${JSON.stringify(data)}`;
+			if (this.__cacheSync) {
+				const cachedResult = this.__cacheSync.get<string>(cacheKey);
+				if (cachedResult) {
+					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
+					// Write out the file
+					this.writeFileSync(filePathOutput, cachedResult);
+					// Return the cached result
+					return cachedResult;
+				}
+
+				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
 			}
+
+			let result = '';
+			let renderEngineName = this.__defaultEngine;
+
+			// Set the render engine
+			if (this.isValidEngine(engineName) && engineName !== undefined) {
+				renderEngineName = engineName;
+			}
+
+			// Get the render engine
+			const renderEngine = this.getRenderEngine(renderEngineName);
+
+			// Set the root template path
+			renderEngine.rootTemplatePath = rootTemplatePath;
+
+			// Get the output
+			result = renderEngine.renderSync(source, data);
+
+			// If caching is enabled, store the result in the cache
+			if (this.__cacheSync) {
+				this.__cacheSync.set(cacheKey, result);
+			}
+
+			// Write out the file
+			this.writeFileSync(filePathOutput, result);
+
+			return result;
+		} catch (error) {
+			/* c8 ignore next 3 */
+			this.emit(EctoEvents.error, error);
+			return '';
 		}
-
-		let result = '';
-		let renderEngineName = this.__defaultEngine;
-
-		// Set the render engine
-		if (this.isValidEngine(engineName) && engineName !== undefined) {
-			renderEngineName = engineName;
-		}
-
-		// Get the render engine
-		const renderEngine = this.getRenderEngine(renderEngineName);
-
-		// Set the root template path
-		renderEngine.rootTemplatePath = rootTemplatePath;
-
-		// Get the output
-		result = renderEngine.renderSync(source, data);
-
-		// If caching is enabled, store the result in the cache
-		if (this.__cacheSync) {
-			this.__cacheSync.set(cacheKey, result);
-		}
-
-		// Write out the file
-		this.writeFileSync(filePathOutput, result);
-
-		return result;
 	}
 
 	/**
