@@ -93,3 +93,13 @@ it('render via ejs hello from docs with caching disabled', () => {
 	const data = {firstName: 'John', lastName: 'Doe'};
 	expect(ecto.renderSync(source, data)).toBe('<h1>Hello John Doe!</h1>');
 });
+
+it('cache should remain disabled when explicitly set to false', () => {
+	const ecto = new Ecto({cache: false});
+	expect(ecto.cache).toBe(undefined);
+});
+
+it('cacheSync should remain disabled when explicitly set to false', () => {
+	const ecto = new Ecto({cacheSync: false});
+	expect(ecto.cacheSync).toBe(undefined);
+});

@@ -99,25 +99,19 @@ export class Ecto extends Hookified {
 		this.registerEngineMappings();
 
 		// Set the cacheable instance if caching is enabled
-		if (options?.cache !== undefined) {
-			// eslint-disable-next-line unicorn/prefer-ternary
-			if (typeof options.cache === 'boolean') {
-				// Set with default options
-				this.__cache = new Cacheable();
-			} else {
-				this.__cache = options.cache;
-			}
+		if (options?.cache === true) {
+			// Set with default options
+			this.__cache = new Cacheable();
+		} else if (options?.cache instanceof Cacheable) {
+			this.__cache = options.cache;
 		}
 
 		// Set the cacheable memory instance if caching is enabled
-		if (options?.cacheSync !== undefined) {
-			// eslint-disable-next-line unicorn/prefer-ternary
-			if (typeof options.cacheSync === 'boolean') {
-				// Set with default options
-				this.__cacheSync = new CacheableMemory();
-			} else {
-				this.__cacheSync = options.cacheSync;
-			}
+		if (options?.cacheSync === true) {
+			// Set with default options
+			this.__cacheSync = new CacheableMemory();
+		} else if (options?.cacheSync instanceof CacheableMemory) {
+			this.__cacheSync = options.cacheSync;
 		}
 
 		// Set the options
