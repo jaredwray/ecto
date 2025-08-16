@@ -60,22 +60,22 @@ export enum EctoEvents {
 }
 
 export class Ecto extends Hookified {
-	private readonly __mapping: EngineMap = new EngineMap();
-	private readonly __engines: BaseEngine[] = new Array<BaseEngine>();
+	private readonly _mapping: EngineMap = new EngineMap();
+	private readonly _engines: BaseEngine[] = new Array<BaseEngine>();
 
 	// Cacheable instance for caching rendered templates
-	private __cache: Cacheable | undefined;
-	private __cacheSync: CacheableMemory | undefined;
+	private _cache: Cacheable | undefined;
+	private _cacheSync: CacheableMemory | undefined;
 
-	private __defaultEngine = 'ejs';
+	private _defaultEngine = 'ejs';
 
 	// Engines
-	private readonly __ejs: EJS;
-	private readonly __markdown: Markdown;
-	private readonly __pug: Pug;
-	private readonly __nunjucks: Nunjucks;
-	private readonly __handlebars: Handlebars;
-	private readonly __liquid: Liquid;
+	private readonly _ejs: EJS;
+	private readonly _markdown: Markdown;
+	private readonly _pug: Pug;
+	private readonly _nunjucks: Nunjucks;
+	private readonly _handlebars: Handlebars;
+	private readonly _liquid: Liquid;
 
 	/**
 	 * Ecto constructor
@@ -85,15 +85,15 @@ export class Ecto extends Hookified {
 	constructor(options?: EctoOptions) {
 		super();
 		// Engines
-		this.__ejs = new EJS(options?.engineOptions?.ejs);
-		this.__markdown = new Markdown(options?.engineOptions?.markdown);
-		this.__pug = new Pug(options?.engineOptions?.pug);
-		this.__nunjucks = new Nunjucks(options?.engineOptions?.nunjucks);
-		this.__handlebars = new Handlebars(options?.engineOptions?.handlebars);
-		this.__liquid = new Liquid(options?.engineOptions?.liquid);
+		this._ejs = new EJS(options?.engineOptions?.ejs);
+		this._markdown = new Markdown(options?.engineOptions?.markdown);
+		this._pug = new Pug(options?.engineOptions?.pug);
+		this._nunjucks = new Nunjucks(options?.engineOptions?.nunjucks);
+		this._handlebars = new Handlebars(options?.engineOptions?.handlebars);
+		this._liquid = new Liquid(options?.engineOptions?.liquid);
 
 		// Register engines
-		this.__engines.push(this.__ejs, this.__markdown, this.__pug, this.__nunjucks, this.__handlebars, this.__liquid);
+		this._engines.push(this._ejs, this._markdown, this._pug, this._nunjucks, this._handlebars, this._liquid);
 
 		// Register mappings
 		this.registerEngineMappings();
@@ -101,22 +101,22 @@ export class Ecto extends Hookified {
 		// Set the cacheable instance if caching is enabled
 		if (options?.cache === true) {
 			// Set with default options
-			this.__cache = new Cacheable();
+			this._cache = new Cacheable();
 		} else if (options?.cache instanceof Cacheable) {
-			this.__cache = options.cache;
+			this._cache = options.cache;
 		}
 
 		// Set the cacheable memory instance if caching is enabled
 		if (options?.cacheSync === true) {
 			// Set with default options
-			this.__cacheSync = new CacheableMemory();
+			this._cacheSync = new CacheableMemory();
 		} else if (options?.cacheSync instanceof CacheableMemory) {
-			this.__cacheSync = options.cacheSync;
+			this._cacheSync = options.cacheSync;
 		}
 
 		// Set the options
 		if (options !== undefined && this.isValidEngine(options.defaultEngine)) {
-			this.__defaultEngine = options.defaultEngine!;
+			this._defaultEngine = options.defaultEngine!;
 		}
 	}
 
@@ -125,7 +125,7 @@ export class Ecto extends Hookified {
 	 * @returns {string} - the engine name such as 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
 	 */
 	public get defaultEngine(): string {
-		return this.__defaultEngine;
+		return this._defaultEngine;
 	}
 
 	/**
@@ -135,9 +135,9 @@ export class Ecto extends Hookified {
 	public set defaultEngine(value: string) {
 		value = value.toLowerCase().trim();
 		if (this.isValidEngine(value)) {
-			this.__defaultEngine = value;
+			this._defaultEngine = value;
 		} else {
-			this.emit(EctoEvents.warn, `Invalid engine name: ${value}. Defaulting to ${this.__defaultEngine}.`);
+			this.emit(EctoEvents.warn, `Invalid engine name: ${value}. Defaulting to ${this._defaultEngine}.`);
 		}
 	}
 
@@ -146,7 +146,7 @@ export class Ecto extends Hookified {
 	 * @returns {Cacheable | undefined} - The cacheable instance or undefined if caching is disabled
 	 */
 	public get cache(): Cacheable | undefined {
-		return this.__cache;
+		return this._cache;
 	}
 
 	/**
@@ -154,7 +154,7 @@ export class Ecto extends Hookified {
 	 * @param {Cacheable | undefined} value - The cacheable instance to set. If set to undefined, caching will be disabled.
 	 */
 	public set cache(value: Cacheable | undefined) {
-		this.__cache = value;
+		this._cache = value;
 	}
 
 	/**
@@ -162,7 +162,7 @@ export class Ecto extends Hookified {
 	 * @returns {CacheableMemory | undefined} - The cacheable memory instance or undefined if caching is disabled
 	 */
 	public get cacheSync(): CacheableMemory | undefined {
-		return this.__cacheSync;
+		return this._cacheSync;
 	}
 
 	/**
@@ -170,7 +170,7 @@ export class Ecto extends Hookified {
 	 * @param {CacheableMemory | undefined} value - The cacheable memory instance to set. If set to undefined, caching will be disabled.
 	 */
 	public set cacheSync(value: CacheableMemory | undefined) {
-		this.__cacheSync = value;
+		this._cacheSync = value;
 	}
 
 	/**
@@ -178,7 +178,7 @@ export class Ecto extends Hookified {
 	 * @returns {EngineMap}
 	 */
 	public get mappings(): EngineMap {
-		return this.__mapping;
+		return this._mapping;
 	}
 
 	/**
@@ -186,7 +186,7 @@ export class Ecto extends Hookified {
 	 * @returns {EJS}
 	 */
 	public get ejs(): EJS {
-		return this.__ejs;
+		return this._ejs;
 	}
 
 	/**
@@ -194,7 +194,7 @@ export class Ecto extends Hookified {
 	 * @returns {Markdown}
 	 */
 	public get markdown(): Markdown {
-		return this.__markdown;
+		return this._markdown;
 	}
 
 	/**
@@ -202,7 +202,7 @@ export class Ecto extends Hookified {
 	 * @returns {Pug}
 	 */
 	public get pug(): Pug {
-		return this.__pug;
+		return this._pug;
 	}
 
 	/**
@@ -210,7 +210,7 @@ export class Ecto extends Hookified {
 	 * @returns {Nunjucks}
 	 */
 	public get nunjucks(): Nunjucks {
-		return this.__nunjucks;
+		return this._nunjucks;
 	}
 
 	/**
@@ -218,7 +218,7 @@ export class Ecto extends Hookified {
 	 * @returns {Handlebars}
 	 */
 	public get handlebars(): Handlebars {
-		return this.__handlebars;
+		return this._handlebars;
 	}
 
 	/**
@@ -226,7 +226,7 @@ export class Ecto extends Hookified {
 	 * @returns {Liquid}
 	 */
 	public get liquid(): Liquid {
-		return this.__liquid;
+		return this._liquid;
 	}
 
 	/**
@@ -241,9 +241,9 @@ export class Ecto extends Hookified {
 	// eslint-disable-next-line max-params
 	public async render(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): Promise<string> {
 		try {
-			const cacheKey = `${engineName ?? this.__defaultEngine}-${source}-${JSON.stringify(data)}`;
-			if (this.__cache) {
-				const cachedResult = await this.__cache.get<string>(cacheKey);
+			const cacheKey = `${engineName ?? this._defaultEngine}-${source}-${JSON.stringify(data)}`;
+			if (this._cache) {
+				const cachedResult = await this._cache.get<string>(cacheKey);
 				if (cachedResult) {
 					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
 					// Write out the file
@@ -256,7 +256,7 @@ export class Ecto extends Hookified {
 			}
 
 			let result = '';
-			let renderEngineName = this.__defaultEngine;
+			let renderEngineName = this._defaultEngine;
 
 			// Set the render engine
 			if (this.isValidEngine(engineName) && engineName !== undefined) {
@@ -273,8 +273,8 @@ export class Ecto extends Hookified {
 			result = await renderEngine.render(source, data);
 
 			// If caching is enabled, store the result in the cache
-			if (this.__cache) {
-				await this.__cache.set(cacheKey, result);
+			if (this._cache) {
+				await this._cache.set(cacheKey, result);
 			}
 
 			// Write out the file
@@ -300,9 +300,9 @@ export class Ecto extends Hookified {
 	// eslint-disable-next-line max-params
 	public renderSync(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): string {
 		try {
-			const cacheKey = `${engineName ?? this.__defaultEngine}-${source}-${JSON.stringify(data)}`;
-			if (this.__cacheSync) {
-				const cachedResult = this.__cacheSync.get<string>(cacheKey);
+			const cacheKey = `${engineName ?? this._defaultEngine}-${source}-${JSON.stringify(data)}`;
+			if (this._cacheSync) {
+				const cachedResult = this._cacheSync.get<string>(cacheKey);
 				if (cachedResult) {
 					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
 					// Write out the file
@@ -315,7 +315,7 @@ export class Ecto extends Hookified {
 			}
 
 			let result = '';
-			let renderEngineName = this.__defaultEngine;
+			let renderEngineName = this._defaultEngine;
 
 			// Set the render engine
 			if (this.isValidEngine(engineName) && engineName !== undefined) {
@@ -332,8 +332,8 @@ export class Ecto extends Hookified {
 			result = renderEngine.renderSync(source, data);
 
 			// If caching is enabled, store the result in the cache
-			if (this.__cacheSync) {
-				this.__cacheSync.set(cacheKey, result);
+			if (this._cacheSync) {
+				this._cacheSync.set(cacheKey, result);
 			}
 
 			// Write out the file
@@ -433,12 +433,12 @@ export class Ecto extends Hookified {
 	 * @returns {string} - will return the engine name such as 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
 	 */
 	public getEngineByFilePath(filePath: string): string {
-		let result = this.__defaultEngine;
+		let result = this._defaultEngine;
 
 		if (filePath !== undefined) {
 			const extension = filePath.includes('.') ? filePath.slice(filePath.lastIndexOf('.') + 1) : '';
 
-			const engExtension = this.__mapping.getName(extension);
+			const engExtension = this._mapping.getName(extension);
 			if (engExtension !== undefined) {
 				result = engExtension;
 			}
@@ -497,7 +497,7 @@ export class Ecto extends Hookified {
 	public isValidEngine(engineName?: string): boolean {
 		let result = false;
 
-		if (engineName !== undefined && this.__mapping.get(engineName) !== undefined) {
+		if (engineName !== undefined && this._mapping.get(engineName) !== undefined) {
 			result = true;
 		}
 
@@ -509,9 +509,9 @@ export class Ecto extends Hookified {
 	 * @returns {void}
 	 */
 	public registerEngineMappings(): void {
-		for (const eng of this.__engines) {
+		for (const eng of this._engines) {
 			for (const name of eng.names) {
-				this.__mapping.set(name, eng.getExtensions());
+				this._mapping.set(name, eng.getExtensions());
 			}
 		}
 	}
@@ -522,42 +522,42 @@ export class Ecto extends Hookified {
 	 * @returns {EngineInterface}
 	 */
 	public getRenderEngine(engineName: string): EngineInterface {
-		let result = this.__ejs; // Setting default
+		let result = this._ejs; // Setting default
 
 		const cleanEngineName = engineName.trim().toLowerCase();
 		switch (cleanEngineName) {
 			case 'markdown': {
-				result = this.__markdown;
+				result = this._markdown;
 				break;
 			}
 
 			case 'pug': {
-				result = this.__pug;
+				result = this._pug;
 				break;
 			}
 
 			case 'nunjucks': {
-				result = this.__nunjucks;
+				result = this._nunjucks;
 				break;
 			}
 
 			case 'mustache': {
-				result = this.__handlebars;
+				result = this._handlebars;
 				break;
 			}
 
 			case 'handlebars': {
-				result = this.__handlebars;
+				result = this._handlebars;
 				break;
 			}
 
 			case 'liquid': {
-				result = this.__liquid;
+				result = this._liquid;
 				break;
 			}
 
 			default: {
-				result = this.__ejs;
+				result = this._ejs;
 				break;
 			}
 		}
