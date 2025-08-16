@@ -3,27 +3,27 @@ export class BaseEngine {
 	opts?: any = undefined;
 	engine: any;
 	rootTemplatePath?: string = undefined;
-	private __extensions = new Array<string>();
+	private _extensions = new Array<string>();
 
 	getExtensions(): string[] {
-		return this.__extensions;
+		return this._extensions;
 	}
 
 	setExtensions(extensions: string[]): void {
-		this.__extensions = new Array<string>();
+		this._extensions = new Array<string>();
 
 		for (const extension of extensions) {
 			const newExtension = extension.trim().toLowerCase();
-			if (!this.__extensions.includes(newExtension)) {
-				this.__extensions.push(newExtension);
+			if (!this._extensions.includes(newExtension)) {
+				this._extensions.push(newExtension);
 			}
 		}
 	}
 
 	deleteExtension(name: string) {
-		for (const [index, extension] of this.__extensions.entries()) {
+		for (const [index, extension] of this._extensions.entries()) {
 			if (name.toLowerCase().trim() === extension) {
-				this.__extensions.splice(index, 1);
+				this._extensions.splice(index, 1);
 			}
 		}
 	}
