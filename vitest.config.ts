@@ -4,7 +4,7 @@ import {defineConfig} from 'vitest/config';
 export default defineConfig({
 	test: {
 		coverage: {
-			reporter: ['lcov'],
+			reporter: ['lcov', 'text'],
 			exclude: [
 				'bin/**',
 				'**/engine-interface**',
