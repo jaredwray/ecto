@@ -154,10 +154,11 @@ it('render via ejs synchronous', () => {
 
 it('render via ejs synchronous with file', () => {
 	const ecto = new Ecto();
-	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
+	const testOutputFullDirectory = testOutputDirectory + '/ejs-321';
+	const filePath = testOutputFullDirectory + '/ecto-ejs-test.html';
 
 	if (fs.existsSync(filePath)) {
-		fs.rmSync(testOutputDirectory, {recursive: true, force: true});
+		fs.rmSync(testOutputFullDirectory, {recursive: true, force: true});
 	}
 
 	const content = ecto.renderSync(ejsExampleSource, ejsExampleData, undefined, undefined, filePath);
@@ -165,7 +166,7 @@ it('render via ejs synchronous with file', () => {
 	expect(content).toBe('<h2>bar</h2>');
 	expect(fs.existsSync(filePath)).toBe(true);
 
-	fs.rmSync(testOutputDirectory, {recursive: true, force: true});
+	fs.rmSync(testOutputFullDirectory, {recursive: true, force: true});
 });
 
 it('render via ejs hello from docs', async () => {
