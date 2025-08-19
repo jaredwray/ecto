@@ -15,11 +15,6 @@ const handlebarsExampleData = {name: 'Alan O\'Connor', hometown: 'Somewhere, TX'
 const testOutputDirectory = './test/output';
 const testRootDirectory = './test/data';
 
-async function sleep(ms: number) {
-	// eslint-disable-next-line no-promise-executor-return
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 it('Init and Verify defaultEngine', () => {
 	const ecto = new Ecto();
 	expect(ecto.defaultEngine).toBe('ejs');
@@ -159,10 +154,11 @@ it('render via ejs synchronous', () => {
 
 it('render via ejs synchronous with file', () => {
 	const ecto = new Ecto();
-	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
+	const testOutputFullDirectory = testOutputDirectory + '/ejs-321';
+	const filePath = testOutputFullDirectory + '/ecto-ejs-test.html';
 
 	if (fs.existsSync(filePath)) {
-		fs.rmSync(testOutputDirectory, {recursive: true, force: true});
+		fs.rmSync(testOutputFullDirectory, {recursive: true, force: true});
 	}
 
 	const content = ecto.renderSync(ejsExampleSource, ejsExampleData, undefined, undefined, filePath);
@@ -170,7 +166,7 @@ it('render via ejs synchronous with file', () => {
 	expect(content).toBe('<h2>bar</h2>');
 	expect(fs.existsSync(filePath)).toBe(true);
 
-	fs.rmSync(testOutputDirectory, {recursive: true, force: true});
+	fs.rmSync(testOutputFullDirectory, {recursive: true, force: true});
 });
 
 it('render via ejs hello from docs', async () => {
@@ -198,18 +194,18 @@ it('render via handlebars and not define engineName', async () => {
 
 it('write via ejs', async () => {
 	const ecto = new Ecto();
-	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
+	const testOutputFullDirectory = testOutputDirectory + '/ejs-212';
+	const filePath = testOutputFullDirectory + '/ecto-ejs-test.html';
 	if (fs.existsSync(filePath)) {
 		fs.rmSync(filePath);
 	}
 
 	await ecto.render(ejsExampleSource, ejsExampleData, 'ejs', undefined, filePath);
-	await sleep(50);
 	const fileSource = await fs.promises.readFile(filePath, 'utf8');
 
 	expect(fileSource).toBe('<h2>bar</h2>');
 
-	await fs.promises.rm(testOutputDirectory, {recursive: true});
+	await fs.promises.rm(testOutputFullDirectory, {recursive: true});
 });
 
 it('write via ejs with long path', async () => {
