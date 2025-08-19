@@ -193,7 +193,7 @@ it('render via handlebars and not define engineName', async () => {
 
 it('write via ejs', async () => {
 	const ecto = new Ecto();
-	const filePath = testOutputDirectory + '/ejs/ecto-ejs-test.html';
+	const filePath = testOutputDirectory + '/ejs/cool232/ecto-ejs-test.html';
 	if (fs.existsSync(filePath)) {
 		fs.rmSync(filePath);
 	}
