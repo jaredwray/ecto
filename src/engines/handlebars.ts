@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument */
 import fs from 'node:fs';
 import * as _ from 'underscore';
-import {helpers, handlebars} from '@jaredwray/fumanchu';
+import {fumanchu} from '@jaredwray/fumanchu';
 import {BaseEngine} from '../base-engine.js';
 import type {EngineInterface} from '../engine-interface.js';
 
@@ -14,10 +14,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		this.names = ['handlebars', 'mustache'];
 		this.opts = options;
 
-		this.engine = handlebars;
-
-		// Register helpers
-		helpers({handlebars}, this.opts);
+		this.engine = fumanchu();
 
 		this.setExtensions(['hbs', 'hjs', 'handlebars', 'mustache']);
 	}
