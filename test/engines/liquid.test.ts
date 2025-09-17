@@ -1,66 +1,75 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
-import fs from 'node:fs';
-import {expect, it} from 'vitest';
-import {Liquid} from '../../src/engines/liquid.js';
+import fs from "node:fs";
+import { expect, it } from "vitest";
+import { Liquid } from "../../src/engines/liquid.js";
 
-const exampleSource1 = '{{name | capitalize}}';
-const exampleData1 = {name: 'john'};
-const exampleSource2 = '<ul> {% for todo in todos %} <li>{{forloop.index}} - {{todo}}</li> {% endfor %}</ul>';
-const exampleData2 = {todos: ['unit tests', 'wash car', 'go running', 'bycicle'], name: 'John Doe'};
+const exampleSource1 = "{{name | capitalize}}";
+const exampleData1 = { name: "john" };
+const exampleSource2 =
+	"<ul> {% for todo in todos %} <li>{{forloop.index}} - {{todo}}</li> {% endfor %}</ul>";
+const exampleData2 = {
+	todos: ["unit tests", "wash car", "go running", "bycicle"],
+	name: "John Doe",
+};
 
-const testTemplateDirectory = './test/data/liquid';
+const testTemplateDirectory = "./test/data/liquid";
 
-it('Liquid - Default Name Liquid', () => {
+it("Liquid - Default Name Liquid", () => {
 	const engine = new Liquid();
-	expect(engine.names.toString()).toContain('liquid');
+	expect(engine.names.toString()).toContain("liquid");
 });
 
-it('Liquid - Opts should be undefined by default', () => {
+it("Liquid - Opts should be undefined by default", () => {
 	const engine = new Liquid();
 	expect(engine.opts).toBe(undefined);
 });
 
-it('Liquid - Setting Opts on the Constructor', () => {
-	const options = {cool: true};
+it("Liquid - Setting Opts on the Constructor", () => {
+	const options = { cool: true };
 	const engine = new Liquid(options);
 	expect(engine.opts.cool).toBe(true);
 });
 
-it('Liquid - Extension should be a count of 1', () => {
+it("Liquid - Extension should be a count of 1", () => {
 	const engine = new Liquid();
 	expect(engine.getExtensions().length).toBe(1);
 });
 
-it('Liquid - Rendering a simple string', async () => {
+it("Liquid - Rendering a simple string", async () => {
 	const engine = new Liquid();
-	expect(await engine.render(exampleSource1, exampleData1)).toBe('John');
+	expect(await engine.render(exampleSource1, exampleData1)).toBe("John");
 });
 
-it('Liquid - Rendering a simple string synchronous', () => {
+it("Liquid - Rendering a simple string synchronous", () => {
 	const engine = new Liquid();
-	expect(engine.renderSync(exampleSource1, exampleData1)).toBe('John');
+	expect(engine.renderSync(exampleSource1, exampleData1)).toBe("John");
 });
 
-it('Liquid - Render Sync with Root Template Path', () => {
+it("Liquid - Render Sync with Root Template Path", () => {
 	const engine = new Liquid();
 	engine.rootTemplatePath = testTemplateDirectory;
-	expect(engine.renderSync(exampleSource1, exampleData1)).toBe('John');
+	expect(engine.renderSync(exampleSource1, exampleData1)).toBe("John");
 });
 
-it('Liquid - Rendering a list in html', async () => {
+it("Liquid - Rendering a list in html", async () => {
 	const engine = new Liquid();
-	expect(await engine.render(exampleSource2, exampleData2)).toBe('<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>');
+	expect(await engine.render(exampleSource2, exampleData2)).toBe(
+		"<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>",
+	);
 });
 
-it('Liquid - Rendering Partials', async () => {
+it("Liquid - Rendering Partials", async () => {
 	const engine = new Liquid();
-	const source = await fs.promises.readFile(testTemplateDirectory + '/example1.liquid', 'utf8');
+	const source = await fs.promises.readFile(
+		`${testTemplateDirectory}/example1.liquid`,
+		"utf8",
+	);
 
 	engine.rootTemplatePath = testTemplateDirectory;
 
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 	const output = await engine.render(source, exampleData2);
 
-	expect(output).toContain('<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>');
-	expect(output).toContain('John Doe');
+	expect(output).toContain(
+		"<ul>  <li>1 - unit tests</li>  <li>2 - wash car</li>  <li>3 - go running</li>  <li>4 - bycicle</li> </ul>",
+	);
+	expect(output).toContain("John Doe");
 });

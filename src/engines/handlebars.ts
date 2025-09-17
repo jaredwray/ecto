@@ -1,25 +1,27 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument */
-import fs from 'node:fs';
-import * as _ from 'underscore';
-import {fumanchu} from '@jaredwray/fumanchu';
-import {BaseEngine} from '../base-engine.js';
-import type {EngineInterface} from '../engine-interface.js';
+import fs from "node:fs";
+import { fumanchu } from "@jaredwray/fumanchu";
+import * as _ from "underscore";
+import { BaseEngine } from "../base-engine.js";
+import type { EngineInterface } from "../engine-interface.js";
 
 export class Handlebars extends BaseEngine implements EngineInterface {
-	public partialsPath = ['partials', 'includes', 'templates'];
+	public partialsPath = ["partials", "includes", "templates"];
 
 	constructor(options?: Record<string, unknown>) {
 		super();
 
-		this.names = ['handlebars', 'mustache'];
+		this.names = ["handlebars", "mustache"];
 		this.opts = options;
 
 		this.engine = fumanchu();
 
-		this.setExtensions(['hbs', 'hjs', 'handlebars', 'mustache']);
+		this.setExtensions(["hbs", "hjs", "handlebars", "mustache"]);
 	}
 
-	async render(source: string, data?: Record<string, unknown>): Promise<string> {
+	async render(
+		source: string,
+		data?: Record<string, unknown>,
+	): Promise<string> {
 		// Register partials
 		if (this.rootTemplatePath) {
 			this.initPartials();
@@ -58,19 +60,27 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		let result = false;
 
 		if (fs.existsSync(partialsPath)) {
-			const partials = fs.readdirSync(partialsPath, {recursive: true, encoding: 'utf8'});
+			const partials = fs.readdirSync(partialsPath, {
+				recursive: true,
+				encoding: "utf8",
+			});
 
 			for (const p of partials) {
-				if (fs.statSync(partialsPath + '/' + p).isDirectory()) {
-					const directoryPartials = fs.readdirSync(partialsPath + '/' + p, {recursive: true, encoding: 'utf8'});
+				if (fs.statSync(`${partialsPath}/${p}`).isDirectory()) {
+					const directoryPartials = fs.readdirSync(`${partialsPath}/${p}`, {
+						recursive: true,
+						encoding: "utf8",
+					});
 					for (const dp of directoryPartials) {
-						const source = fs.readFileSync(partialsPath + '/' + p + '/' + dp).toString();
-						const name = p + '/' + dp.split('.')[0];
+						const source = fs
+							.readFileSync(`${partialsPath}/${p}/${dp}`)
+							.toString();
+						const name = `${p}/${dp.split(".")[0]}`;
 						this.engine.registerPartial(name, this.engine.compile(source));
 					}
 				} else {
-					const source = fs.readFileSync(partialsPath + '/' + p, 'utf8');
-					const name = p.split('.')[0];
+					const source = fs.readFileSync(`${partialsPath}/${p}`, "utf8");
+					const name = p.split(".")[0];
 					this.engine.registerPartial(name, this.engine.compile(source));
 				}
 			}

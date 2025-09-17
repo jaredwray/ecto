@@ -1,16 +1,16 @@
 export class BaseEngine {
-	names = new Array<string>();
-	opts?: any = undefined;
-	engine: any;
+	names = [] as string[];
+	opts?: Record<string, unknown> = undefined;
+	engine: unknown;
 	rootTemplatePath?: string = undefined;
-	private _extensions = new Array<string>();
+	private _extensions = [] as string[];
 
 	getExtensions(): string[] {
 		return this._extensions;
 	}
 
 	setExtensions(extensions: string[]): void {
-		this._extensions = new Array<string>();
+		this._extensions = [] as string[];
 
 		for (const extension of extensions) {
 			const newExtension = extension.trim().toLowerCase();
