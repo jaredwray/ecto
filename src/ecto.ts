@@ -281,8 +281,8 @@ export class Ecto extends Hookified {
 			await this.writeFile(filePathOutput, result);
 
 			return result;
+		/* c8 ignore next 3 */
 		} catch (error) {
-			/* c8 ignore next 3 */
 			this.emit(EctoEvents.error, error);
 			return '';
 		}
