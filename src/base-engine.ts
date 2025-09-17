@@ -1,7 +1,8 @@
 export class BaseEngine {
 	names = [] as string[];
 	opts?: Record<string, unknown> = undefined;
-	engine: unknown;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	engine: any;
 	rootTemplatePath?: string = undefined;
 	private _extensions = [] as string[];
 

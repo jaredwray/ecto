@@ -3,7 +3,7 @@ import { BaseEngine } from "../base-engine.js";
 import type { EngineInterface } from "../engine-interface.js";
 
 export class Markdown extends BaseEngine implements EngineInterface {
-	constructor(options?: any) {
+	constructor(options?: Record<string, unknown>) {
 		super();
 
 		this.names = ["markdown"];

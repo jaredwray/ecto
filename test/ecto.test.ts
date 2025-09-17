@@ -161,7 +161,7 @@ it("getEngineByTemplatePath should return pug for jade", () => {
 it("getEngineByFilePath should return default engine for undefined filePath", () => {
 	const ecto = new Ecto();
 
-	expect(ecto.getEngineByFilePath(undefined as any)).toBe("ejs");
+	expect(ecto.getEngineByFilePath(undefined as unknown as string)).toBe("ejs");
 });
 
 it("getEngineByFilePath should return default engine for file with no extension", () => {
