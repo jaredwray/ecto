@@ -1,16 +1,17 @@
 export class BaseEngine {
-	names = new Array<string>();
-	opts?: any = undefined;
+	names = [] as string[];
+	opts?: Record<string, unknown> = undefined;
+	// biome-ignore lint/suspicious/noExplicitAny: Different engines use different types, any is required for flexibility
 	engine: any;
 	rootTemplatePath?: string = undefined;
-	private _extensions = new Array<string>();
+	private _extensions = [] as string[];
 
 	getExtensions(): string[] {
 		return this._extensions;
 	}
 
 	setExtensions(extensions: string[]): void {
-		this._extensions = new Array<string>();
+		this._extensions = [] as string[];
 
 		for (const extension of extensions) {
 			const newExtension = extension.trim().toLowerCase();

@@ -18,8 +18,11 @@
   "author": "Jared Wray <me@jaredwray.com>",
   "license": "MIT",
   "scripts": {
+    "lint": "biome check --write --error-on-warnings",
+    "lint:ci": "biome check --error-on-warnings",
     "clean": "rimraf ./dist yarn.lock package-lock.json pnpm-lock.yaml ./coverage ./node_modules ./site/readme.md ./dist-site",
-    "test": "xo --fix && vitest run --coverage",
+    "test": "pnpm lint && vitest run --coverage",
+    "test:ci": "pnpm lint:ci && vitest run --coverage",
     "build": "rimraf ./dist && tsup src/ecto.ts --format esm --dts --clean",
     "prepare": "pnpm build",
     "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
@@ -57,6 +60,7 @@
     "writr": "^4.4.6"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
     "@types/ejs": "^3.1.5",
     "@types/node": "^24.3.0",
     "@types/nunjucks": "^3.2.6",
@@ -68,8 +72,7 @@
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
-    "webpack": "^5.101.3",
-    "xo": "^1.2.0"
+    "webpack": "^5.101.3"
   },
   "files": [
     "dist",

@@ -1,63 +1,61 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import {expect, it} from 'vitest';
-import {EngineMap} from '../src/engine-map.js';
+import { expect, it } from "vitest";
+import { EngineMap } from "../src/engine-map.js";
 
-it('EngineMap - Default Name should be Blank', () => {
+it("EngineMap - Default Name should be Blank", () => {
 	const mappings = new EngineMap();
-	expect(mappings.get('ejs')).toBe(undefined);
+	expect(mappings.get("ejs")).toBe(undefined);
 });
 
-it('EngineMap - set with extensions', () => {
+it("EngineMap - set with extensions", () => {
 	const mappings = new EngineMap();
-	mappings.set('ejs', ['ejs']);
-	expect(mappings.get('ejs')?.toString()).toBe('ejs');
+	mappings.set("ejs", ["ejs"]);
+	expect(mappings.get("ejs")?.toString()).toBe("ejs");
 });
 
-it('EngineMap - set with multiple extensions', () => {
+it("EngineMap - set with multiple extensions", () => {
 	const mappings = new EngineMap();
-	mappings.set('ejs', ['ejs', 'md', 'njk']);
-	expect(mappings.get('ejs')?.length).toBe(3);
+	mappings.set("ejs", ["ejs", "md", "njk"]);
+	expect(mappings.get("ejs")?.length).toBe(3);
 });
 
-it('EngineMap - set with no extensions should be undefined', () => {
+it("EngineMap - set with no extensions should be undefined", () => {
 	const mappings = new EngineMap();
-	mappings.set('ejs', []);
-	expect(mappings.get('ejs')?.length).toBe(undefined);
+	mappings.set("ejs", []);
+	expect(mappings.get("ejs")?.length).toBe(undefined);
 });
 
-it('EngineMap - set with no extensions should be undefined', () => {
+it("EngineMap - set with no extensions should be undefined", () => {
 	const mappings = new EngineMap();
-	mappings.set('', ['md']);
-	expect(mappings.get('')?.length).toBe(undefined);
+	mappings.set("", ["md"]);
+	expect(mappings.get("")?.length).toBe(undefined);
 });
 
-it('EngineMap - delete with extensions', () => {
+it("EngineMap - delete with extensions", () => {
 	const mappings = new EngineMap();
-	mappings.set('ejs', ['ejs']);
-	mappings.set('markdown', ['md']);
-	expect(mappings.get('ejs')?.toString()).toBe('ejs');
-	mappings.delete('ejs');
-	expect(mappings.get('ejs')?.toString()).toBe(undefined);
-	expect(mappings.get('markdown')?.toString()).toBe('md');
+	mappings.set("ejs", ["ejs"]);
+	mappings.set("markdown", ["md"]);
+	expect(mappings.get("ejs")?.toString()).toBe("ejs");
+	mappings.delete("ejs");
+	expect(mappings.get("ejs")?.toString()).toBe(undefined);
+	expect(mappings.get("markdown")?.toString()).toBe("md");
 });
 
-it('EngineMap - deleteExtension with extensions', () => {
+it("EngineMap - deleteExtension with extensions", () => {
 	const mappings = new EngineMap();
-	mappings.set('ejs', ['ejs', 'md', 'njk']);
-	expect(mappings.get('ejs')?.length).toBe(3);
-	mappings.deleteExtension('ejs', 'njk');
-	expect(mappings.get('ejs')?.toString()).toBe('ejs,md');
+	mappings.set("ejs", ["ejs", "md", "njk"]);
+	expect(mappings.get("ejs")?.length).toBe(3);
+	mappings.deleteExtension("ejs", "njk");
+	expect(mappings.get("ejs")?.toString()).toBe("ejs,md");
 });
 
-it('EngineMap - getName with extensions', () => {
+it("EngineMap - getName with extensions", () => {
 	const mappings = new EngineMap();
-	mappings.set('ejs', ['ejs', 'md', 'njk']);
-	expect(mappings.getName('md')).toBe('ejs');
+	mappings.set("ejs", ["ejs", "md", "njk"]);
+	expect(mappings.getName("md")).toBe("ejs");
 });
 
-it('EngineMap - getName with bad extensions', () => {
+it("EngineMap - getName with bad extensions", () => {
 	const mappings = new EngineMap();
-	mappings.set('ejs', ['ejs', 'md', 'njk']);
-	expect(mappings.getName('md1')).toBe(undefined);
+	mappings.set("ejs", ["ejs", "md", "njk"]);
+	expect(mappings.getName("md1")).toBe(undefined);
 });
-

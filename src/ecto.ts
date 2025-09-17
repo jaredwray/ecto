@@ -1,16 +1,16 @@
-import fs from 'node:fs';
-import {Hookified, type HookifiedOptions} from 'hookified';
-import {Writr} from 'writr';
-import {Cacheable, CacheableMemory} from 'cacheable';
-import {EngineMap} from './engine-map.js';
-import {Markdown} from './engines/markdown.js';
-import {Handlebars} from './engines/handlebars.js';
-import {EJS} from './engines/ejs.js';
-import {Pug} from './engines/pug.js';
-import {Nunjucks} from './engines/nunjucks.js';
-import {Liquid} from './engines/liquid.js';
-import {type BaseEngine} from './base-engine.js';
-import type {EngineInterface} from './engine-interface.js';
+import fs from "node:fs";
+import { Cacheable, CacheableMemory } from "cacheable";
+import { Hookified, type HookifiedOptions } from "hookified";
+import { Writr } from "writr";
+import type { BaseEngine } from "./base-engine.js";
+import type { EngineInterface } from "./engine-interface.js";
+import { EngineMap } from "./engine-map.js";
+import { EJS } from "./engines/ejs.js";
+import { Handlebars } from "./engines/handlebars.js";
+import { Liquid } from "./engines/liquid.js";
+import { Markdown } from "./engines/markdown.js";
+import { Nunjucks } from "./engines/nunjucks.js";
+import { Pug } from "./engines/pug.js";
 
 export type EctoOptions = {
 	/**
@@ -53,21 +53,21 @@ export type EctoOptions = {
 } & HookifiedOptions;
 
 export enum EctoEvents {
-	cacheHit = 'cacheHit',
-	cacheMiss = 'cacheMiss',
-	warn = 'warn',
-	error = 'error',
+	cacheHit = "cacheHit",
+	cacheMiss = "cacheMiss",
+	warn = "warn",
+	error = "error",
 }
 
 export class Ecto extends Hookified {
 	private readonly _mapping: EngineMap = new EngineMap();
-	private readonly _engines: BaseEngine[] = new Array<BaseEngine>();
+	private readonly _engines: BaseEngine[] = [] as BaseEngine[];
 
 	// Cacheable instance for caching rendered templates
 	private _cache: Cacheable | undefined;
 	private _cacheSync: CacheableMemory | undefined;
 
-	private _defaultEngine = 'ejs';
+	private _defaultEngine = "ejs";
 
 	// Engines
 	private readonly _ejs: EJS;
@@ -81,7 +81,6 @@ export class Ecto extends Hookified {
 	 * Ecto constructor
 	 * @param {EctoOptions} [options] - The options for the ecto engine
 	 */
-	// eslint-disable-next-line complexity
 	constructor(options?: EctoOptions) {
 		super();
 		// Engines
@@ -93,7 +92,14 @@ export class Ecto extends Hookified {
 		this._liquid = new Liquid(options?.engineOptions?.liquid);
 
 		// Register engines
-		this._engines.push(this._ejs, this._markdown, this._pug, this._nunjucks, this._handlebars, this._liquid);
+		this._engines.push(
+			this._ejs,
+			this._markdown,
+			this._pug,
+			this._nunjucks,
+			this._handlebars,
+			this._liquid,
+		);
 
 		// Register mappings
 		this.registerEngineMappings();
@@ -115,8 +121,8 @@ export class Ecto extends Hookified {
 		}
 
 		// Set the options
-		if (options !== undefined && this.isValidEngine(options.defaultEngine)) {
-			this._defaultEngine = options.defaultEngine!;
+		if (options?.defaultEngine && this.isValidEngine(options.defaultEngine)) {
+			this._defaultEngine = options.defaultEngine;
 		}
 	}
 
@@ -137,7 +143,10 @@ export class Ecto extends Hookified {
 		if (this.isValidEngine(value)) {
 			this._defaultEngine = value;
 		} else {
-			this.emit(EctoEvents.warn, `Invalid engine name: ${value}. Defaulting to ${this._defaultEngine}.`);
+			this.emit(
+				EctoEvents.warn,
+				`Invalid engine name: ${value}. Defaulting to ${this._defaultEngine}.`,
+			);
 		}
 	}
 
@@ -238,8 +247,13 @@ export class Ecto extends Hookified {
 	 * @param {string} [filePathOutput] - The file path to write the output
 	 * @returns {Promise<string>}
 	 */
-	// eslint-disable-next-line max-params
-	public async render(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): Promise<string> {
+	public async render(
+		source: string,
+		data?: Record<string, unknown>,
+		engineName?: string,
+		rootTemplatePath?: string,
+		filePathOutput?: string,
+	): Promise<string> {
 		try {
 			const cacheKey = `${engineName ?? this._defaultEngine}-${source}-${JSON.stringify(data)}`;
 			if (this._cache) {
@@ -255,7 +269,7 @@ export class Ecto extends Hookified {
 				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
 			}
 
-			let result = '';
+			let result = "";
 			let renderEngineName = this._defaultEngine;
 
 			// Set the render engine
@@ -281,10 +295,10 @@ export class Ecto extends Hookified {
 			await this.writeFile(filePathOutput, result);
 
 			return result;
-		/* c8 ignore next 4 */
+			/* c8 ignore next 4 */
 		} catch (error) {
 			this.emit(EctoEvents.error, error);
-			return '';
+			return "";
 		}
 	}
 
@@ -297,8 +311,13 @@ export class Ecto extends Hookified {
 	 * @param {string} [filePathOutput] - The file path to write the output
 	 * @returns {string}
 	 */
-	// eslint-disable-next-line max-params
-	public renderSync(source: string, data?: Record<string, unknown>, engineName?: string, rootTemplatePath?: string, filePathOutput?: string): string {
+	public renderSync(
+		source: string,
+		data?: Record<string, unknown>,
+		engineName?: string,
+		rootTemplatePath?: string,
+		filePathOutput?: string,
+	): string {
 		try {
 			const cacheKey = `${engineName ?? this._defaultEngine}-${source}-${JSON.stringify(data)}`;
 			if (this._cacheSync) {
@@ -314,7 +333,7 @@ export class Ecto extends Hookified {
 				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
 			}
 
-			let result = '';
+			let result = "";
 			let renderEngineName = this._defaultEngine;
 
 			// Set the render engine
@@ -340,10 +359,10 @@ export class Ecto extends Hookified {
 			this.writeFileSync(filePathOutput, result);
 
 			return result;
-		/* c8 ignore next 4 */
+			/* c8 ignore next 4 */
 		} catch (error) {
 			this.emit(EctoEvents.error, error);
-			return '';
+			return "";
 		}
 	}
 
@@ -356,17 +375,28 @@ export class Ecto extends Hookified {
 	 * @param {string} [engineName] - The engine to use for rendering
 	 * @returns
 	 */
-	// eslint-disable-next-line max-params
-	public async renderFromFile(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): Promise<string> {
-		let result = '';
+	public async renderFromFile(
+		filePath: string,
+		data?: Record<string, unknown>,
+		rootTemplatePath?: string,
+		filePathOutput?: string,
+		engineName?: string,
+	): Promise<string> {
+		let result = "";
 
 		// Select which engine
 		engineName ??= this.getEngineByFilePath(filePath);
 
 		// Get the source
-		const source = await fs.promises.readFile(filePath, 'utf8');
+		const source = await fs.promises.readFile(filePath, "utf8");
 
-		result = await this.render(source, data, engineName, rootTemplatePath, filePathOutput);
+		result = await this.render(
+			source,
+			data,
+			engineName,
+			rootTemplatePath,
+			filePathOutput,
+		);
 
 		return result;
 	}
@@ -380,17 +410,28 @@ export class Ecto extends Hookified {
 	 * @param {string} [engineName] - The engine to use for rendering
 	 * @returns {string}
 	 */
-	// eslint-disable-next-line max-params
-	public renderFromFileSync(filePath: string, data?: Record<string, unknown>, rootTemplatePath?: string, filePathOutput?: string, engineName?: string): string {
-		let result = '';
+	public renderFromFileSync(
+		filePath: string,
+		data?: Record<string, unknown>,
+		rootTemplatePath?: string,
+		filePathOutput?: string,
+		engineName?: string,
+	): string {
+		let result = "";
 
 		// Select which engine
 		engineName ??= this.getEngineByFilePath(filePath);
 
 		// Get the source
-		const source = fs.readFileSync(filePath, 'utf8');
+		const source = fs.readFileSync(filePath, "utf8");
 
-		result = this.renderSync(source, data, engineName, rootTemplatePath, filePathOutput);
+		result = this.renderSync(
+			source,
+			data,
+			engineName,
+			rootTemplatePath,
+			filePathOutput,
+		);
 
 		return result;
 	}
@@ -401,13 +442,13 @@ export class Ecto extends Hookified {
 	 * @returns {Promise<void>}
 	 */
 	public async ensureFilePath(path: string) {
-		const pathList = path.split('/');
+		const pathList = path.split("/");
 		pathList.pop();
 
-		const directory = pathList.join('/');
+		const directory = pathList.join("/");
 
 		if (!fs.existsSync(directory)) {
-			fs.mkdirSync(directory, {recursive: true});
+			fs.mkdirSync(directory, { recursive: true });
 		}
 	}
 
@@ -417,13 +458,13 @@ export class Ecto extends Hookified {
 	 * @returns {void}
 	 */
 	public ensureFilePathSync(path: string) {
-		const pathList = path.split('/');
+		const pathList = path.split("/");
 		pathList.pop();
 
-		const directory = pathList.join('/');
+		const directory = pathList.join("/");
 
 		if (!fs.existsSync(directory)) {
-			fs.mkdirSync(directory, {recursive: true});
+			fs.mkdirSync(directory, { recursive: true });
 		}
 	}
 
@@ -436,7 +477,9 @@ export class Ecto extends Hookified {
 		let result = this._defaultEngine;
 
 		if (filePath !== undefined) {
-			const extension = filePath.includes('.') ? filePath.slice(filePath.lastIndexOf('.') + 1) : '';
+			const extension = filePath.includes(".")
+				? filePath.slice(filePath.lastIndexOf(".") + 1)
+				: "";
 
 			const engExtension = this._mapping.getName(extension);
 			if (engExtension !== undefined) {
@@ -453,14 +496,17 @@ export class Ecto extends Hookified {
 	 * @param {string} templateName
 	 * @returns {Promise<string>} - the path to the template file
 	 */
-	public async findTemplateWithoutExtension(path: string, templateName: string): Promise<string> {
-		let result = '';
+	public async findTemplateWithoutExtension(
+		path: string,
+		templateName: string,
+	): Promise<string> {
+		let result = "";
 
 		const files = await fs.promises.readdir(path);
 
 		for (const file of files) {
-			if (file.startsWith(templateName + '.')) {
-				result = path + '/' + file;
+			if (file.startsWith(`${templateName}.`)) {
+				result = `${path}/${file}`;
 				break;
 			}
 		}
@@ -474,14 +520,17 @@ export class Ecto extends Hookified {
 	 * @param {string} templateName
 	 * @returns {string} - the path to the template file
 	 */
-	public findTemplateWithoutExtensionSync(path: string, templateName: string): string {
-		let result = '';
+	public findTemplateWithoutExtensionSync(
+		path: string,
+		templateName: string,
+	): string {
+		let result = "";
 
 		const files = fs.readdirSync(path);
 
 		for (const file of files) {
-			if (file.startsWith(templateName + '.')) {
-				result = path + '/' + file;
+			if (file.startsWith(`${templateName}.`)) {
+				result = `${path}/${file}`;
 				break;
 			}
 		}
@@ -497,7 +546,10 @@ export class Ecto extends Hookified {
 	public isValidEngine(engineName?: string): boolean {
 		let result = false;
 
-		if (engineName !== undefined && this._mapping.get(engineName) !== undefined) {
+		if (
+			engineName !== undefined &&
+			this._mapping.get(engineName) !== undefined
+		) {
 			result = true;
 		}
 
@@ -526,32 +578,32 @@ export class Ecto extends Hookified {
 
 		const cleanEngineName = engineName.trim().toLowerCase();
 		switch (cleanEngineName) {
-			case 'markdown': {
+			case "markdown": {
 				result = this._markdown;
 				break;
 			}
 
-			case 'pug': {
+			case "pug": {
 				result = this._pug;
 				break;
 			}
 
-			case 'nunjucks': {
+			case "nunjucks": {
 				result = this._nunjucks;
 				break;
 			}
 
-			case 'mustache': {
+			case "mustache": {
 				result = this._handlebars;
 				break;
 			}
 
-			case 'handlebars': {
+			case "handlebars": {
 				result = this._handlebars;
 				break;
 			}
 
-			case 'liquid': {
+			case "liquid": {
 				result = this._liquid;
 				break;
 			}
@@ -572,7 +624,7 @@ export class Ecto extends Hookified {
 	 */
 	public hasFrontMatter(source: string): boolean {
 		const writr = new Writr(source);
-		if (writr.frontMatterRaw !== '') {
+		if (writr.frontMatterRaw !== "") {
 			return true;
 		}
 

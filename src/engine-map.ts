@@ -1,12 +1,14 @@
-
 export class EngineMap {
-	private readonly _mappings: Map<string, string[]> = new Map<string, string[]>();
+	private readonly _mappings: Map<string, string[]> = new Map<
+		string,
+		string[]
+	>();
 
 	set(name: string, extensions: string[]): void {
 		const engineName = name.trim().toLowerCase();
-		const engineExtensions = new Array<string>();
+		const engineExtensions: string[] = [];
 
-		if (extensions.length > 0 && name !== '') {
+		if (extensions.length > 0 && name !== "") {
 			// Clean engine extensions
 			for (let extension of extensions) {
 				extension = extension.trim().toLowerCase();
@@ -27,7 +29,7 @@ export class EngineMap {
 		const engineName = name.trim().toLowerCase();
 		const extensions = this._mappings.get(engineName);
 		if (extensions) {
-			const engineExtensions = new Array<string>();
+			const engineExtensions: string[] = [];
 			for (const extension_ of extensions) {
 				if (extension_ !== extension.trim().toLowerCase()) {
 					engineExtensions.push(extension_);
@@ -43,7 +45,7 @@ export class EngineMap {
 	}
 
 	getName(extension: string): string | undefined {
-		let engineName;
+		let engineName: string | undefined;
 
 		for (const [name, extensions] of this._mappings) {
 			if (extensions.includes(extension.trim().toLowerCase())) {
