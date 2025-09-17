@@ -1,7 +1,7 @@
 export class BaseEngine {
 	names = [] as string[];
 	opts?: Record<string, unknown> = undefined;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// biome-ignore lint/suspicious/noExplicitAny: Different engines use different types, any is required for flexibility
 	engine: any;
 	rootTemplatePath?: string = undefined;
 	private _extensions = [] as string[];

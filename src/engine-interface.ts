@@ -1,6 +1,6 @@
 export type EngineInterface = {
 	names: string[];
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// biome-ignore lint/suspicious/noExplicitAny: Different engines use different types, any is required for flexibility
 	engine: any;
 	opts?: Record<string, unknown>;
 	rootTemplatePath?: string;
