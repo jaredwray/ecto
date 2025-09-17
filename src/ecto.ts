@@ -281,7 +281,7 @@ export class Ecto extends Hookified {
 			await this.writeFile(filePathOutput, result);
 
 			return result;
-		/* c8 ignore next 3 */
+		/* c8 ignore next 4 */
 		} catch (error) {
 			this.emit(EctoEvents.error, error);
 			return '';
@@ -340,7 +340,7 @@ export class Ecto extends Hookified {
 			this.writeFileSync(filePathOutput, result);
 
 			return result;
-		/* c8 ignore next 3 */
+		/* c8 ignore next 4 */
 		} catch (error) {
 			this.emit(EctoEvents.error, error);
 			return '';
