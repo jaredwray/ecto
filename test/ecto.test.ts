@@ -140,6 +140,59 @@ it('getEngineByTemplatePath should return pug for jade', () => {
 	expect(ecto.getEngineByFilePath('./this/is/a/long/pathfoo.jade')).toBe('pug');
 });
 
+it('getEngineByFilePath should return default engine for undefined filePath', () => {
+	const ecto = new Ecto();
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+	expect(ecto.getEngineByFilePath(undefined as any)).toBe('ejs');
+});
+
+it('getEngineByFilePath should return default engine for file with no extension', () => {
+	const ecto = new Ecto();
+
+	expect(ecto.getEngineByFilePath('README')).toBe('ejs');
+	expect(ecto.getEngineByFilePath('file-without-extension')).toBe('ejs');
+	expect(ecto.getEngineByFilePath('/path/to/file-without-extension')).toBe('ejs');
+});
+
+it('getEngineByFilePath should return default engine for file with unknown extension', () => {
+	const ecto = new Ecto();
+
+	expect(ecto.getEngineByFilePath('file.unknown')).toBe('ejs');
+	expect(ecto.getEngineByFilePath('document.xyz')).toBe('ejs');
+	expect(ecto.getEngineByFilePath('/path/file.notreal')).toBe('ejs');
+	expect(ecto.getEngineByFilePath('template.nunjucks')).toBe('ejs');
+});
+
+it('getEngineByFilePath should return correct engine for various extensions', () => {
+	const ecto = new Ecto();
+
+	expect(ecto.getEngineByFilePath('template.ejs')).toBe('ejs');
+	expect(ecto.getEngineByFilePath('template.hbs')).toBe('mustache');
+	expect(ecto.getEngineByFilePath('template.handlebars')).toBe('mustache');
+	expect(ecto.getEngineByFilePath('template.mustache')).toBe('mustache');
+	expect(ecto.getEngineByFilePath('template.md')).toBe('markdown');
+	expect(ecto.getEngineByFilePath('template.markdown')).toBe('markdown');
+	expect(ecto.getEngineByFilePath('template.pug')).toBe('pug');
+	expect(ecto.getEngineByFilePath('template.jade')).toBe('pug');
+	expect(ecto.getEngineByFilePath('template.njk')).toBe('nunjucks');
+	expect(ecto.getEngineByFilePath('template.liquid')).toBe('liquid');
+});
+
+it('getEngineByFilePath should handle files with multiple dots correctly', () => {
+	const ecto = new Ecto();
+
+	expect(ecto.getEngineByFilePath('file.name.with.dots.ejs')).toBe('ejs');
+	expect(ecto.getEngineByFilePath('template.min.hbs')).toBe('mustache');
+	expect(ecto.getEngineByFilePath('component.spec.pug')).toBe('pug');
+});
+
+it('getEngineByFilePath should handle empty string filePath', () => {
+	const ecto = new Ecto();
+
+	expect(ecto.getEngineByFilePath('')).toBe('ejs');
+});
+
 it('render via ejs', async () => {
 	const ecto = new Ecto();
 
@@ -150,6 +203,21 @@ it('render via ejs synchronous', () => {
 	const ecto = new Ecto();
 
 	expect(ecto.renderSync(ejsExampleSource, ejsExampleData)).toBe('<h2>bar</h2>');
+});
+
+it('renderSync should handle errors and return empty string', () => {
+	const ecto = new Ecto();
+	let errorEmitted = false;
+
+	ecto.on('error', () => {
+		errorEmitted = true;
+	});
+
+	const malformedEjsSource = '<% if (test) { %><h2><%= test.foo %></h2><% } %><%';
+	const result = ecto.renderSync(malformedEjsSource, ejsExampleData);
+
+	expect(result).toBe('');
+	expect(errorEmitted).toBe(true);
 });
 
 it('render via ejs synchronous with file', () => {
