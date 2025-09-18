@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import path from "node:path";
 import { Cacheable, CacheableMemory } from "cacheable";
 import { Hookified, type HookifiedOptions } from "hookified";
 import { Writr } from "writr";
@@ -387,6 +388,8 @@ export class Ecto extends Hookified {
 		// Select which engine
 		engineName ??= this.getEngineByFilePath(filePath);
 
+		const templateRootPath = rootTemplatePath ?? path.dirname(filePath);
+
 		// Get the source
 		const source = await fs.promises.readFile(filePath, "utf8");
 
@@ -394,7 +397,7 @@ export class Ecto extends Hookified {
 			source,
 			data,
 			engineName,
-			rootTemplatePath,
+			templateRootPath,
 			filePathOutput,
 		);
 
@@ -422,6 +425,8 @@ export class Ecto extends Hookified {
 		// Select which engine
 		engineName ??= this.getEngineByFilePath(filePath);
 
+		const templateRootPath = rootTemplatePath ?? path.dirname(filePath);
+
 		// Get the source
 		const source = fs.readFileSync(filePath, "utf8");
 
@@ -429,7 +434,7 @@ export class Ecto extends Hookified {
 			source,
 			data,
 			engineName,
-			rootTemplatePath,
+			templateRootPath,
 			filePathOutput,
 		);
 
