@@ -57,12 +57,12 @@
     "nunjucks": "^3.2.4",
     "pug": "^3.0.3",
     "underscore": "^1.13.7",
-    "writr": "^4.4.6"
+    "writr": "^4.5.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
     "@types/ejs": "^3.1.5",
-    "@types/node": "^24.3.0",
+    "@types/node": "^24.5.2",
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
     "@types/underscore": "^1.13.0",
