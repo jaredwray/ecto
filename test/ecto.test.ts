@@ -385,6 +385,30 @@ it("Render from Template - Handlebars", async () => {
 	expect(source).toContain("Foo!");
 });
 
+it("Render from Template - Handlebars infers root path for partials", async () => {
+	const ecto = new Ecto();
+	const source = await ecto.renderFromFile(
+		`${testRootDirectory}/handlebars/example1.hbs`,
+		handlebarsExampleData,
+	);
+
+	expect(source).toContain("<title>Alan O'Connor - Header Title </title>");
+	expect(source).toContain("Foo!");
+	expect(source).toContain("ux layout");
+});
+
+it("Render from Template - Handlebars infers root path for partials synchronously", () => {
+	const ecto = new Ecto();
+	const source = ecto.renderFromFileSync(
+		`${testRootDirectory}/handlebars/example1.hbs`,
+		handlebarsExampleData,
+	);
+
+	expect(source).toContain("<title>Alan O'Connor - Header Title </title>");
+	expect(source).toContain("Foo!");
+	expect(source).toContain("ux layout");
+});
+
 it("Find Template without Extension", async () => {
 	const ecto = new Ecto();
 	const templatePath = `${testRootDirectory}/find-templates`;
