@@ -52,7 +52,7 @@
     "@jaredwray/fumanchu": "^4.0.1",
     "cacheable": "^2.0.1",
     "ejs": "^3.1.10",
-    "hookified": "^1.11.0",
+    "hookified": "^1.12.1",
     "liquidjs": "^10.21.1",
     "nunjucks": "^3.2.4",
     "pug": "^3.0.3",
