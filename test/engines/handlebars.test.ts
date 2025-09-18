@@ -115,3 +115,176 @@ it("Handlebars - Rendering with Partials - Docula", async () => {
 
 	expect(result).toContain('<img src="/logo.svg" alt="logo" />');
 });
+
+it("Handlebars - Partials functionality validation", async () => {
+	const engine = new Handlebars();
+
+	const mainTemplate = `
+		<div class="container">
+			{{> userInfo}}
+			{{> itemList}}
+			{{#if showFooter}}
+				{{> footer}}
+			{{/if}}
+		</div>
+	`;
+
+	const userInfoPartial = `
+		<div class="user">
+			<h2>{{name}}</h2>
+			<p>Location: {{location}}</p>
+		</div>
+	`;
+
+	const itemListPartial = `
+		<ul class="items">
+			{{#each items}}
+				<li>{{this.title}} - \${{this.price}}</li>
+			{{/each}}
+		</ul>
+	`;
+
+	const footerPartial = `
+		<footer>
+			<p>Copyright {{year}} - {{company}}</p>
+		</footer>
+	`;
+
+	engine.engine.registerPartial(
+		"userInfo",
+		engine.engine.compile(userInfoPartial),
+	);
+	engine.engine.registerPartial(
+		"itemList",
+		engine.engine.compile(itemListPartial),
+	);
+	engine.engine.registerPartial("footer", engine.engine.compile(footerPartial));
+
+	const data = {
+		name: "John Doe",
+		location: "New York, NY",
+		items: [
+			{ title: "Widget", price: 9.99 },
+			{ title: "Gadget", price: 19.99 },
+			{ title: "Doohickey", price: 14.99 },
+		],
+		showFooter: true,
+		year: 2025,
+		company: "Test Corp",
+	};
+
+	const result = await engine.render(mainTemplate, data);
+
+	expect(result).toContain("John Doe");
+	expect(result).toContain("New York, NY");
+	expect(result).toContain("Widget - $9.99");
+	expect(result).toContain("Gadget - $19.99");
+	expect(result).toContain("Doohickey - $14.99");
+	expect(result).toContain("Copyright 2025 - Test Corp");
+	expect(result).toContain('<div class="container">');
+	expect(result).toContain('<div class="user">');
+	expect(result).toContain('<ul class="items">');
+	expect(result).toContain("<footer>");
+
+	const dataWithoutFooter = { ...data, showFooter: false };
+	const resultNoFooter = await engine.render(mainTemplate, dataWithoutFooter);
+	expect(resultNoFooter).not.toContain("<footer>");
+	expect(resultNoFooter).not.toContain("Copyright");
+});
+
+it("Handlebars - Nested partials validation", async () => {
+	const handlebars = new Handlebars();
+
+	const mainTemplate = `{{> outer}}`;
+
+	const outerPartial = `
+		<div class="outer">
+			<h1>{{title}}</h1>
+			{{> inner}}
+		</div>
+	`;
+
+	const innerPartial = `
+		<div class="inner">
+			<p>{{message}}</p>
+			{{> deepNested}}
+		</div>
+	`;
+
+	const deepNestedPartial = `
+		<span class="deep">{{detail}}</span>
+	`;
+
+	handlebars.engine.registerPartial(
+		"outer",
+		handlebars.engine.compile(outerPartial),
+	);
+	handlebars.engine.registerPartial(
+		"inner",
+		handlebars.engine.compile(innerPartial),
+	);
+	handlebars.engine.registerPartial(
+		"deepNested",
+		handlebars.engine.compile(deepNestedPartial),
+	);
+
+	const data = {
+		title: "Nested Partials Test",
+		message: "This is a nested partial",
+		detail: "Deep nested content",
+	};
+
+	const result = await handlebars.render(mainTemplate, data);
+
+	expect(result).toContain("Nested Partials Test");
+	expect(result).toContain("This is a nested partial");
+	expect(result).toContain("Deep nested content");
+	expect(result).toContain('<div class="outer">');
+	expect(result).toContain('<div class="inner">');
+	expect(result).toContain('<span class="deep">');
+});
+
+it("Handlebars - Partial with context switching", async () => {
+	const engine = new Handlebars();
+
+	const mainTemplate = `
+		{{#each users}}
+			{{> userCard}}
+		{{/each}}
+	`;
+
+	const userCardPartial = `
+		<div class="card">
+			<h3>{{name}}</h3>
+			<p>Email: {{email}}</p>
+			{{#if premium}}
+				<span class="badge">Premium Member</span>
+			{{/if}}
+		</div>
+	`;
+
+	engine.engine.registerPartial(
+		"userCard",
+		engine.engine.compile(userCardPartial),
+	);
+
+	const data = {
+		users: [
+			{ name: "Alice", email: "alice@example.com", premium: true },
+			{ name: "Bob", email: "bob@example.com", premium: false },
+			{ name: "Charlie", email: "charlie@example.com", premium: true },
+		],
+	};
+
+	const result = await engine.render(mainTemplate, data);
+
+	expect(result).toContain("Alice");
+	expect(result).toContain("alice@example.com");
+	expect(result).toContain("Bob");
+	expect(result).toContain("bob@example.com");
+	expect(result).toContain("Charlie");
+	expect(result).toContain("charlie@example.com");
+
+	const premiumBadges = (result.match(/Premium Member/g) || []).length;
+	expect(premiumBadges).toBe(2);
+});
