@@ -1,3 +1,4 @@
+// biome-ignore-all lint/suspicious/noExplicitAny: test file
 import fs from "node:fs";
 import { expect, it } from "vitest";
 import { Handlebars } from "../../src/engines/handlebars.js";
@@ -287,4 +288,155 @@ it("Handlebars - Partial with context switching", async () => {
 
 	const premiumBadges = (result.match(/Premium Member/g) || []).length;
 	expect(premiumBadges).toBe(2);
+});
+
+it("Handlebars - forEach with navigation sidebar like docula example", async () => {
+	const engine = new Handlebars();
+
+	const mainTemplate = `
+		<nav class="sidebar">
+			<div class="nav-sections">
+				{{#forEach sections}}
+					<div class="nav-section">
+						<h4 class="section-title">{{title}}</h4>
+						<ul class="nav-links">
+							{{#forEach items}}
+								<li class="nav-item{{#if active}} active{{/if}}">
+									<a href="{{url}}" title="{{description}}">
+										{{#if icon}}<span class="icon">{{icon}}</span>{{/if}}
+										<span class="label">{{label}}</span>
+									</a>
+									{{#if children}}
+										<ul class="sub-nav">
+											{{#forEach children}}
+												<li class="sub-item">
+													<a href="{{url}}">{{label}}</a>
+												</li>
+											{{/forEach}}
+										</ul>
+									{{/if}}
+								</li>
+							{{/forEach}}
+						</ul>
+					</div>
+				{{/forEach}}
+			</div>
+		</nav>
+	`;
+
+	engine.engine.registerHelper("forEach", (context: any, options: any) => {
+		let result = "";
+		if (Array.isArray(context)) {
+			for (let i = 0; i < context.length; i++) {
+				result += options.fn(context[i], {
+					data: {
+						index: i,
+						first: i === 0,
+						last: i === context.length - 1,
+					},
+				});
+			}
+		} else if (context && typeof context === "object") {
+			const keys = Object.keys(context);
+			for (let i = 0; i < keys.length; i++) {
+				result += options.fn(context[keys[i]], {
+					data: {
+						key: keys[i],
+						index: i,
+						first: i === 0,
+						last: i === keys.length - 1,
+					},
+				});
+			}
+		}
+		return result;
+	});
+
+	const data = {
+		sections: [
+			{
+				title: "Getting Started",
+				items: [
+					{
+						label: "Installation",
+						url: "/docs/installation",
+						description: "How to install the library",
+						icon: "📦",
+						active: false,
+					},
+					{
+						label: "Quick Start",
+						url: "/docs/quickstart",
+						description: "Get up and running quickly",
+						icon: "🚀",
+						active: true,
+						children: [
+							{ label: "Basic Setup", url: "/docs/quickstart/basic" },
+							{ label: "Configuration", url: "/docs/quickstart/config" },
+						],
+					},
+				],
+			},
+			{
+				title: "API Reference",
+				items: [
+					{
+						label: "Core API",
+						url: "/docs/api/core",
+						description: "Core functionality reference",
+						icon: "📖",
+						active: false,
+					},
+					{
+						label: "Advanced Features",
+						url: "/docs/api/advanced",
+						description: "Advanced API features",
+						icon: "⚙️",
+						active: false,
+						children: [
+							{ label: "Plugins", url: "/docs/api/plugins" },
+							{ label: "Extensions", url: "/docs/api/extensions" },
+							{ label: "Middleware", url: "/docs/api/middleware" },
+						],
+					},
+				],
+			},
+		],
+	};
+
+	const result = await engine.render(mainTemplate, data);
+
+	expect(result).toContain('<nav class="sidebar">');
+	expect(result).toContain("Getting Started");
+	expect(result).toContain("API Reference");
+	expect(result).toContain("Installation");
+	expect(result).toContain("Quick Start");
+	expect(result).toContain("Core API");
+	expect(result).toContain("Advanced Features");
+
+	expect(result).toContain("📦");
+	expect(result).toContain("🚀");
+	expect(result).toContain("📖");
+	expect(result).toContain("⚙️");
+
+	expect(result).toContain('class="nav-item active"');
+	expect(result).toContain("/docs/installation");
+	expect(result).toContain("/docs/quickstart");
+	expect(result).toContain("/docs/api/core");
+	expect(result).toContain("/docs/api/advanced");
+
+	expect(result).toContain("Basic Setup");
+	expect(result).toContain("Configuration");
+	expect(result).toContain("Plugins");
+	expect(result).toContain("Extensions");
+	expect(result).toContain("Middleware");
+
+	expect(result).toContain("/docs/quickstart/basic");
+	expect(result).toContain("/docs/quickstart/config");
+	expect(result).toContain("/docs/api/plugins");
+	expect(result).toContain("/docs/api/extensions");
+	expect(result).toContain("/docs/api/middleware");
+
+	expect(result).toContain('title="How to install the library"');
+	expect(result).toContain('title="Get up and running quickly"');
 });
