@@ -78,7 +78,7 @@ it("render via ejs synchronous with file with caching enabled", async () => {
 	const ecto = new Ecto({ cache: new Cacheable() });
 	const filePath = `${testOutputDirectory}/ejs/ecto-ejs-test.html`;
 
-	if (fs.existsSync(filePath)) {
+	if (fs.existsSync(testOutputDirectory)) {
 		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
 	}
 
@@ -93,14 +93,18 @@ it("render via ejs synchronous with file with caching enabled", async () => {
 	expect(content).toBe("<h2>bar</h2>");
 	expect(fs.existsSync(filePath)).toBe(true);
 
-	fs.rmSync(testOutputDirectory, { recursive: true, force: true });
+	// Add small delay before cleanup to ensure file operations are complete
+	await new Promise((resolve) => setTimeout(resolve, 10));
+	if (fs.existsSync(testOutputDirectory)) {
+		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
+	}
 });
 
 it("render via ejs synchronous with file with caching enabled sync", () => {
 	const ecto = new Ecto({ cacheSync: new CacheableMemory() });
 	const filePath = `${testOutputDirectory}/ejs/ecto-ejs-test.html`;
 
-	if (fs.existsSync(filePath)) {
+	if (fs.existsSync(testOutputDirectory)) {
 		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
 	}
 
@@ -115,7 +119,9 @@ it("render via ejs synchronous with file with caching enabled sync", () => {
 	expect(content).toBe("<h2>bar</h2>");
 	expect(fs.existsSync(filePath)).toBe(true);
 
-	fs.rmSync(testOutputDirectory, { recursive: true, force: true });
+	if (fs.existsSync(testOutputDirectory)) {
+		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
+	}
 });
 
 it("render via ejs hello from docs with caching disabled", async () => {
