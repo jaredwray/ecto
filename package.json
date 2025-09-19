@@ -49,7 +49,7 @@
     "liquidjs"
   ],
   "dependencies": {
-    "@jaredwray/fumanchu": "^4.1.0",
+    "@jaredwray/fumanchu": "^4.3.0",
     "cacheable": "^2.0.1",
     "ejs": "^3.1.10",
     "hookified": "^1.12.1",
