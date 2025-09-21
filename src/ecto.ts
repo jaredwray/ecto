@@ -616,9 +616,10 @@ export class Ecto extends Hookified {
 		}
 
 		// Check for EJS (uses <% %> tags)
+		// Use simpler patterns to avoid catastrophic backtracking
 		if (
-			/<%-?\s*[\s\S]*?\s*%>/.test(source) ||
-			/<%=\s*[\s\S]*?\s*%>/.test(source)
+			/<%[-=]/.test(source) || // Look for <%- or <%=
+			/<%[^%]*%>/.test(source) // Look for <% ... %> without nested patterns
 		) {
 			return "ejs";
 		}
@@ -626,7 +627,7 @@ export class Ecto extends Hookified {
 		// Check for Liquid first (has unique keywords that Nunjucks doesn't have)
 		// Liquid uses {% liquid %}, {% assign %}, {% capture %}, {% case %}, {% when %}
 		if (
-			/{%\s*(?:liquid|assign|capture|endcapture|case|when|unless|endunless|tablerow|endtablerow|increment|decrement)(?:\s+[\s\S]*?)?\s*%}/.test(
+			/{%\s*(?:liquid|assign|capture|endcapture|case|when|unless|endunless|tablerow|endtablerow|increment|decrement)\b/.test(
 				source,
 			) ||
 			// Liquid heavily uses filters with pipe syntax
@@ -639,7 +640,7 @@ export class Ecto extends Hookified {
 		// Check for Nunjucks/Jinja2 style (uses {% %} for logic and {{ }} for variables)
 		// Nunjucks typically has {% block %}, {% extends %}, {% include %}, {% for %}, {% if %}
 		if (
-			/{%\s*(?:block|extends|include|import|for|if|elif|else|endif|endfor|set|macro|endmacro|call)\s+[\s\S]*?\s*%}/.test(
+			/{%\s*(?:block|extends|include|import|for|if|elif|else|endif|endfor|set|macro|endmacro|call)\b/.test(
 				source,
 			)
 		) {
@@ -649,10 +650,10 @@ export class Ecto extends Hookified {
 		// Check for Handlebars/Mustache (uses {{ }} and {{# }})
 		// Handlebars has helpers like {{#if}}, {{#each}}, {{#unless}}
 		if (
-			/{{#(?:if|each|unless|with|lookup|log)\s+[\s\S]*?}}/.test(source) ||
+			/{{#(?:if|each|unless|with|lookup|log)\b/.test(source) ||
 			/{{\/(?:if|each|unless|with)}}/.test(source) ||
 			/{{>\s*\S+/.test(source) || // Partials
-			/{{!--[\s\S]*?--}}/.test(source)
+			/{{!--[^-]*--}}/.test(source)
 		) {
 			// Handlebars comments
 			return "handlebars";
