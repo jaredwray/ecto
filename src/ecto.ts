@@ -597,15 +597,22 @@ export class Ecto extends Hookified {
 		}
 
 		// Check for Pug/Jade (indentation-based, no angle brackets for tags)
-		if (
-			(/^(?:doctype\s+html|html|head|body|div|p|h[1-6]|ul|li|a|img)\b[^<>]*$/m.test(
+		// Avoid catastrophic backtracking by limiting the search
+		const hasHtmlTags = /<[a-zA-Z][^>]*>/.test(source);
+		if (!hasHtmlTags) {
+			// Check for Pug patterns
+			const hasPugTagPattern =
+				/^(?:doctype\s+html|html|head|body|div|p|h[1-6]|ul|li|a|img)\b/m.test(
+					source,
+				);
+			const hasPugAttributes = /^[ \t]*[a-z][a-z0-9]*\([^)]+\)/m.test(source);
+			const hasPugClassOrId = /^[ \t]*[a-z][a-z0-9]*(?:\.|#|\(|\s|$)/im.test(
 				source,
-			) ||
-				/^[ \t]*[a-z][a-z0-9]*\([^)]+\)/m.test(source)) && // Pug attributes syntax
-			/^[ \t]*[a-z][a-z0-9]*(?:\.|#|\(|\s|$)/im.test(source) &&
-			!/<[^>]+>/.test(source)
-		) {
-			return "pug";
+			);
+
+			if ((hasPugTagPattern || hasPugAttributes) && hasPugClassOrId) {
+				return "pug";
+			}
 		}
 
 		// Check for EJS (uses <% %> tags)
