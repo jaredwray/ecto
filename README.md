@@ -30,6 +30,7 @@ Ecto is a modern template consolidation engine that enables the best template en
   * [Default Engine](#default-engine)
   * [Engine Mappings](#engine-mappings)
   * [FrontMatter Helper Functions](#frontmatter-helper-functions)
+  * [Detect Template Engine](#detect-template-engine)
 * [The Template Engines We Support](#the-template-engines-we-support)
     * [EJS](#ejs)
     * [Markdown](#markdown)
@@ -562,8 +563,69 @@ Ecto has added in some helper functions for frontmatter in markdown files. Front
 
 * `.hasFrontMatter(source: string): boolean` - This function checks if the markdown file has frontmatter. It takes in a string and returns a boolean value.
 * `.getFrontMatter(source: string): object` - This function gets the frontmatter from the markdown file. It takes in a string and returns an object.
-* `setFrontMatter(source:string, data: Record<string, unknown>)` - This function sets the front matter even if it already exists and returns the full source with the new front matter. 
+* `setFrontMatter(source:string, data: Record<string, unknown>)` - This function sets the front matter even if it already exists and returns the full source with the new front matter.
 * `.removeFrontMatter(source: string): string` - This function removes the frontmatter from the markdown file. It takes in a string and returns a string.
+
+# Detect Template Engine
+
+Ecto provides a `detectEngine` method that can automatically detect the template engine from a template string by analyzing its syntax patterns. This is useful when you receive template content but don't know which engine it uses.
+
+## detectEngine(source: string): string
+
+The `detectEngine` method analyzes the template syntax and returns the detected engine name. If no specific template syntax is found, it returns the configured default engine.
+
+| Name   | Type   | Description                                       |
+| ------ | ------ | ------------------------------------------------- |
+| source | string | The template source string to analyze            |
+
+**Returns:** The detected engine name ('ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid') or the default engine if no specific syntax is detected.
+
+### Basic Usage
+
+```javascript
+const ecto = new Ecto();
+
+// Detect EJS templates
+const ejsEngine = ecto.detectEngine('<%= name %>');
+console.log(ejsEngine); // 'ejs'
+
+// Detect Handlebars templates
+const hbsEngine = ecto.detectEngine('{{name}}');
+console.log(hbsEngine); // 'handlebars'
+
+// Detect Markdown
+const mdEngine = ecto.detectEngine('# Hello World\n\nThis is markdown');
+console.log(mdEngine); // 'markdown'
+
+// Detect Pug templates
+const pugEngine = ecto.detectEngine('div.container\n  h1 Hello');
+console.log(pugEngine); // 'pug'
+
+// Detect Nunjucks templates
+const njkEngine = ecto.detectEngine('{% block content %}Hello{% endblock %}');
+console.log(njkEngine); // 'nunjucks'
+
+// Detect Liquid templates
+const liquidEngine = ecto.detectEngine('{% assign name = "John" %}{{ name | upcase }}');
+console.log(liquidEngine); // 'liquid'
+
+// Returns default engine for plain text
+const defaultEngine = ecto.detectEngine('Plain text without template syntax');
+console.log(defaultEngine); // 'ejs' (or whatever is set as defaultEngine)
+```
+
+### Detection Patterns
+
+The `detectEngine` method recognizes the following syntax patterns:
+
+- **EJS**: `<% %>`, `<%= %>`, `<%- %>`
+- **Handlebars/Mustache**: `{{ }}`, `{{# }}`, `{{> }}`
+- **Pug**: Indentation-based syntax without angle brackets
+- **Nunjucks**: `{% block %}`, `{% extends %}`, `{% include %}`
+- **Liquid**: `{% assign %}`, `{% capture %}`, pipe filters `{{ var | filter }}`
+- **Markdown**: Headers `#`, lists, code blocks, links, tables
+
+Note: For ambiguous syntax (like simple `{{ }}` which could be Handlebars, Mustache, or Liquid), the method makes intelligent decisions based on additional context clues in the template.
 
 # Caching on Rendering
 
