@@ -471,6 +471,68 @@ This will return the string “handlebars”, which is the corresponding engine 
 
 Gaining an understanding of this class will provide you with more options and possibilities when using Ecto.
 
+## Detect Template Engine
+
+Ecto provides a `detectEngine` method that can automatically detect the template engine from a template string by analyzing its syntax patterns. This is useful when you receive template content but don't know which engine it uses.
+
+## detectEngine(source: string): string
+
+The `detectEngine` method analyzes the template syntax and returns the detected engine name. If no specific template syntax is found, it returns the configured default engine.
+
+| Name   | Type   | Description                                       |
+| ------ | ------ | ------------------------------------------------- |
+| source | string | The template source string to analyze            |
+
+**Returns:** The detected engine name ('ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid') or the default engine if no specific syntax is detected.
+
+### Basic Usage
+
+```javascript
+const ecto = new Ecto();
+
+// Detect EJS templates
+const ejsEngine = ecto.detectEngine('<%= name %>');
+console.log(ejsEngine); // 'ejs'
+
+// Detect Handlebars templates
+const hbsEngine = ecto.detectEngine('{{name}}');
+console.log(hbsEngine); // 'handlebars'
+
+// Detect Markdown
+const mdEngine = ecto.detectEngine('# Hello World\n\nThis is markdown');
+console.log(mdEngine); // 'markdown'
+
+// Detect Pug templates
+const pugEngine = ecto.detectEngine('div.container\n  h1 Hello');
+console.log(pugEngine); // 'pug'
+
+// Detect Nunjucks templates
+const njkEngine = ecto.detectEngine('{% block content %}Hello{% endblock %}');
+console.log(njkEngine); // 'nunjucks'
+
+// Detect Liquid templates
+const liquidEngine = ecto.detectEngine('{% assign name = "John" %}{{ name | upcase }}');
+console.log(liquidEngine); // 'liquid'
+
+// Returns default engine for plain text
+const defaultEngine = ecto.detectEngine('Plain text without template syntax');
+console.log(defaultEngine); // 'ejs' (or whatever is set as defaultEngine)
+```
+
+### Detection Patterns
+
+The `detectEngine` method recognizes the following syntax patterns:
+
+- **EJS**: `<% %>`, `<%= %>`, `<%- %>`
+- **Handlebars/Mustache**: `{{ }}`, `{{# }}`, `{{> }}`
+- **Pug**: Indentation-based syntax without angle brackets
+- **Nunjucks**: `{% block %}`, `{% extends %}`, `{% include %}`
+- **Liquid**: `{% assign %}`, `{% capture %}`, pipe filters `{{ var | filter }}`
+- **Markdown**: Headers `#`, lists, code blocks, links, tables
+
+Note: For ambiguous syntax (like simple `{{ }}` which could be Handlebars, Mustache, or Liquid), the method makes intelligent decisions based on additional context clues in the template.
+
+
 # The Template Engines We Support
 
 A template engine is a tool that allows developers to write HTML markup that contains the template engine’s defined tags and syntax. These tags are used to insert variables into the final output of the template, or run some programming logic at run-time before sending the final HTML to the browser for display.
@@ -565,67 +627,6 @@ Ecto has added in some helper functions for frontmatter in markdown files. Front
 * `.getFrontMatter(source: string): object` - This function gets the frontmatter from the markdown file. It takes in a string and returns an object.
 * `setFrontMatter(source:string, data: Record<string, unknown>)` - This function sets the front matter even if it already exists and returns the full source with the new front matter.
 * `.removeFrontMatter(source: string): string` - This function removes the frontmatter from the markdown file. It takes in a string and returns a string.
-
-# Detect Template Engine
-
-Ecto provides a `detectEngine` method that can automatically detect the template engine from a template string by analyzing its syntax patterns. This is useful when you receive template content but don't know which engine it uses.
-
-## detectEngine(source: string): string
-
-The `detectEngine` method analyzes the template syntax and returns the detected engine name. If no specific template syntax is found, it returns the configured default engine.
-
-| Name   | Type   | Description                                       |
-| ------ | ------ | ------------------------------------------------- |
-| source | string | The template source string to analyze            |
-
-**Returns:** The detected engine name ('ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid') or the default engine if no specific syntax is detected.
-
-### Basic Usage
-
-```javascript
-const ecto = new Ecto();
-
-// Detect EJS templates
-const ejsEngine = ecto.detectEngine('<%= name %>');
-console.log(ejsEngine); // 'ejs'
-
-// Detect Handlebars templates
-const hbsEngine = ecto.detectEngine('{{name}}');
-console.log(hbsEngine); // 'handlebars'
-
-// Detect Markdown
-const mdEngine = ecto.detectEngine('# Hello World\n\nThis is markdown');
-console.log(mdEngine); // 'markdown'
-
-// Detect Pug templates
-const pugEngine = ecto.detectEngine('div.container\n  h1 Hello');
-console.log(pugEngine); // 'pug'
-
-// Detect Nunjucks templates
-const njkEngine = ecto.detectEngine('{% block content %}Hello{% endblock %}');
-console.log(njkEngine); // 'nunjucks'
-
-// Detect Liquid templates
-const liquidEngine = ecto.detectEngine('{% assign name = "John" %}{{ name | upcase }}');
-console.log(liquidEngine); // 'liquid'
-
-// Returns default engine for plain text
-const defaultEngine = ecto.detectEngine('Plain text without template syntax');
-console.log(defaultEngine); // 'ejs' (or whatever is set as defaultEngine)
-```
-
-### Detection Patterns
-
-The `detectEngine` method recognizes the following syntax patterns:
-
-- **EJS**: `<% %>`, `<%= %>`, `<%- %>`
-- **Handlebars/Mustache**: `{{ }}`, `{{# }}`, `{{> }}`
-- **Pug**: Indentation-based syntax without angle brackets
-- **Nunjucks**: `{% block %}`, `{% extends %}`, `{% include %}`
-- **Liquid**: `{% assign %}`, `{% capture %}`, pipe filters `{{ var | filter }}`
-- **Markdown**: Headers `#`, lists, code blocks, links, tables
-
-Note: For ambiguous syntax (like simple `{{ }}` which could be Handlebars, Mustache, or Liquid), the method makes intelligent decisions based on additional context clues in the template.
 
 # Caching on Rendering
 
