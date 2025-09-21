@@ -582,6 +582,109 @@ export class Ecto extends Hookified {
 	}
 
 	/**
+	 * Detect the template language/engine from a template string by analyzing its syntax
+	 * @param {string} source - The template source string to analyze
+	 * @returns {string} The detected engine name ('ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid') or 'unknown'
+	 * @example
+	 * const engine = ecto.detectLanguage('<%= name %>'); // Returns 'ejs'
+	 * const engine2 = ecto.detectLanguage('{{name}}'); // Returns 'handlebars' or 'liquid'
+	 * const engine3 = ecto.detectLanguage('# Heading'); // Returns 'markdown'
+	 */
+	public detectLanguage(source: string): string {
+		if (!source || typeof source !== "string") {
+			return "unknown";
+		}
+
+		// Check for Pug/Jade (indentation-based, no angle brackets for tags)
+		if (
+			(/^(?:doctype\s+html|html|head|body|div|p|h[1-6]|ul|li|a|img)\b[^<>]*$/m.test(
+				source,
+			) ||
+				/^[ \t]*[a-z][a-z0-9]*\([^)]+\)/m.test(source)) && // Pug attributes syntax
+			/^[ \t]*[a-z][a-z0-9]*(?:\.|#|\(|\s|$)/im.test(source) &&
+			!/<[^>]+>/.test(source)
+		) {
+			return "pug";
+		}
+
+		// Check for EJS (uses <% %> tags)
+		if (
+			/<%-?\s*[\s\S]*?\s*%>/.test(source) ||
+			/<%=\s*[\s\S]*?\s*%>/.test(source)
+		) {
+			return "ejs";
+		}
+
+		// Check for Liquid first (has unique keywords that Nunjucks doesn't have)
+		// Liquid uses {% liquid %}, {% assign %}, {% capture %}, {% case %}, {% when %}
+		if (
+			/{%\s*(?:liquid|assign|capture|endcapture|case|when|unless|endunless|tablerow|endtablerow|increment|decrement)(?:\s+[\s\S]*?)?\s*%}/.test(
+				source,
+			) ||
+			// Liquid heavily uses filters with pipe syntax
+			(/{{[^}]*\|[^}]*}}/.test(source) &&
+				!/{%\s*(?:block|extends|macro|import|call)\s+/.test(source))
+		) {
+			return "liquid";
+		}
+
+		// Check for Nunjucks/Jinja2 style (uses {% %} for logic and {{ }} for variables)
+		// Nunjucks typically has {% block %}, {% extends %}, {% include %}, {% for %}, {% if %}
+		if (
+			/{%\s*(?:block|extends|include|import|for|if|elif|else|endif|endfor|set|macro|endmacro|call)\s+[\s\S]*?\s*%}/.test(
+				source,
+			)
+		) {
+			return "nunjucks";
+		}
+
+		// Check for Handlebars/Mustache (uses {{ }} and {{# }})
+		// Handlebars has helpers like {{#if}}, {{#each}}, {{#unless}}
+		if (
+			/{{#(?:if|each|unless|with|lookup|log)\s+[\s\S]*?}}/.test(source) ||
+			/{{\/(?:if|each|unless|with)}}/.test(source) ||
+			/{{>\s*\S+/.test(source) || // Partials
+			/{{!--[\s\S]*?--}}/.test(source)
+		) {
+			// Handlebars comments
+			return "handlebars";
+		}
+
+		// Basic Mustache/Handlebars variable syntax (could be either)
+		if (/{{[^}]+}}/.test(source) && !/{%/.test(source)) {
+			// Default to handlebars for simple {{ }} syntax since it's more common
+			return "handlebars";
+		}
+
+		// Check for Markdown indicators
+		// Look for markdown headers, lists, code blocks, links, images
+		if (
+			/^[\t ]*#{1,6}\s+.+$/m.test(source) || // Headers (with leading whitespace)
+			/^\s*[-*+]\s+.+$/m.test(source) || // Unordered lists
+			/^\s*\d+\.\s+.+$/m.test(source) || // Ordered lists
+			/^\s*```[\s\S]*?```\s*$/m.test(source) || // Code blocks
+			/\[([^\]]+)\]\(([^)]+)\)/.test(source) || // Links
+			/!\[([^\]]*)\]\(([^)]+)\)/.test(source) || // Images
+			/^\s*>\s+.+$/m.test(source) || // Blockquotes
+			/^\s*\|.+\|.+\|$/m.test(source)
+		) {
+			// Tables
+			// Make sure it's not mixed with template syntax
+			if (
+				!/<%-?\s*[\s\S]*?\s*%>/.test(source) &&
+				!/{[{%]/.test(source) &&
+				!/<[^>]+>/.test(source.replace(/```[\s\S]*?```/g, ""))
+			) {
+				// Ignore HTML in code blocks
+				return "markdown";
+			}
+		}
+
+		// If no specific template syntax is found, return unknown
+		return "unknown";
+	}
+
+	/**
 	 * Register all engine mappings between engine names and file extensions
 	 * @returns {void}
 	 * @private
