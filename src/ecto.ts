@@ -240,13 +240,15 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Async render the source with the data
-	 * @param {string} source - The source to render
-	 * @param {Record<string, unknown} data - data to render with the source
-	 * @param {string} [engineName] - The engine to use for rendering
-	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
-	 * @param {string} [filePathOutput] - The file path to write the output
-	 * @returns {Promise<string>}
+	 * Asynchronously render a template source with data using the specified engine
+	 * @param {string} source - The template source string to render
+	 * @param {Record<string, unknown>} [data] - Data object to pass to the template engine
+	 * @param {string} [engineName] - Name of the engine to use (e.g., 'ejs', 'pug'). Defaults to defaultEngine
+	 * @param {string} [rootTemplatePath] - Root directory path for template includes/partials resolution
+	 * @param {string} [filePathOutput] - Optional file path to write the rendered output to
+	 * @returns {Promise<string>} The rendered template output as a string
+	 * @example
+	 * const result = await ecto.render('<%= name %>', { name: 'World' }, 'ejs');
 	 */
 	public async render(
 		source: string,
@@ -304,13 +306,15 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Synchronously render the source with the data
-	 * @param {string} source - The source to render
-	 * @param {Record<string, unknown} data - data to render with the source
-	 * @param {string} [engineName] - The engine to use for rendering
-	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
-	 * @param {string} [filePathOutput] - The file path to write the output
-	 * @returns {string}
+	 * Synchronously render a template source with data using the specified engine
+	 * @param {string} source - The template source string to render
+	 * @param {Record<string, unknown>} [data] - Data object to pass to the template engine
+	 * @param {string} [engineName] - Name of the engine to use (e.g., 'ejs', 'pug'). Defaults to defaultEngine
+	 * @param {string} [rootTemplatePath] - Root directory path for template includes/partials resolution
+	 * @param {string} [filePathOutput] - Optional file path to write the rendered output to
+	 * @returns {string} The rendered template output as a string
+	 * @example
+	 * const result = ecto.renderSync('<%= name %>', { name: 'World' }, 'ejs');
 	 */
 	public renderSync(
 		source: string,
@@ -368,13 +372,15 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Render from a file path
-	 * @param {string} filePath - The file path to the source
-	 * @param {Record<string, unknown>} data - The data to render with the source
-	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
-	 * @param {string} [filePathOutput] - The file path to write the output
-	 * @param {string} [engineName] - The engine to use for rendering
-	 * @returns
+	 * Asynchronously render a template from a file path
+	 * @param {string} filePath - Path to the template file to render
+	 * @param {Record<string, unknown>} [data] - Data object to pass to the template engine
+	 * @param {string} [rootTemplatePath] - Root directory for template includes. Defaults to file's directory
+	 * @param {string} [filePathOutput] - Optional file path to write the rendered output to
+	 * @param {string} [engineName] - Engine to use. If not specified, determined from file extension
+	 * @returns {Promise<string>} The rendered template output as a string
+	 * @example
+	 * const result = await ecto.renderFromFile('./templates/index.ejs', { title: 'Home' });
 	 */
 	public async renderFromFile(
 		filePath: string,
@@ -405,13 +411,15 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Sync render from a file path
-	 * @param {string} filePath - The file path to the source
-	 * @param {Record<string, unknown>} data - The data to render with the source
-	 * @param {string} [rootTemplatePath] - The root path to the template if using includes / partials
-	 * @param {string} [filePathOutput] - The file path to write the output
-	 * @param {string} [engineName] - The engine to use for rendering
-	 * @returns {string}
+	 * Synchronously render a template from a file path
+	 * @param {string} filePath - Path to the template file to render
+	 * @param {Record<string, unknown>} [data] - Data object to pass to the template engine
+	 * @param {string} [rootTemplatePath] - Root directory for template includes. Defaults to file's directory
+	 * @param {string} [filePathOutput] - Optional file path to write the rendered output to
+	 * @param {string} [engineName] - Engine to use. If not specified, determined from file extension
+	 * @returns {string} The rendered template output as a string
+	 * @example
+	 * const result = ecto.renderFromFileSync('./templates/index.ejs', { title: 'Home' });
 	 */
 	public renderFromFileSync(
 		filePath: string,
@@ -442,9 +450,11 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Ensure the file path exists or create it
-	 * @param {string} path
+	 * Asynchronously ensure that the directory path for a file exists, creating it if necessary
+	 * @param {string} path - The full file path (directories will be extracted from this)
 	 * @returns {Promise<void>}
+	 * @example
+	 * await ecto.ensureFilePath('/path/to/file.txt');
 	 */
 	public async ensureFilePath(path: string) {
 		const pathList = path.split("/");
@@ -458,9 +468,11 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Ensure the file path exists or create it synchronously
-	 * @param {string} path
+	 * Synchronously ensure that the directory path for a file exists, creating it if necessary
+	 * @param {string} path - The full file path (directories will be extracted from this)
 	 * @returns {void}
+	 * @example
+	 * ecto.ensureFilePathSync('/path/to/file.txt');
 	 */
 	public ensureFilePathSync(path: string) {
 		const pathList = path.split("/");
@@ -474,9 +486,11 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Get the Engine By File Path
-	 * @param {string} filePath
-	 * @returns {string} - will return the engine name such as 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
+	 * Determine the appropriate template engine based on a file's extension
+	 * @param {string} filePath - The file path to analyze
+	 * @returns {string} The engine name (e.g., 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid')
+	 * @example
+	 * const engine = ecto.getEngineByFilePath('template.ejs'); // Returns 'ejs'
 	 */
 	public getEngineByFilePath(filePath: string): string {
 		let result = this._defaultEngine;
@@ -496,10 +510,12 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Find the template without the extension. This will look in a directory for a file that starts with the template name
-	 * @param {string} path - the path to look for the template file
-	 * @param {string} templateName
-	 * @returns {Promise<string>} - the path to the template file
+	 * Asynchronously find a template file in a directory by name, regardless of extension
+	 * @param {string} path - Directory path to search in
+	 * @param {string} templateName - Template name without extension
+	 * @returns {Promise<string>} Full path to the found template file, or empty string if not found
+	 * @example
+	 * const templatePath = await ecto.findTemplateWithoutExtension('./templates', 'index');
 	 */
 	public async findTemplateWithoutExtension(
 		path: string,
@@ -520,10 +536,12 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Syncronously find the template without the extension. This will look in a directory for a file that starts with the template name
-	 * @param {string} path - the path to look for the template file
-	 * @param {string} templateName
-	 * @returns {string} - the path to the template file
+	 * Synchronously find a template file in a directory by name, regardless of extension
+	 * @param {string} path - Directory path to search in
+	 * @param {string} templateName - Template name without extension
+	 * @returns {string} Full path to the found template file, or empty string if not found
+	 * @example
+	 * const templatePath = ecto.findTemplateWithoutExtensionSync('./templates', 'index');
 	 */
 	public findTemplateWithoutExtensionSync(
 		path: string,
@@ -544,9 +562,11 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Is it a valid engine that is registered in ecto
-	 * @param engineName
-	 * @returns {boolean}
+	 * Check if the given engine name is valid and registered in Ecto
+	 * @param {string} [engineName] - The engine name to validate
+	 * @returns {boolean} True if the engine is valid and registered, false otherwise
+	 * @example
+	 * const isValid = ecto.isValidEngine('ejs'); // Returns true
 	 */
 	public isValidEngine(engineName?: string): boolean {
 		let result = false;
@@ -562,8 +582,9 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Register the engine mappings
+	 * Register all engine mappings between engine names and file extensions
 	 * @returns {void}
+	 * @private
 	 */
 	public registerEngineMappings(): void {
 		for (const eng of this._engines) {
@@ -574,9 +595,11 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Get Render Engine by the engine name. Default is EJS
-	 * @param {string} engineName
-	 * @returns {EngineInterface}
+	 * Get the render engine instance by name
+	 * @param {string} engineName - The name of the engine to retrieve
+	 * @returns {EngineInterface} The engine instance (defaults to EJS if not found)
+	 * @example
+	 * const engine = ecto.getRenderEngine('pug');
 	 */
 	public getRenderEngine(engineName: string): EngineInterface {
 		let result = this._ejs; // Setting default
@@ -623,9 +646,11 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Checks if the source has front matter
-	 * @param {string} source
-	 * @returns {boolean}
+	 * Check if the source content contains front matter (YAML metadata)
+	 * @param {string} source - The source content to check
+	 * @returns {boolean} True if front matter is present, false otherwise
+	 * @example
+	 * const hasFM = ecto.hasFrontMatter('---\ntitle: Test\n---\nContent');
 	 */
 	public hasFrontMatter(source: string): boolean {
 		const writr = new Writr(source);
@@ -637,9 +662,11 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Get the Front Matter from the source
-	 * @param {string} source
-	 * @returns {Record<string, unknown>}
+	 * Extract front matter data from the source content
+	 * @param {string} source - The source content containing front matter
+	 * @returns {Record<string, unknown>} Parsed front matter as an object
+	 * @example
+	 * const data = ecto.getFrontMatter('---\ntitle: Test\n---\nContent');
 	 */
 	public getFrontMatter(source: string): Record<string, unknown> {
 		const writr = new Writr(source);
@@ -647,10 +674,12 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Will set the front matter in the source and return the source
-	 * @param {string} source - The source to set the front matter
-	 * @param {Record<string, unknown>} data - The front matter data
-	 * @returns {string} - The source with the front matter
+	 * Set or replace front matter in the source content
+	 * @param {string} source - The source content
+	 * @param {Record<string, unknown>} data - The front matter data to set
+	 * @returns {string} The source content with updated front matter
+	 * @example
+	 * const updated = ecto.setFrontMatter('Content', { title: 'New Title' });
 	 */
 	public setFrontMatter(source: string, data: Record<string, unknown>): string {
 		const writr = new Writr(source);
@@ -659,15 +688,24 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Remove the Front Matter from the source
-	 * @param {string} source
-	 * @returns {string}
+	 * Remove front matter from the source content, returning only the body
+	 * @param {string} source - The source content with front matter
+	 * @returns {string} The source content without front matter
+	 * @example
+	 * const body = ecto.removeFrontMatter('---\ntitle: Test\n---\nContent');
 	 */
 	public removeFrontMatter(source: string): string {
 		const writr = new Writr(source);
 		return writr.body;
 	}
 
+	/**
+	 * Write content to a file asynchronously, creating directories if needed
+	 * @private
+	 * @param {string} [filePath] - The path to write the file to
+	 * @param {string} [source] - The content to write to the file
+	 * @returns {Promise<void>}
+	 */
 	private async writeFile(filePath?: string, source?: string) {
 		if (filePath && source) {
 			await this.ensureFilePath(filePath);
@@ -675,6 +713,13 @@ export class Ecto extends Hookified {
 		}
 	}
 
+	/**
+	 * Write content to a file synchronously, creating directories if needed
+	 * @private
+	 * @param {string} [filePath] - The path to write the file to
+	 * @param {string} [source] - The content to write to the file
+	 * @returns {void}
+	 */
 	private writeFileSync(filePath?: string, source?: string) {
 		if (filePath && source) {
 			this.ensureFilePathSync(filePath);
