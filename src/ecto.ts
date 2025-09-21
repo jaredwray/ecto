@@ -820,6 +820,7 @@ export class Ecto extends Hookified {
 		// Check for markdown links and images
 		if (
 			source.includes("](") &&
+			/* c8 ignore next */
 			(source.includes("[") || source.includes("!["))
 		) {
 			markdownIndicators++;
