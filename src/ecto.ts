@@ -687,7 +687,7 @@ export class Ecto extends Hookified {
 				) {
 					return "nunjucks";
 				}
-		/* c8 ignore next 3 */
+				/* c8 ignore next 3 */
 			}
 		}
 
