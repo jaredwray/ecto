@@ -584,15 +584,16 @@ export class Ecto extends Hookified {
 	/**
 	 * Detect the template engine from a template string by analyzing its syntax
 	 * @param {string} source - The template source string to analyze
-	 * @returns {string} The detected engine name ('ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid') or 'unknown'
+	 * @returns {string} The detected engine name ('ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid') or the default engine
 	 * @example
 	 * const engine = ecto.detectEngine('<%= name %>'); // Returns 'ejs'
 	 * const engine2 = ecto.detectEngine('{{name}}'); // Returns 'handlebars' or 'liquid'
 	 * const engine3 = ecto.detectEngine('# Heading'); // Returns 'markdown'
+	 * const engine4 = ecto.detectEngine('plain text'); // Returns defaultEngine (e.g., 'ejs')
 	 */
 	public detectEngine(source: string): string {
 		if (!source || typeof source !== "string") {
-			return "unknown";
+			return this._defaultEngine;
 		}
 
 		// Check for Pug/Jade (indentation-based, no angle brackets for tags)
@@ -680,8 +681,8 @@ export class Ecto extends Hookified {
 			}
 		}
 
-		// If no specific template syntax is found, return unknown
-		return "unknown";
+		// If no specific template syntax is found, return the default engine
+		return this._defaultEngine;
 	}
 
 	/**

@@ -313,28 +313,35 @@ const x = 1;
 		});
 	});
 
-	describe("Edge Cases and Unknown Detection", () => {
-		it("should return unknown for empty or invalid input", () => {
-			expect(ecto.detectEngine("")).toBe("unknown");
+	describe("Edge Cases and Default Engine Detection", () => {
+		it("should return default engine (ejs) for empty or invalid input", () => {
+			expect(ecto.detectEngine("")).toBe("ejs");
 			// Test with invalid types using type assertions to bypass TypeScript checking
 			// These tests ensure runtime handling of invalid input
-			expect(ecto.detectEngine(null as unknown as string)).toBe("unknown");
-			expect(ecto.detectEngine(undefined as unknown as string)).toBe("unknown");
-			expect(ecto.detectEngine(123 as unknown as string)).toBe("unknown");
-			expect(ecto.detectEngine({} as unknown as string)).toBe("unknown");
+			expect(ecto.detectEngine(null as unknown as string)).toBe("ejs");
+			expect(ecto.detectEngine(undefined as unknown as string)).toBe("ejs");
+			expect(ecto.detectEngine(123 as unknown as string)).toBe("ejs");
+			expect(ecto.detectEngine({} as unknown as string)).toBe("ejs");
 		});
 
-		it("should return unknown for plain text without template syntax", () => {
-			expect(ecto.detectEngine("Hello World")).toBe("unknown");
-			expect(ecto.detectEngine("This is just plain text.")).toBe("unknown");
-			expect(ecto.detectEngine("No template syntax here!")).toBe("unknown");
+		it("should return default engine (ejs) for plain text without template syntax", () => {
+			expect(ecto.detectEngine("Hello World")).toBe("ejs");
+			expect(ecto.detectEngine("This is just plain text.")).toBe("ejs");
+			expect(ecto.detectEngine("No template syntax here!")).toBe("ejs");
 		});
 
-		it("should return unknown for plain HTML without template syntax", () => {
-			expect(ecto.detectEngine("<div>Hello</div>")).toBe("unknown");
-			expect(ecto.detectEngine("<p>Plain HTML</p>")).toBe("unknown");
-			expect(ecto.detectEngine("<span class='test'>Text</span>")).toBe(
-				"unknown",
+		it("should return default engine (ejs) for plain HTML without template syntax", () => {
+			expect(ecto.detectEngine("<div>Hello</div>")).toBe("ejs");
+			expect(ecto.detectEngine("<p>Plain HTML</p>")).toBe("ejs");
+			expect(ecto.detectEngine("<span class='test'>Text</span>")).toBe("ejs");
+		});
+
+		it("should return custom default engine when defaultEngine is changed", () => {
+			const customEcto = new Ecto({ defaultEngine: "handlebars" });
+			expect(customEcto.detectEngine("Hello World")).toBe("handlebars");
+			expect(customEcto.detectEngine("")).toBe("handlebars");
+			expect(customEcto.detectEngine("<div>Plain HTML</div>")).toBe(
+				"handlebars",
 			);
 		});
 
