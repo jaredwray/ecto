@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
+    "@faker-js/faker": "^10.0.0",
     "@types/ejs": "^3.1.5",
     "@types/node": "^24.5.2",
     "@types/nunjucks": "^3.2.6",
