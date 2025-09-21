@@ -582,15 +582,15 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Detect the template language/engine from a template string by analyzing its syntax
+	 * Detect the template engine from a template string by analyzing its syntax
 	 * @param {string} source - The template source string to analyze
 	 * @returns {string} The detected engine name ('ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid') or 'unknown'
 	 * @example
-	 * const engine = ecto.detectLanguage('<%= name %>'); // Returns 'ejs'
-	 * const engine2 = ecto.detectLanguage('{{name}}'); // Returns 'handlebars' or 'liquid'
-	 * const engine3 = ecto.detectLanguage('# Heading'); // Returns 'markdown'
+	 * const engine = ecto.detectEngine('<%= name %>'); // Returns 'ejs'
+	 * const engine2 = ecto.detectEngine('{{name}}'); // Returns 'handlebars' or 'liquid'
+	 * const engine3 = ecto.detectEngine('# Heading'); // Returns 'markdown'
 	 */
-	public detectLanguage(source: string): string {
+	public detectEngine(source: string): string {
 		if (!source || typeof source !== "string") {
 			return "unknown";
 		}

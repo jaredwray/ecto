@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { Ecto } from "../src/ecto.js";
 
-describe("Ecto detectLanguage", () => {
+describe("Ecto detectEngine", () => {
 	let ecto: Ecto;
 
 	beforeEach(() => {
@@ -10,27 +10,23 @@ describe("Ecto detectLanguage", () => {
 
 	describe("EJS Detection", () => {
 		it("should detect EJS with <%= %> syntax", () => {
-			expect(ecto.detectLanguage("<%= name %>")).toBe("ejs");
-			expect(ecto.detectLanguage("Hello <%= user.name %>!")).toBe("ejs");
-			expect(ecto.detectLanguage("<div><%= title %></div>")).toBe("ejs");
+			expect(ecto.detectEngine("<%= name %>")).toBe("ejs");
+			expect(ecto.detectEngine("Hello <%= user.name %>!")).toBe("ejs");
+			expect(ecto.detectEngine("<div><%= title %></div>")).toBe("ejs");
 		});
 
 		it("should detect EJS with <%- %> syntax", () => {
-			expect(ecto.detectLanguage("<%- htmlContent %>")).toBe("ejs");
-			expect(ecto.detectLanguage("<div><%- unescapedHtml %></div>")).toBe(
-				"ejs",
-			);
+			expect(ecto.detectEngine("<%- htmlContent %>")).toBe("ejs");
+			expect(ecto.detectEngine("<div><%- unescapedHtml %></div>")).toBe("ejs");
 		});
 
 		it("should detect EJS with <% %> syntax", () => {
-			expect(ecto.detectLanguage("<% if (true) { %>")).toBe("ejs");
-			expect(ecto.detectLanguage("<% for(let i = 0; i < 10; i++) { %>")).toBe(
+			expect(ecto.detectEngine("<% if (true) { %>")).toBe("ejs");
+			expect(ecto.detectEngine("<% for(let i = 0; i < 10; i++) { %>")).toBe(
 				"ejs",
 			);
 			expect(
-				ecto.detectLanguage(
-					"<% if (user) { %><h1><%= user.name %></h1><% } %>",
-				),
+				ecto.detectEngine("<% if (user) { %><h1><%= user.name %></h1><% } %>"),
 			).toBe("ejs");
 		});
 
@@ -46,46 +42,44 @@ describe("Ecto detectLanguage", () => {
 					<p>No items found</p>
 				<% } %>
 			`;
-			expect(ecto.detectLanguage(template)).toBe("ejs");
+			expect(ecto.detectEngine(template)).toBe("ejs");
 		});
 	});
 
 	describe("Handlebars Detection", () => {
 		it("should detect Handlebars with basic variable syntax", () => {
-			expect(ecto.detectLanguage("{{name}}")).toBe("handlebars");
-			expect(ecto.detectLanguage("Hello {{user.name}}!")).toBe("handlebars");
-			expect(ecto.detectLanguage("{{firstName}} {{lastName}}")).toBe(
+			expect(ecto.detectEngine("{{name}}")).toBe("handlebars");
+			expect(ecto.detectEngine("Hello {{user.name}}!")).toBe("handlebars");
+			expect(ecto.detectEngine("{{firstName}} {{lastName}}")).toBe(
 				"handlebars",
 			);
 		});
 
 		it("should detect Handlebars with helpers", () => {
-			expect(ecto.detectLanguage("{{#if isActive}}Active{{/if}}")).toBe(
+			expect(ecto.detectEngine("{{#if isActive}}Active{{/if}}")).toBe(
 				"handlebars",
 			);
-			expect(ecto.detectLanguage("{{#each items}}{{this}}{{/each}}")).toBe(
+			expect(ecto.detectEngine("{{#each items}}{{this}}{{/each}}")).toBe(
 				"handlebars",
 			);
-			expect(ecto.detectLanguage("{{#unless hidden}}Visible{{/unless}}")).toBe(
+			expect(ecto.detectEngine("{{#unless hidden}}Visible{{/unless}}")).toBe(
 				"handlebars",
 			);
-			expect(ecto.detectLanguage("{{#with person}}{{name}}{{/with}}")).toBe(
+			expect(ecto.detectEngine("{{#with person}}{{name}}{{/with}}")).toBe(
 				"handlebars",
 			);
 		});
 
 		it("should detect Handlebars partials", () => {
-			expect(ecto.detectLanguage("{{> header}}")).toBe("handlebars");
-			expect(ecto.detectLanguage("{{> partials/navigation}}")).toBe(
-				"handlebars",
-			);
+			expect(ecto.detectEngine("{{> header}}")).toBe("handlebars");
+			expect(ecto.detectEngine("{{> partials/navigation}}")).toBe("handlebars");
 		});
 
 		it("should detect Handlebars comments", () => {
-			expect(ecto.detectLanguage("{{!-- This is a comment --}}")).toBe(
+			expect(ecto.detectEngine("{{!-- This is a comment --}}")).toBe(
 				"handlebars",
 			);
-			expect(ecto.detectLanguage("{{! Simple comment }}")).toBe("handlebars");
+			expect(ecto.detectEngine("{{! Simple comment }}")).toBe("handlebars");
 		});
 
 		it("should detect complex Handlebars templates", () => {
@@ -102,26 +96,26 @@ describe("Ecto detectLanguage", () => {
 					<p>Please log in</p>
 				{{/if}}
 			`;
-			expect(ecto.detectLanguage(template)).toBe("handlebars");
+			expect(ecto.detectEngine(template)).toBe("handlebars");
 		});
 	});
 
 	describe("Pug Detection", () => {
 		it("should detect simple Pug syntax", () => {
-			expect(ecto.detectLanguage("html")).toBe("pug");
-			expect(ecto.detectLanguage("div")).toBe("pug");
-			expect(ecto.detectLanguage("p Hello World")).toBe("pug");
+			expect(ecto.detectEngine("html")).toBe("pug");
+			expect(ecto.detectEngine("div")).toBe("pug");
+			expect(ecto.detectEngine("p Hello World")).toBe("pug");
 		});
 
 		it("should detect Pug with classes and IDs", () => {
-			expect(ecto.detectLanguage("div.container")).toBe("pug");
-			expect(ecto.detectLanguage("div#main-content")).toBe("pug");
-			expect(ecto.detectLanguage("p.text-center#intro")).toBe("pug");
+			expect(ecto.detectEngine("div.container")).toBe("pug");
+			expect(ecto.detectEngine("div#main-content")).toBe("pug");
+			expect(ecto.detectEngine("p.text-center#intro")).toBe("pug");
 		});
 
 		it("should detect Pug with attributes", () => {
-			expect(ecto.detectLanguage('a(href="/about") About')).toBe("pug");
-			expect(ecto.detectLanguage('img(src="logo.png" alt="Logo")')).toBe("pug");
+			expect(ecto.detectEngine('a(href="/about") About')).toBe("pug");
+			expect(ecto.detectEngine('img(src="logo.png" alt="Logo")')).toBe("pug");
 		});
 
 		it("should detect complex Pug templates", () => {
@@ -133,41 +127,39 @@ html
     h1 Welcome
     div.container
       p Hello World`;
-			expect(ecto.detectLanguage(template)).toBe("pug");
+			expect(ecto.detectEngine(template)).toBe("pug");
 		});
 
 		it("should not detect as Pug if HTML tags are present", () => {
-			expect(ecto.detectLanguage("<div>Hello</div>")).not.toBe("pug");
-			expect(ecto.detectLanguage("div <span>text</span>")).not.toBe("pug");
+			expect(ecto.detectEngine("<div>Hello</div>")).not.toBe("pug");
+			expect(ecto.detectEngine("div <span>text</span>")).not.toBe("pug");
 		});
 	});
 
 	describe("Nunjucks Detection", () => {
 		it("should detect Nunjucks block syntax", () => {
-			expect(ecto.detectLanguage("{% block content %}{% endblock %}")).toBe(
+			expect(ecto.detectEngine("{% block content %}{% endblock %}")).toBe(
 				"nunjucks",
 			);
-			expect(ecto.detectLanguage("{% extends 'base.html' %}")).toBe("nunjucks");
-			expect(ecto.detectLanguage("{% include 'header.html' %}")).toBe(
-				"nunjucks",
-			);
+			expect(ecto.detectEngine("{% extends 'base.html' %}")).toBe("nunjucks");
+			expect(ecto.detectEngine("{% include 'header.html' %}")).toBe("nunjucks");
 		});
 
 		it("should detect Nunjucks control structures", () => {
-			expect(ecto.detectLanguage("{% if user %}Hello{% endif %}")).toBe(
+			expect(ecto.detectEngine("{% if user %}Hello{% endif %}")).toBe(
 				"nunjucks",
 			);
 			expect(
-				ecto.detectLanguage("{% for item in items %}{{ item }}{% endfor %}"),
+				ecto.detectEngine("{% for item in items %}{{ item }}{% endfor %}"),
 			).toBe("nunjucks");
-			expect(ecto.detectLanguage("{% set name = 'John' %}")).toBe("nunjucks");
+			expect(ecto.detectEngine("{% set name = 'John' %}")).toBe("nunjucks");
 		});
 
 		it("should detect Nunjucks macros", () => {
-			expect(ecto.detectLanguage("{% macro input(name) %}{% endmacro %}")).toBe(
+			expect(ecto.detectEngine("{% macro input(name) %}{% endmacro %}")).toBe(
 				"nunjucks",
 			);
-			expect(ecto.detectLanguage("{% import 'forms.html' as forms %}")).toBe(
+			expect(ecto.detectEngine("{% import 'forms.html' as forms %}")).toBe(
 				"nunjucks",
 			);
 		});
@@ -183,50 +175,50 @@ html
 					{% endfor %}
 				{% endblock %}
 			`;
-			expect(ecto.detectLanguage(template)).toBe("nunjucks");
+			expect(ecto.detectEngine(template)).toBe("nunjucks");
 		});
 	});
 
 	describe("Liquid Detection", () => {
 		it("should detect Liquid-specific tags", () => {
-			expect(ecto.detectLanguage("{% assign name = 'John' %}")).toBe("liquid");
+			expect(ecto.detectEngine("{% assign name = 'John' %}")).toBe("liquid");
+			expect(ecto.detectEngine("{% capture var %}Hello{% endcapture %}")).toBe(
+				"liquid",
+			);
 			expect(
-				ecto.detectLanguage("{% capture var %}Hello{% endcapture %}"),
-			).toBe("liquid");
-			expect(
-				ecto.detectLanguage("{% case color %}{% when 'red' %}{% endcase %}"),
+				ecto.detectEngine("{% case color %}{% when 'red' %}{% endcase %}"),
 			).toBe("liquid");
 		});
 
 		it("should detect Liquid control flow", () => {
-			expect(ecto.detectLanguage("{% unless condition %}{% endunless %}")).toBe(
+			expect(ecto.detectEngine("{% unless condition %}{% endunless %}")).toBe(
 				"liquid",
 			);
 			expect(
-				ecto.detectLanguage(
+				ecto.detectEngine(
 					"{% tablerow product in products %}{% endtablerow %}",
 				),
 			).toBe("liquid");
 		});
 
 		it("should detect Liquid with filters", () => {
-			expect(ecto.detectLanguage("{{ 'hello' | upcase }}")).toBe("liquid");
-			expect(ecto.detectLanguage("{{ product.price | minus: 10 }}")).toBe(
+			expect(ecto.detectEngine("{{ 'hello' | upcase }}")).toBe("liquid");
+			expect(ecto.detectEngine("{{ product.price | minus: 10 }}")).toBe(
 				"liquid",
 			);
 			// This template is ambiguous - both Nunjucks and Liquid use {% for %},
 			// but the filter syntax with pipe is more specific to Liquid
 			// Let's use a more specific Liquid example
 			expect(
-				ecto.detectLanguage(
+				ecto.detectEngine(
 					"{% assign greeting = 'hello' %} {{ greeting | upcase }}",
 				),
 			).toBe("liquid");
 		});
 
 		it("should detect Liquid increment/decrement", () => {
-			expect(ecto.detectLanguage("{% increment counter %}")).toBe("liquid");
-			expect(ecto.detectLanguage("{% decrement counter %}")).toBe("liquid");
+			expect(ecto.detectEngine("{% increment counter %}")).toBe("liquid");
+			expect(ecto.detectEngine("{% decrement counter %}")).toBe("liquid");
 		});
 
 		it("should detect complex Liquid templates", () => {
@@ -243,58 +235,56 @@ html
 				{% endcapture %}
 				{{ product_list }}
 			`;
-			expect(ecto.detectLanguage(template)).toBe("liquid");
+			expect(ecto.detectEngine(template)).toBe("liquid");
 		});
 	});
 
 	describe("Markdown Detection", () => {
 		it("should detect Markdown headers", () => {
-			expect(ecto.detectLanguage("# Heading 1")).toBe("markdown");
-			expect(ecto.detectLanguage("## Heading 2")).toBe("markdown");
-			expect(ecto.detectLanguage("### Heading 3")).toBe("markdown");
-			expect(ecto.detectLanguage("#### Heading 4")).toBe("markdown");
+			expect(ecto.detectEngine("# Heading 1")).toBe("markdown");
+			expect(ecto.detectEngine("## Heading 2")).toBe("markdown");
+			expect(ecto.detectEngine("### Heading 3")).toBe("markdown");
+			expect(ecto.detectEngine("#### Heading 4")).toBe("markdown");
 		});
 
 		it("should detect Markdown lists", () => {
-			expect(ecto.detectLanguage("- Item 1\n- Item 2")).toBe("markdown");
-			expect(ecto.detectLanguage("* Item 1\n* Item 2")).toBe("markdown");
-			expect(ecto.detectLanguage("+ Item 1\n+ Item 2")).toBe("markdown");
-			expect(ecto.detectLanguage("1. First\n2. Second")).toBe("markdown");
+			expect(ecto.detectEngine("- Item 1\n- Item 2")).toBe("markdown");
+			expect(ecto.detectEngine("* Item 1\n* Item 2")).toBe("markdown");
+			expect(ecto.detectEngine("+ Item 1\n+ Item 2")).toBe("markdown");
+			expect(ecto.detectEngine("1. First\n2. Second")).toBe("markdown");
 		});
 
 		it("should detect Markdown code blocks", () => {
-			expect(ecto.detectLanguage("```javascript\nconst x = 1;\n```")).toBe(
+			expect(ecto.detectEngine("```javascript\nconst x = 1;\n```")).toBe(
 				"markdown",
 			);
-			expect(ecto.detectLanguage("```\ncode here\n```")).toBe("markdown");
+			expect(ecto.detectEngine("```\ncode here\n```")).toBe("markdown");
 		});
 
 		it("should detect Markdown links and images", () => {
-			expect(ecto.detectLanguage("[Link text](http://example.com)")).toBe(
+			expect(ecto.detectEngine("[Link text](http://example.com)")).toBe(
 				"markdown",
 			);
-			expect(ecto.detectLanguage("![Alt text](image.png)")).toBe("markdown");
+			expect(ecto.detectEngine("![Alt text](image.png)")).toBe("markdown");
 		});
 
 		it("should detect Markdown blockquotes", () => {
-			expect(ecto.detectLanguage("> This is a quote")).toBe("markdown");
-			expect(ecto.detectLanguage("> Quote line 1\n> Quote line 2")).toBe(
+			expect(ecto.detectEngine("> This is a quote")).toBe("markdown");
+			expect(ecto.detectEngine("> Quote line 1\n> Quote line 2")).toBe(
 				"markdown",
 			);
 		});
 
 		it("should detect Markdown tables", () => {
-			expect(ecto.detectLanguage("| Col1 | Col2 |\n|------|------|")).toBe(
+			expect(ecto.detectEngine("| Col1 | Col2 |\n|------|------|")).toBe(
 				"markdown",
 			);
 		});
 
 		it("should not detect as Markdown if template syntax is present", () => {
-			expect(ecto.detectLanguage("# Heading <%= name %>")).not.toBe("markdown");
-			expect(ecto.detectLanguage("# Title {{ variable }}")).not.toBe(
-				"markdown",
-			);
-			expect(ecto.detectLanguage("# Title {% if true %}")).not.toBe("markdown");
+			expect(ecto.detectEngine("# Heading <%= name %>")).not.toBe("markdown");
+			expect(ecto.detectEngine("# Title {{ variable }}")).not.toBe("markdown");
+			expect(ecto.detectEngine("# Title {% if true %}")).not.toBe("markdown");
 		});
 
 		it("should detect complex Markdown documents", () => {
@@ -319,71 +309,69 @@ const x = 1;
 | Column 1 | Column 2 |
 |----------|----------|
 | Data 1   | Data 2   |`;
-			expect(ecto.detectLanguage(template)).toBe("markdown");
+			expect(ecto.detectEngine(template)).toBe("markdown");
 		});
 	});
 
 	describe("Edge Cases and Unknown Detection", () => {
 		it("should return unknown for empty or invalid input", () => {
-			expect(ecto.detectLanguage("")).toBe("unknown");
+			expect(ecto.detectEngine("")).toBe("unknown");
 			// Test with invalid types using type assertions to bypass TypeScript checking
 			// These tests ensure runtime handling of invalid input
-			expect(ecto.detectLanguage(null as unknown as string)).toBe("unknown");
-			expect(ecto.detectLanguage(undefined as unknown as string)).toBe(
-				"unknown",
-			);
-			expect(ecto.detectLanguage(123 as unknown as string)).toBe("unknown");
-			expect(ecto.detectLanguage({} as unknown as string)).toBe("unknown");
+			expect(ecto.detectEngine(null as unknown as string)).toBe("unknown");
+			expect(ecto.detectEngine(undefined as unknown as string)).toBe("unknown");
+			expect(ecto.detectEngine(123 as unknown as string)).toBe("unknown");
+			expect(ecto.detectEngine({} as unknown as string)).toBe("unknown");
 		});
 
 		it("should return unknown for plain text without template syntax", () => {
-			expect(ecto.detectLanguage("Hello World")).toBe("unknown");
-			expect(ecto.detectLanguage("This is just plain text.")).toBe("unknown");
-			expect(ecto.detectLanguage("No template syntax here!")).toBe("unknown");
+			expect(ecto.detectEngine("Hello World")).toBe("unknown");
+			expect(ecto.detectEngine("This is just plain text.")).toBe("unknown");
+			expect(ecto.detectEngine("No template syntax here!")).toBe("unknown");
 		});
 
 		it("should return unknown for plain HTML without template syntax", () => {
-			expect(ecto.detectLanguage("<div>Hello</div>")).toBe("unknown");
-			expect(ecto.detectLanguage("<p>Plain HTML</p>")).toBe("unknown");
-			expect(ecto.detectLanguage("<span class='test'>Text</span>")).toBe(
+			expect(ecto.detectEngine("<div>Hello</div>")).toBe("unknown");
+			expect(ecto.detectEngine("<p>Plain HTML</p>")).toBe("unknown");
+			expect(ecto.detectEngine("<span class='test'>Text</span>")).toBe(
 				"unknown",
 			);
 		});
 
 		it("should handle mixed content appropriately", () => {
 			// EJS takes precedence
-			expect(ecto.detectLanguage("<%= name %> {{other}}")).toBe("ejs");
+			expect(ecto.detectEngine("<%= name %> {{other}}")).toBe("ejs");
 
 			// Nunjucks takes precedence over basic handlebars syntax
 			expect(
-				ecto.detectLanguage("{% block content %} {{variable}} {% endblock %}"),
+				ecto.detectEngine("{% block content %} {{variable}} {% endblock %}"),
 			).toBe("nunjucks");
 
 			// Liquid-specific syntax with filters
 			expect(
-				ecto.detectLanguage("{{ name | upcase }} {% assign foo = 'bar' %}"),
+				ecto.detectEngine("{{ name | upcase }} {% assign foo = 'bar' %}"),
 			).toBe("liquid");
 
 			// For ambiguous templates (both Nunjucks and Liquid use {% for %}),
 			// Nunjucks takes precedence without Liquid-specific keywords
 			expect(
-				ecto.detectLanguage("{% for item in items %}{{ item }}{% endfor %}"),
+				ecto.detectEngine("{% for item in items %}{{ item }}{% endfor %}"),
 			).toBe("nunjucks");
 		});
 
 		it("should handle whitespace and newlines correctly", () => {
-			expect(ecto.detectLanguage("   <%= name %>   ")).toBe("ejs");
-			expect(ecto.detectLanguage("\n\n{{name}}\n\n")).toBe("handlebars");
-			expect(ecto.detectLanguage("\t\t# Heading\n")).toBe("markdown");
+			expect(ecto.detectEngine("   <%= name %>   ")).toBe("ejs");
+			expect(ecto.detectEngine("\n\n{{name}}\n\n")).toBe("handlebars");
+			expect(ecto.detectEngine("\t\t# Heading\n")).toBe("markdown");
 		});
 
 		it("should handle templates with comments", () => {
-			expect(ecto.detectLanguage("<!-- HTML comment --> <%= name %>")).toBe(
+			expect(ecto.detectEngine("<!-- HTML comment --> <%= name %>")).toBe(
 				"ejs",
 			);
-			expect(
-				ecto.detectLanguage("{{!-- Handlebars comment --}} {{name}}"),
-			).toBe("handlebars");
+			expect(ecto.detectEngine("{{!-- Handlebars comment --}} {{name}}")).toBe(
+				"handlebars",
+			);
 		});
 	});
 
@@ -402,7 +390,7 @@ const x = 1;
 	<% } %>
 </body>
 </html>`;
-			expect(ecto.detectLanguage(template)).toBe("ejs");
+			expect(ecto.detectEngine(template)).toBe("ejs");
 		});
 
 		it("should detect a real Handlebars template", () => {
@@ -419,7 +407,7 @@ const x = 1;
 	{{/if}}
 </body>
 </html>`;
-			expect(ecto.detectLanguage(template)).toBe("handlebars");
+			expect(ecto.detectEngine(template)).toBe("handlebars");
 		});
 
 		it("should detect a real Pug template", () => {
@@ -437,7 +425,7 @@ html(lang="en")
 			ul
 				each item in items
 					li= item`;
-			expect(ecto.detectLanguage(template)).toBe("pug");
+			expect(ecto.detectEngine(template)).toBe("pug");
 		});
 	});
 });
