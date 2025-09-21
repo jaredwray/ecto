@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { faker } from "@faker-js/faker";
 import { expect, it } from "vitest";
 import { Ecto } from "../src/ecto.js";
 
@@ -247,7 +248,8 @@ it("renderSync should handle errors and return empty string", () => {
 
 it("render via ejs synchronous with file", () => {
 	const ecto = new Ecto();
-	const testOutputFullDirectory = `${testOutputDirectory}/ejs-321`;
+	const uniqueId = faker.string.alphanumeric(10);
+	const testOutputFullDirectory = `${testOutputDirectory}/ejs-${uniqueId}`;
 	const filePath = `${testOutputFullDirectory}/ecto-ejs-test.html`;
 
 	if (fs.existsSync(filePath)) {
@@ -299,7 +301,8 @@ it("render via handlebars and not define engineName", async () => {
 
 it("write via ejs", async () => {
 	const ecto = new Ecto();
-	const testOutputFullDirectory = `${testOutputDirectory}/ejs-212`;
+	const uniqueId = faker.string.alphanumeric(10);
+	const testOutputFullDirectory = `${testOutputDirectory}/ejs-${uniqueId}`;
 	const filePath = `${testOutputFullDirectory}/ecto-ejs-test.html`;
 	if (fs.existsSync(filePath)) {
 		fs.rmSync(filePath);
