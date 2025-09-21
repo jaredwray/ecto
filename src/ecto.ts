@@ -596,97 +596,264 @@ export class Ecto extends Hookified {
 			return this._defaultEngine;
 		}
 
-		// Check for Pug/Jade (indentation-based, no angle brackets for tags)
-		// Avoid catastrophic backtracking by limiting the search
-		const hasHtmlTags = /<[a-zA-Z][^>]*>/.test(source);
-		if (!hasHtmlTags) {
-			// Check for Pug patterns
-			const hasPugTagPattern =
-				/^(?:doctype\s+html|html|head|body|div|p|h[1-6]|ul|li|a|img)\b/m.test(
-					source,
-				);
-			const hasPugAttributes = /^[ \t]*[a-z][a-z0-9]*\([^)]+\)/m.test(source);
-			const hasPugClassOrId = /^[ \t]*[a-z][a-z0-9]*(?:\.|#|\(|\s|$)/im.test(
-				source,
-			);
-
-			if ((hasPugTagPattern || hasPugAttributes) && hasPugClassOrId) {
-				return "pug";
-			}
-		}
-
 		// Check for EJS (uses <% %> tags)
-		// Use simpler patterns to avoid catastrophic backtracking
-		if (
-			/<%[-=]/.test(source) || // Look for <%- or <%=
-			/<%[^%]*%>/.test(source) // Look for <% ... %> without nested patterns
-		) {
-			return "ejs";
+		if (source.includes("<%")) {
+			if (
+				source.includes("<%=") ||
+				source.includes("<%-") ||
+				source.includes("%>")
+			) {
+				return "ejs";
+			}
 		}
 
 		// Check for Liquid first (has unique keywords that Nunjucks doesn't have)
-		// Liquid uses {% liquid %}, {% assign %}, {% capture %}, {% case %}, {% when %}
-		if (
-			/{%\s*(?:liquid|assign|capture|endcapture|case|when|unless|endunless|tablerow|endtablerow|increment|decrement)\b/.test(
-				source,
-			) ||
-			// Liquid heavily uses filters with pipe syntax
-			(/{{[^}]*\|[^}]*}}/.test(source) &&
-				!/{%\s*(?:block|extends|macro|import|call)\s+/.test(source))
-		) {
-			return "liquid";
+		if (source.includes("{%")) {
+			// Check for Liquid-specific keywords
+			const liquidKeywords = [
+				"liquid",
+				"assign",
+				"capture",
+				"endcapture",
+				"case",
+				"when",
+				"unless",
+				"endunless",
+				"tablerow",
+				"endtablerow",
+				"increment",
+				"decrement",
+			];
+			for (const keyword of liquidKeywords) {
+				if (
+					source.includes(`{% ${keyword}`) ||
+					source.includes(`{%${keyword}`)
+				) {
+					return "liquid";
+				}
+			}
+			// Check for Liquid filters with pipe syntax
+			if (
+				source.includes("{{") &&
+				source.includes("|") &&
+				source.includes("}}")
+			) {
+				// Make sure it's not Nunjucks by checking for Nunjucks-specific keywords
+				const nunjucksSpecific = [
+					"block",
+					"extends",
+					"macro",
+					"import",
+					"call",
+				];
+				let hasNunjucksKeyword = false;
+				for (const keyword of nunjucksSpecific) {
+					if (
+						source.includes(`{% ${keyword}`) ||
+						source.includes(`{%${keyword}`)
+					) {
+						hasNunjucksKeyword = true;
+						break;
+					}
+				}
+				if (!hasNunjucksKeyword) {
+					return "liquid";
+				}
+			}
 		}
 
-		// Check for Nunjucks/Jinja2 style (uses {% %} for logic and {{ }} for variables)
-		// Nunjucks typically has {% block %}, {% extends %}, {% include %}, {% for %}, {% if %}
-		if (
-			/{%\s*(?:block|extends|include|import|for|if|elif|else|endif|endfor|set|macro|endmacro|call)\b/.test(
-				source,
-			)
-		) {
-			return "nunjucks";
+		// Check for Nunjucks (uses {% %} for logic)
+		if (source.includes("{%")) {
+			const nunjucksKeywords = [
+				"block",
+				"extends",
+				"include",
+				"import",
+				"for",
+				"if",
+				"elif",
+				"else",
+				"endif",
+				"endfor",
+				"set",
+				"macro",
+				"endmacro",
+				"call",
+			];
+			for (const keyword of nunjucksKeywords) {
+				if (
+					source.includes(`{% ${keyword}`) ||
+					source.includes(`{%${keyword}`)
+				) {
+					return "nunjucks";
+				}
+			}
+			/* c8 ignore next */
 		}
 
 		// Check for Handlebars/Mustache (uses {{ }} and {{# }})
-		// Handlebars has helpers like {{#if}}, {{#each}}, {{#unless}}
-		if (
-			/{{#(?:if|each|unless|with|lookup|log)\b/.test(source) ||
-			/{{\/(?:if|each|unless|with)}}/.test(source) ||
-			/{{>\s*\S+/.test(source) || // Partials
-			/{{!--[^-]*--}}/.test(source)
-		) {
-			// Handlebars comments
-			return "handlebars";
+		if (source.includes("{{")) {
+			// First check if it's Liquid with filters (before assuming Handlebars)
+			if (source.includes(" | ") && source.includes("}}")) {
+				// This could be a Liquid filter, check for Liquid-specific keywords
+				if (
+					source.includes("{% assign ") ||
+					source.includes("{% capture ") ||
+					source.includes("{% unless ") ||
+					source.includes("{% increment ") ||
+					source.includes("{% decrement ") ||
+					source.includes("{% tablerow ") ||
+					source.includes("{% case ") ||
+					source.includes("{% when ") ||
+					source.includes(" | upcase") ||
+					source.includes(" | downcase") ||
+					source.includes(" | capitalize") ||
+					source.includes(" | minus:") ||
+					source.includes(" | plus:") ||
+					source.includes(" | money") ||
+					source.includes(" | date:")
+				) {
+					return "liquid";
+				}
+			}
+			// Check for Handlebars helpers
+			if (
+				source.includes("{{#") ||
+				source.includes("{{/") ||
+				source.includes("{{>") ||
+				source.includes("{{!--")
+			) {
+				return "handlebars";
+			}
+			// Check for basic mustache/handlebars syntax
+			if (source.includes("}}") && !source.includes("{%")) {
+				return "handlebars";
+			}
 		}
 
-		// Basic Mustache/Handlebars variable syntax (could be either)
-		if (/{{[^}]+}}/.test(source) && !/{%/.test(source)) {
-			// Default to handlebars for simple {{ }} syntax since it's more common
-			return "handlebars";
+		// Check for Markdown first (before Pug to avoid conflicts)
+		const lines = source.split("\n");
+		let markdownIndicators = 0;
+		let pugIndicators = 0;
+
+		for (const line of lines) {
+			const trimmed = line.trim();
+
+			// Check for markdown headers
+			if (
+				trimmed.startsWith("# ") ||
+				trimmed.startsWith("## ") ||
+				trimmed.startsWith("### ") ||
+				trimmed.startsWith("#### ") ||
+				trimmed.startsWith("##### ") ||
+				trimmed.startsWith("###### ")
+			) {
+				markdownIndicators++;
+			}
+
+			// Check for markdown lists
+			if (
+				trimmed.startsWith("- ") ||
+				trimmed.startsWith("* ") ||
+				trimmed.startsWith("+ ")
+			) {
+				markdownIndicators++;
+			}
+
+			// Check for ordered lists (e.g., "1. ", "2. ", etc.)
+			const firstChar = trimmed.charAt(0);
+			if (firstChar >= "0" && firstChar <= "9") {
+				const dotIndex = trimmed.indexOf(".");
+				if (
+					dotIndex > 0 &&
+					dotIndex < 4 &&
+					trimmed.charAt(dotIndex + 1) === " "
+				) {
+					markdownIndicators++;
+				}
+			}
+
+			// Check for blockquotes
+			if (trimmed.startsWith("> ")) {
+				markdownIndicators++;
+			}
+
+			// Check for code blocks
+			if (trimmed.startsWith("```")) {
+				markdownIndicators++;
+			}
+
+			// Check for Pug patterns (only count if it's not markdown)
+			if (
+				!trimmed.startsWith("# ") &&
+				!trimmed.startsWith("- ") &&
+				!trimmed.startsWith("* ") &&
+				!trimmed.startsWith("+ ") &&
+				!trimmed.startsWith("> ")
+			) {
+				if (
+					trimmed.startsWith("doctype") ||
+					trimmed.startsWith("html") ||
+					trimmed.startsWith("head") ||
+					trimmed.startsWith("body") ||
+					trimmed.startsWith("div") ||
+					trimmed.startsWith("p") ||
+					(trimmed.startsWith("h") &&
+						trimmed.length > 1 &&
+						trimmed.charAt(1) >= "1" &&
+						trimmed.charAt(1) <= "6")
+				) {
+					pugIndicators++;
+				}
+				// Check for Pug class/id selectors (but not in markdown context)
+				if (
+					(trimmed.includes("(") && trimmed.includes(")")) ||
+					trimmed.indexOf(".") === 0 || // starts with dot for class
+					(trimmed.indexOf("#") === 0 && !trimmed.includes(" "))
+				) {
+					// starts with # but no space (not markdown header)
+					pugIndicators++;
+				}
+			}
 		}
 
-		// Check for Markdown indicators
-		// Look for markdown headers, lists, code blocks, links, images
+		// Check for markdown links and images
 		if (
-			/^[\t ]*#{1,6}\s+.+$/m.test(source) || // Headers (with leading whitespace)
-			/^\s*[-*+]\s+.+$/m.test(source) || // Unordered lists
-			/^\s*\d+\.\s+.+$/m.test(source) || // Ordered lists
-			/^\s*```[\s\S]*?```\s*$/m.test(source) || // Code blocks
-			/\[([^\]]+)\]\(([^)]+)\)/.test(source) || // Links
-			/!\[([^\]]*)\]\(([^)]+)\)/.test(source) || // Images
-			/^\s*>\s+.+$/m.test(source) || // Blockquotes
-			/^\s*\|.+\|.+\|$/m.test(source)
+			source.includes("](") &&
+			(source.includes("[") || source.includes("!["))
 		) {
-			// Tables
+			markdownIndicators++;
+		}
+
+		// Check for markdown tables
+		if (source.includes("|") && source.includes("---")) {
+			markdownIndicators++;
+		}
+
+		// Determine if it's Markdown
+		if (markdownIndicators > 0) {
 			// Make sure it's not mixed with template syntax
 			if (
-				!/<%-?\s*[\s\S]*?\s*%>/.test(source) &&
-				!/{[{%]/.test(source) &&
-				!/<[^>]+>/.test(source.replace(/```[\s\S]*?```/g, ""))
+				!source.includes("<%") &&
+				!source.includes("{{") &&
+				!source.includes("{%")
 			) {
-				// Ignore HTML in code blocks
 				return "markdown";
 			}
+		}
+
+		// Check for Pug (indentation-based, no HTML tags)
+		const hasHtmlOpenTag = source.includes("<") && source.includes(">");
+		const hasHtmlCloseTag = source.includes("</");
+		if (
+			pugIndicators > 0 &&
+			!hasHtmlOpenTag &&
+			!hasHtmlCloseTag &&
+			!source.includes("<%") &&
+			!source.includes("{{") &&
+			!source.includes("{%")
+		) {
+			return "pug";
 		}
 
 		// If no specific template syntax is found, return the default engine

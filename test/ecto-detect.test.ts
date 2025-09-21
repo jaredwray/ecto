@@ -221,6 +221,72 @@ html
 			expect(ecto.detectEngine("{% decrement counter %}")).toBe("liquid");
 		});
 
+		it("should detect Liquid with additional filter types", () => {
+			// Test filters that were not covered
+			expect(ecto.detectEngine("{{ price | plus: 10 }}")).toBe("liquid");
+			expect(ecto.detectEngine("{{ 100.50 | money }}")).toBe("liquid");
+			expect(
+				ecto.detectEngine("{{ article.published_at | date: '%Y-%m-%d' }}"),
+			).toBe("liquid");
+			expect(ecto.detectEngine("{{ 'hello' | capitalize }}")).toBe("liquid");
+			expect(ecto.detectEngine("{{ 'HELLO' | downcase }}")).toBe("liquid");
+		});
+
+		it("should prioritize Nunjucks over Liquid when Nunjucks keywords are present", () => {
+			// Templates with filters AND Nunjucks-specific keywords should be detected as Nunjucks
+			expect(
+				ecto.detectEngine(
+					"{% block content %}{{ name | upper }}{% endblock %}",
+				),
+			).toBe("nunjucks");
+			expect(
+				ecto.detectEngine(
+					"{% extends 'base.html' %}{{ title | truncate(20) }}",
+				),
+			).toBe("nunjucks");
+			expect(
+				ecto.detectEngine(
+					"{% macro input(name) %}{{ name | escape }}{% endmacro %}",
+				),
+			).toBe("nunjucks");
+			expect(
+				ecto.detectEngine(
+					"{% import 'forms.html' as forms %}{{ forms.input | safe }}",
+				),
+			).toBe("nunjucks");
+			expect(
+				ecto.detectEngine(
+					"{% call forms.dialog %}{{ content | striptags }}{% endcall %}",
+				),
+			).toBe("nunjucks");
+
+			// Test all Nunjucks keywords with filter syntax
+			expect(
+				ecto.detectEngine("{% block test %}{{ value | filter }}{% endblock %}"),
+			).toBe("nunjucks");
+			expect(
+				ecto.detectEngine("{%block test%}{{ value | filter }}{%endblock%}"),
+			).toBe("nunjucks");
+		});
+
+		it("should detect Liquid filters even with complex syntax", () => {
+			// Test edge case where {{ and }} are on same line but filter has spaces
+			expect(ecto.detectEngine("{{ value | upcase }}")).toBe("liquid");
+			expect(ecto.detectEngine("Line 1\n{{ myvar | upcase }}\nLine 3")).toBe(
+				"liquid",
+			);
+			// Without specific Liquid keywords, generic filter syntax defaults to handlebars
+			expect(ecto.detectEngine("{{ value|filter }}")).toBe("handlebars");
+		});
+
+		it("should detect Liquid when filter syntax is present without Nunjucks keywords", () => {
+			// This covers the specific case where we have {{ | }} but no Nunjucks-specific keywords
+			// and no specific Liquid filters, triggering the fallback Liquid detection
+			expect(
+				ecto.detectEngine("{% for item in items %}{{ item|trim }}{% endfor %}"),
+			).toBe("liquid");
+		});
+
 		it("should detect complex Liquid templates", () => {
 			const template = `
 				{% assign products = collections.all.products %}
