@@ -426,6 +426,16 @@ it("Find Template without Extension Sync", () => {
 	expect(filePath).toBe(`${templatePath}/bar.njk`);
 });
 
+it("Find Template without Extension Sync - not found", () => {
+	const ecto = new Ecto();
+	const templatePath = `${testRootDirectory}/find-templates`;
+	const filePath = ecto.findTemplateWithoutExtensionSync(
+		templatePath,
+		"nonexistent",
+	);
+	expect(filePath).toBe("");
+});
+
 it("Find Template without Extension on duplicate Sync", async () => {
 	const ecto = new Ecto();
 	const templatePath = `${testRootDirectory}/find-templates`;

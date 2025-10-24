@@ -501,4 +501,136 @@ html(lang="en")
 			expect(ecto.detectEngine(template)).toBe("pug");
 		});
 	});
+
+	describe("Edge Cases and Additional Coverage", () => {
+		it("should fallback to default when has <% but incomplete EJS syntax", () => {
+			// This has <% but not <%=, <%-, or %> - tests the false branch of line 602
+			// This is an edge case - invalid/incomplete EJS syntax
+			const template = "Some text with <% only";
+			// Should fall through to default since it doesn't match complete EJS patterns
+			expect(ecto.detectEngine(template)).toBe("ejs"); // Falls through to default
+		});
+
+		it("should detect Liquid with filters and {% assign %}", () => {
+			const template = "{{ name | capitalize }} {% assign foo = 'bar' %}";
+			expect(ecto.detectEngine(template)).toBe("liquid");
+		});
+
+		it("should detect Liquid with filters and {% capture %}", () => {
+			const template =
+				"{{ name | upcase }} {% capture greeting %}Hello{% endcapture %}";
+			expect(ecto.detectEngine(template)).toBe("liquid");
+		});
+
+		it("should detect Liquid with filters and {% unless %}", () => {
+			const template =
+				"{{ price | money }} {% unless sold %}Available{% endunless %}";
+			expect(ecto.detectEngine(template)).toBe("liquid");
+		});
+
+		it("should detect Handlebars with pipe but not Liquid keywords", () => {
+			// Has | and }} but not Liquid-specific keywords
+			const template = "{{ items | length }}";
+			expect(ecto.detectEngine(template)).toBe("handlebars");
+		});
+
+		it("should detect Handlebars when has }} but not {%", () => {
+			const template = "Hello {{ name }} and {{ city }}";
+			expect(ecto.detectEngine(template)).toBe("handlebars");
+		});
+
+		it("should detect Markdown with ordered lists", () => {
+			const template = `
+1. First item
+2. Second item
+3. Third item
+`;
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should detect Markdown with numbered lists (double digits)", () => {
+			const template = `
+10. Tenth item
+11. Eleventh item
+`;
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should detect Markdown with links", () => {
+			const template = "[Click here](https://example.com)";
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should detect Markdown with images", () => {
+			const template = "![Alt text](image.png)";
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should detect Markdown with headers without template syntax", () => {
+			const template = `
+# Heading 1
+## Heading 2
+
+Some content here.
+`;
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should detect Markdown with blockquotes without template syntax", () => {
+			const template = `
+> This is a quote
+> Another line of quote
+
+Regular text.
+`;
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should handle edge case with number but not valid ordered list", () => {
+			// Has a number at start but doesn't form a valid list (no dot and space)
+			const template = "123 is a number\n456test";
+			// This should not match markdown ordered list pattern
+			expect(ecto.detectEngine(template)).toBe("ejs"); // defaults to ejs
+		});
+
+		it("should detect Markdown with unordered lists and avoid template syntax check", () => {
+			const template = `
+# Title
+
+- Item one
+- Item two
+
+Some text
+`;
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should not detect Handlebars when has }} AND {%", () => {
+			// Line 730: has }} but also has {% so condition is false
+			// This tests the AND condition - it has }} but also {% so it doesn't match handlebars
+			const template = "{{ name }} {% if test %}";
+			// Should detect as Nunjucks or Liquid (not Handlebars) since it has {%
+			expect(ecto.detectEngine(template)).not.toBe("handlebars");
+		});
+
+		it("should handle markdown indicators without ]( link syntax", () => {
+			// Line 823: has markdown but not the ]( pattern
+			const template = "# Header\n\nSome text without links";
+			expect(ecto.detectEngine(template)).toBe("markdown");
+		});
+
+		it("should not detect as markdown when has markdown indicators AND template syntax", () => {
+			// Line 838: has markdown indicators but also template syntax
+			const template = "# Header\n\n<%= name %>";
+			// Should detect as EJS, not markdown
+			expect(ecto.detectEngine(template)).toBe("ejs");
+		});
+
+		it("should not detect as markdown when has markdown with handlebars syntax", () => {
+			// Line 838: has markdown indicators but also template syntax
+			const template = "# Header\n\n{{ name }}";
+			// Should detect as Handlebars, not markdown
+			expect(ecto.detectEngine(template)).toBe("handlebars");
+		});
+	});
 });

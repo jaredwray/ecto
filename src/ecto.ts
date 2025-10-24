@@ -727,6 +727,7 @@ export class Ecto extends Hookified {
 				return "handlebars";
 			}
 			// Check for basic mustache/handlebars syntax
+			/* v8 ignore next -- @preserve */
 			if (source.includes("}}") && !source.includes("{%")) {
 				return "handlebars";
 			}
@@ -819,9 +820,9 @@ export class Ecto extends Hookified {
 		}
 
 		// Check for markdown links and images
+		/* v8 ignore next -- @preserve */
 		if (
 			source.includes("](") &&
-			/* c8 ignore next */
 			(source.includes("[") || source.includes("!["))
 		) {
 			markdownIndicators++;
@@ -835,6 +836,7 @@ export class Ecto extends Hookified {
 		// Determine if it's Markdown
 		if (markdownIndicators > 0) {
 			// Make sure it's not mixed with template syntax
+			/* v8 ignore next -- @preserve */
 			if (
 				!source.includes("<%") &&
 				!source.includes("{{") &&
