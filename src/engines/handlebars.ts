@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { fumanchu } from "@jaredwray/fumanchu";
-import * as _ from "underscore";
+import { decode } from "ent";
 import { BaseEngine } from "../base-engine.js";
 import type { EngineInterface } from "../engine-interface.js";
 
@@ -30,7 +30,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		const template = this.engine.compile(source, this.opts);
 
 		let result = template(data, this.opts);
-		result = _.unescape(result);
+		result = decode(result);
 
 		return result;
 	}
@@ -44,7 +44,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		const template = this.engine.compile(source, this.opts);
 
 		let result = template(data, this.opts);
-		result = _.unescape(result);
+		result = decode(result);
 
 		return result;
 	}
