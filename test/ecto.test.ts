@@ -448,3 +448,71 @@ it("Render with Configuration via Nunjucks", async () => {
 
 	expect(source).toContain("Hello <script>alert('XSS')</script>");
 });
+
+it("ensureFilePath - creates directory when it doesn't exist", async () => {
+	const ecto = new Ecto();
+	const testPath = `${testOutputDirectory}/new-dir/test.txt`;
+
+	// Clean up if it exists
+	if (fs.existsSync(`${testOutputDirectory}/new-dir`)) {
+		fs.rmSync(`${testOutputDirectory}/new-dir`, { recursive: true });
+	}
+
+	await ecto.ensureFilePath(testPath);
+	expect(fs.existsSync(`${testOutputDirectory}/new-dir`)).toBe(true);
+
+	// Clean up
+	fs.rmSync(`${testOutputDirectory}/new-dir`, { recursive: true });
+});
+
+it("ensureFilePath - does nothing when directory already exists", async () => {
+	const ecto = new Ecto();
+	const testPath = `${testOutputDirectory}/existing-dir/test.txt`;
+
+	// Ensure directory exists first
+	if (!fs.existsSync(`${testOutputDirectory}/existing-dir`)) {
+		fs.mkdirSync(`${testOutputDirectory}/existing-dir`, { recursive: true });
+	}
+
+	// This should not throw and should handle existing directory
+	await ecto.ensureFilePath(testPath);
+	expect(fs.existsSync(`${testOutputDirectory}/existing-dir`)).toBe(true);
+
+	// Clean up
+	fs.rmSync(`${testOutputDirectory}/existing-dir`, { recursive: true });
+});
+
+it("ensureFilePathSync - creates directory when it doesn't exist", () => {
+	const ecto = new Ecto();
+	const testPath = `${testOutputDirectory}/new-dir-sync/test.txt`;
+
+	// Clean up if it exists
+	if (fs.existsSync(`${testOutputDirectory}/new-dir-sync`)) {
+		fs.rmSync(`${testOutputDirectory}/new-dir-sync`, { recursive: true });
+	}
+
+	ecto.ensureFilePathSync(testPath);
+	expect(fs.existsSync(`${testOutputDirectory}/new-dir-sync`)).toBe(true);
+
+	// Clean up
+	fs.rmSync(`${testOutputDirectory}/new-dir-sync`, { recursive: true });
+});
+
+it("ensureFilePathSync - does nothing when directory already exists", () => {
+	const ecto = new Ecto();
+	const testPath = `${testOutputDirectory}/existing-dir-sync/test.txt`;
+
+	// Ensure directory exists first
+	if (!fs.existsSync(`${testOutputDirectory}/existing-dir-sync`)) {
+		fs.mkdirSync(`${testOutputDirectory}/existing-dir-sync`, {
+			recursive: true,
+		});
+	}
+
+	// This should not throw and should handle existing directory
+	ecto.ensureFilePathSync(testPath);
+	expect(fs.existsSync(`${testOutputDirectory}/existing-dir-sync`)).toBe(true);
+
+	// Clean up
+	fs.rmSync(`${testOutputDirectory}/existing-dir-sync`, { recursive: true });
+});
