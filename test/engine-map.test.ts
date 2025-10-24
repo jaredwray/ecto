@@ -18,6 +18,13 @@ it("EngineMap - set with multiple extensions", () => {
 	expect(mappings.get("ejs")?.length).toBe(3);
 });
 
+it("EngineMap - set with duplicate extensions should deduplicate", () => {
+	const mappings = new EngineMap();
+	mappings.set("ejs", ["ejs", "md", "ejs", "njk", "md"]);
+	expect(mappings.get("ejs")?.length).toBe(3);
+	expect(mappings.get("ejs")?.toString()).toBe("ejs,md,njk");
+});
+
 it("EngineMap - set with no extensions should be undefined", () => {
 	const mappings = new EngineMap();
 	mappings.set("ejs", []);
@@ -45,6 +52,15 @@ it("EngineMap - deleteExtension with extensions", () => {
 	mappings.set("ejs", ["ejs", "md", "njk"]);
 	expect(mappings.get("ejs")?.length).toBe(3);
 	mappings.deleteExtension("ejs", "njk");
+	expect(mappings.get("ejs")?.toString()).toBe("ejs,md");
+});
+
+it("EngineMap - deleteExtension from non-existent engine should not error", () => {
+	const mappings = new EngineMap();
+	mappings.set("ejs", ["ejs", "md"]);
+	// Try to delete extension from an engine that doesn't exist
+	mappings.deleteExtension("handlebars", "hbs");
+	// Original engine should still be intact
 	expect(mappings.get("ejs")?.toString()).toBe("ejs,md");
 });
 

@@ -73,3 +73,23 @@ it("Liquid - Rendering Partials", async () => {
 	);
 	expect(output).toContain("John Doe");
 });
+
+it("Liquid - Rendering multiple times with same engine instance (async)", async () => {
+	const engine = new Liquid();
+	const firstRender = await engine.render(exampleSource1, exampleData1);
+	expect(firstRender).toBe("John");
+
+	// Second render should reuse the existing engine
+	const secondRender = await engine.render(exampleSource1, exampleData1);
+	expect(secondRender).toBe("John");
+});
+
+it("Liquid - Rendering multiple times with same engine instance (sync)", () => {
+	const engine = new Liquid();
+	const firstRender = engine.renderSync(exampleSource1, exampleData1);
+	expect(firstRender).toBe("John");
+
+	// Second render should reuse the existing engine
+	const secondRender = engine.renderSync(exampleSource1, exampleData1);
+	expect(secondRender).toBe("John");
+});
