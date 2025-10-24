@@ -56,3 +56,11 @@ it("BaseEngine - deleteExtension should be 1 with case", () => {
 	be.deleteExtension("Md ");
 	expect(be.getExtensions().length).toBe(1);
 });
+
+it("BaseEngine - deleteExtension with non-existent extension should remain same length", () => {
+	const be = new BaseEngine();
+	be.setExtensions(["md", "markdown"]);
+	expect(be.getExtensions().length).toBe(2);
+	be.deleteExtension("html");
+	expect(be.getExtensions().length).toBe(2);
+});
