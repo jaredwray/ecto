@@ -1010,3 +1010,14 @@ export class Ecto extends Hookified {
 		}
 	}
 }
+
+// Export base types for developers who want to create custom engines
+export type { BaseEngine } from "./base-engine.js";
+export type { EngineInterface } from "./engine-interface.js";
+// Export all engine classes so developers can use them directly
+export { EJS } from "./engines/ejs.js";
+export { Handlebars } from "./engines/handlebars.js";
+export { Liquid } from "./engines/liquid.js";
+export { Markdown } from "./engines/markdown.js";
+export { Nunjucks } from "./engines/nunjucks.js";
+export { Pug } from "./engines/pug.js";

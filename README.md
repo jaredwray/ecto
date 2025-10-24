@@ -42,6 +42,13 @@ Ecto is a modern template consolidation engine that enables the best template en
 * [FrontMatter Helper Functions](#frontmatter-helper-functions)
 * [Caching on Rendering](#caching-on-rendering)
 * [Emitting Events](#emitting-events)
+* [Creating Custom Engines](#creating-custom-engines)
+  * [Direct Engine Usage](#direct-engine-usage)
+  * [Creating a Custom Engine](#creating-a-custom-engine)
+  * [Integrating Custom Engine with Ecto](#integrating-custom-engine-with-ecto)
+  * [Engine Interface Reference](#engine-interface-reference)
+  * [BaseEngine Helper Methods](#baseengine-helper-methods)
+  * [Tips for Custom Engines](#tips-for-custom-engines)
 * [How to Contribute](#how-to-contribute)
 * [License](#license)
 
@@ -704,6 +711,440 @@ const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 const data = { firstName: "John", lastName: "Doe" };
 await ecto.render(source, data); // <h1>Hello John Doe!</h1>
 ```
+
+# Creating Custom Engines
+
+Ecto allows you to create your own custom template engines by implementing the `EngineInterface`. This is useful when you want to integrate a template engine that isn't built into Ecto or when you need custom rendering logic.
+
+## Direct Engine Usage
+
+All built-in engines can be imported and used directly without going through the main `Ecto` class:
+
+```typescript
+import { EJS, Handlebars, Liquid, Markdown, Nunjucks, Pug } from 'ecto';
+
+// Use any engine directly
+const handlebars = new Handlebars();
+const result = await handlebars.render('Hello {{name}}', { name: 'World' });
+```
+
+### Customizing Engines via Constructor
+
+The recommended way to customize engines is through the `engineOptions` parameter in the Ecto constructor:
+
+```typescript
+import { Ecto } from 'ecto';
+
+const ecto = new Ecto({
+  engineOptions: {
+    handlebars: {
+      noEscape: false,
+      strict: true
+    },
+    markdown: {
+      html: true,
+      breaks: true
+    },
+    ejs: {
+      delimiter: '?'  // Use <? ?> instead of <% %>
+    }
+  }
+});
+
+// Engines are now configured with your options
+await ecto.render('<? name ?>', { name: 'World' }, 'ejs');
+```
+
+### Accessing and Modifying Engines After Creation
+
+After creating an Ecto instance, you can access each engine directly and modify it. This is useful for adding custom helpers or changing settings dynamically:
+
+```typescript
+import { Ecto } from 'ecto';
+
+const ecto = new Ecto();
+
+// Access the Handlebars engine and add custom helpers
+ecto.handlebars.engine.registerHelper('uppercase', (text) => {
+  return text.toUpperCase();
+});
+
+ecto.handlebars.engine.registerHelper('formatDate', (date) => {
+  return new Date(date).toLocaleDateString();
+});
+
+// Now use the customized engine
+const result = await ecto.render(
+  'Hello {{uppercase name}} - {{formatDate date}}',
+  { name: 'world', date: '2024-01-15' },
+  'handlebars'
+);
+// Output: Hello WORLD - 1/15/2024
+
+// Works with renderFromFile too
+await ecto.renderFromFile('./template.hbs', { name: 'world', date: '2024-01-15' });
+```
+
+### Customizing Multiple Engines
+
+You can customize multiple engines in the same Ecto instance:
+
+```typescript
+import { Ecto } from 'ecto';
+
+const ecto = new Ecto();
+
+// Customize Handlebars with helpers
+ecto.handlebars.engine.registerHelper('bold', (text) => {
+  return `<strong>${text}</strong>`;
+});
+
+// Customize EJS options
+ecto.ejs.opts = {
+  ...ecto.ejs.opts,
+  delimiter: '?',
+  openDelimiter: '[',
+  closeDelimiter: ']'
+};
+
+// Customize Markdown options
+ecto.markdown.opts = {
+  ...ecto.markdown.opts,
+  html: true,
+  breaks: true
+};
+
+// Use all customized engines
+await ecto.render('{{bold "Hello"}}', {}, 'handlebars');
+await ecto.render('[? name ?]', { name: 'World' }, 'ejs');
+await ecto.render('# Hello\n\nVisit https://example.com', {}, 'markdown');
+```
+
+### Setting Partials Path for Handlebars
+
+You can configure Handlebars to look for partials in multiple directories:
+
+```typescript
+import { Ecto } from 'ecto';
+
+const ecto = new Ecto();
+
+// Configure where to look for partials
+ecto.handlebars.partialsPath = ['partials', 'includes', 'components', 'layouts'];
+ecto.handlebars.rootTemplatePath = './templates';
+
+// Now partials will be loaded from multiple directories
+await ecto.render('{{> header}}Content{{> footer}}', {}, 'handlebars');
+```
+
+### Using Exported Engines Standalone
+
+You can also use the exported engine classes independently of Ecto:
+
+```typescript
+import { Handlebars } from 'ecto';
+
+// Create a standalone engine instance
+const handlebars = new Handlebars();
+
+// Add custom helpers
+handlebars.engine.registerHelper('shout', (text) => {
+  return text.toUpperCase() + '!!!';
+});
+
+// Use it directly
+const result = await handlebars.render('{{shout greeting}}', { greeting: 'hello' });
+console.log(result); // HELLO!!!
+```
+
+This pattern is particularly powerful when:
+- You need consistent helpers across all templates
+- You want to configure engine-specific options globally
+- You're building a framework or application with specific template requirements
+- You need to extend engine functionality beyond default behavior
+
+## Creating a Custom Engine
+
+To create a custom engine, you need to:
+
+1. Extend the `BaseEngine` class
+2. Implement the `EngineInterface`
+3. Define your engine's name and file extensions
+4. Implement the `render` and `renderSync` methods
+
+### Basic Custom Engine Example
+
+Here's a simple example of a custom uppercase engine:
+
+```typescript
+import { BaseEngine, type EngineInterface } from 'ecto';
+
+class UppercaseEngine extends BaseEngine implements EngineInterface {
+  constructor(options?: Record<string, unknown>) {
+    super();
+
+    // Define the engine name(s)
+    this.names = ['uppercase', 'upper'];
+
+    // Set any options
+    this.opts = options;
+
+    // Define file extensions this engine handles
+    this.setExtensions(['upper', 'uppercase']);
+  }
+
+  async render(source: string, data?: Record<string, unknown>): Promise<string> {
+    // Simple rendering logic: replace variables and uppercase everything
+    let result = source;
+
+    if (data) {
+      // Replace {{variable}} with data values
+      for (const [key, value] of Object.entries(data)) {
+        const regex = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g');
+        result = result.replace(regex, String(value));
+      }
+    }
+
+    // Convert to uppercase
+    return result.toUpperCase();
+  }
+
+  renderSync(source: string, data?: Record<string, unknown>): string {
+    // Same logic for synchronous rendering
+    let result = source;
+
+    if (data) {
+      for (const [key, value] of Object.entries(data)) {
+        const regex = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g');
+        result = result.replace(regex, String(value));
+      }
+    }
+
+    return result.toUpperCase();
+  }
+}
+
+// Use the custom engine
+const engine = new UppercaseEngine();
+const result = await engine.render('Hello {{name}}!', { name: 'World' });
+console.log(result); // Output: HELLO WORLD!
+```
+
+### Integrating Custom Engine with Ecto
+
+To use your custom engine with the main Ecto class, you need to register it:
+
+```typescript
+import { Ecto } from 'ecto';
+
+const ecto = new Ecto();
+
+// Create and register your custom engine
+const uppercaseEngine = new UppercaseEngine();
+
+// Add to the engines collection
+ecto.engines.set('uppercase', uppercaseEngine);
+
+// Register the file extensions
+ecto.mappings.set('uppercase', ['upper', 'uppercase']);
+
+// Now you can use it with render
+const result = await ecto.render('Hello {{name}}!', { name: 'World' }, 'uppercase');
+console.log(result); // HELLO WORLD!
+
+// Or with renderFromFile (for .upper or .uppercase files)
+await ecto.renderFromFile('./template.upper', { name: 'World' });
+```
+
+### Advanced Custom Engine with Template Library
+
+Here's a more advanced example that wraps an external template library:
+
+```typescript
+import { BaseEngine, type EngineInterface } from 'ecto';
+import Handlebars from 'handlebars'; // Example external library
+
+class CustomHandlebarsEngine extends BaseEngine implements EngineInterface {
+  constructor(options?: Record<string, unknown>) {
+    super();
+
+    this.names = ['custom-handlebars'];
+    this.opts = options;
+    this.setExtensions(['chbs']);
+
+    // Initialize the underlying engine
+    this.engine = Handlebars.create();
+
+    // Register custom helpers
+    this.engine.registerHelper('shout', (text: string) => {
+      return text.toUpperCase() + '!!!';
+    });
+
+    this.engine.registerHelper('whisper', (text: string) => {
+      return text.toLowerCase() + '...';
+    });
+  }
+
+  async render(source: string, data?: Record<string, unknown>): Promise<string> {
+    const template = this.engine.compile(source, this.opts);
+    return template(data);
+  }
+
+  renderSync(source: string, data?: Record<string, unknown>): string {
+    const template = this.engine.compile(source, this.opts);
+    return template(data);
+  }
+}
+
+// Usage
+const engine = new CustomHandlebarsEngine();
+const result = await engine.render(
+  'Normal: {{name}}, Shout: {{shout name}}, Whisper: {{whisper name}}',
+  { name: 'Hello' }
+);
+console.log(result);
+// Output: Normal: Hello, Shout: HELLO!!!, Whisper: hello...
+```
+
+### Custom Engine with Partials Support
+
+If your engine needs to support partials, you can handle the `rootTemplatePath`:
+
+```typescript
+import fs from 'node:fs';
+import { BaseEngine, type EngineInterface } from 'ecto';
+
+class CustomEngineWithPartials extends BaseEngine implements EngineInterface {
+  private partials: Map<string, string> = new Map();
+
+  constructor(options?: Record<string, unknown>) {
+    super();
+    this.names = ['custom-partials'];
+    this.opts = options;
+    this.setExtensions(['cpart']);
+  }
+
+  async render(source: string, data?: Record<string, unknown>): Promise<string> {
+    // Load partials if rootTemplatePath is set
+    if (this.rootTemplatePath) {
+      await this.loadPartials(this.rootTemplatePath);
+    }
+
+    // Process includes: {{> partialName}}
+    let result = source;
+    const includeRegex = /\{\{>\s*(\w+)\s*\}\}/g;
+    result = result.replace(includeRegex, (match, partialName) => {
+      return this.partials.get(partialName) || match;
+    });
+
+    // Process variables: {{variableName}}
+    if (data) {
+      for (const [key, value] of Object.entries(data)) {
+        const regex = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g');
+        result = result.replace(regex, String(value));
+      }
+    }
+
+    return result;
+  }
+
+  renderSync(source: string, data?: Record<string, unknown>): string {
+    if (this.rootTemplatePath) {
+      this.loadPartialsSync(this.rootTemplatePath);
+    }
+
+    let result = source;
+    const includeRegex = /\{\{>\s*(\w+)\s*\}\}/g;
+    result = result.replace(includeRegex, (match, partialName) => {
+      return this.partials.get(partialName) || match;
+    });
+
+    if (data) {
+      for (const [key, value] of Object.entries(data)) {
+        const regex = new RegExp(`\\{\\{\\s*${key}\\s*\\}\\}`, 'g');
+        result = result.replace(regex, String(value));
+      }
+    }
+
+    return result;
+  }
+
+  private async loadPartials(partialsPath: string): Promise<void> {
+    const files = await fs.promises.readdir(partialsPath);
+    for (const file of files) {
+      if (file.endsWith('.cpart')) {
+        const name = file.replace('.cpart', '');
+        const content = await fs.promises.readFile(
+          `${partialsPath}/${file}`,
+          'utf-8'
+        );
+        this.partials.set(name, content);
+      }
+    }
+  }
+
+  private loadPartialsSync(partialsPath: string): void {
+    const files = fs.readdirSync(partialsPath);
+    for (const file of files) {
+      if (file.endsWith('.cpart')) {
+        const name = file.replace('.cpart', '');
+        const content = fs.readFileSync(`${partialsPath}/${file}`, 'utf-8');
+        this.partials.set(name, content);
+      }
+    }
+  }
+}
+
+// Usage
+const engine = new CustomEngineWithPartials();
+engine.rootTemplatePath = './templates/partials';
+const result = await engine.render('{{> header}}\nHello {{name}}!\n{{> footer}}', {
+  name: 'World'
+});
+```
+
+## Engine Interface Reference
+
+When creating a custom engine, implement these required methods:
+
+```typescript
+interface EngineInterface {
+  // Engine name(s) - can support multiple aliases
+  names: string[];
+
+  // The underlying template engine (if wrapping a library)
+  engine: any;
+
+  // Optional configuration
+  opts?: Record<string, unknown>;
+
+  // Root path for templates (used for partials/includes)
+  rootTemplatePath?: string;
+
+  // Async rendering method
+  render(source: string, data?: Record<string, unknown>): Promise<string>;
+
+  // Synchronous rendering method
+  renderSync(source: string, data?: Record<string, unknown>): string;
+}
+```
+
+## BaseEngine Helper Methods
+
+The `BaseEngine` class provides useful helper methods:
+
+- `getExtensions()`: Get registered file extensions
+- `setExtensions(extensions: string[])`: Set file extensions this engine handles
+- `deleteExtension(name: string)`: Remove a file extension
+
+## Tips for Custom Engines
+
+1. **Error Handling**: Always wrap your rendering logic in try-catch blocks
+2. **Options**: Make your engine configurable through the constructor options
+3. **Performance**: Consider caching compiled templates if applicable
+4. **Type Safety**: Use TypeScript for better development experience
+5. **Testing**: Write comprehensive tests for your custom engine
+6. **Documentation**: Document your engine's syntax and features
 
 # How to Contribute
 
