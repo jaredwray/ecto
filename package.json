@@ -60,19 +60,19 @@
     "writr": "^4.5.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.0",
+    "@biomejs/biome": "^2.3.7",
     "@faker-js/faker": "^10.1.0",
     "@types/ejs": "^3.1.5",
     "@types/ent": "^2.2.8",
-    "@types/node": "^24.9.1",
+    "@types/node": "^24.10.1",
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
-    "@vitest/coverage-v8": "^4.0.3",
+    "@vitest/coverage-v8": "^4.0.14",
     "docula": "^0.31.0",
-    "rimraf": "^6.0.1",
-    "tsup": "^8.5.0",
+    "rimraf": "^6.1.2",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.3"
+    "vitest": "^4.0.14"
   },
   "files": [
     "dist",
