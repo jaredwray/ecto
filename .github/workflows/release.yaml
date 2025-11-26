@@ -6,15 +6,15 @@ on:
     types: [released]
 
 jobs:
-  build:
+  build-release:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
       with:
-      ref: ${{ github.event.release.target_commitish }}
-      
+        ref: ${{ github.event.release.target_commitish }}
+
     - name: Use Node.js 22
       uses: actions/setup-node@v4
       with:
