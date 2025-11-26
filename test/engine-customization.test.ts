@@ -84,5 +84,5 @@ it("Engine Customization - Configure engine via constructor", async () => {
 		{},
 		"markdown",
 	);
-	expect(result).toContain("<div>HTML content</div>");
+	expect(result).toContain('<h1 id="hello">Hello</h1>');
 });
