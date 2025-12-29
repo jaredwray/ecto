@@ -526,3 +526,166 @@ it("ensureFilePathSync - does nothing when directory already exists", () => {
 	// Clean up
 	fs.rmSync(`${testOutputDirectory}/existing-dir-sync`, { recursive: true });
 });
+
+// Hook tests
+it("beforeRender hook modifies source", async () => {
+	const ecto = new Ecto();
+	ecto.onHook("beforeRender", (context: { source: string }) => {
+		// Replace the template source itself
+		context.source = "<%= modified %>";
+	});
+
+	const result = await ecto.render("<%= original %>", {
+		original: "old",
+		modified: "new",
+	});
+	expect(result).toBe("new");
+});
+
+it("beforeRender hook modifies data", async () => {
+	const ecto = new Ecto();
+	ecto.onHook("beforeRender", (context: { data?: Record<string, unknown> }) => {
+		context.data = { ...context.data, injected: "value" };
+	});
+
+	const result = await ecto.render("<%= injected %>", {});
+	expect(result).toBe("value");
+});
+
+it("afterRender hook modifies result", async () => {
+	const ecto = new Ecto();
+	ecto.onHook("afterRender", (renderResult: { result: string }) => {
+		renderResult.result = renderResult.result.toUpperCase();
+	});
+
+	const result = await ecto.render("<%= name %>", { name: "hello" });
+	expect(result).toBe("HELLO");
+});
+
+it("beforeRenderSync hook modifies source", () => {
+	const ecto = new Ecto();
+	ecto.onHook("beforeRenderSync", (context: { source: string }) => {
+		// Replace the template source itself
+		context.source = "<%= modified %>";
+	});
+
+	const result = ecto.renderSync("<%= original %>", {
+		original: "old",
+		modified: "sync-new",
+	});
+	expect(result).toBe("sync-new");
+});
+
+it("beforeRenderSync hook modifies data", () => {
+	const ecto = new Ecto();
+	ecto.onHook(
+		"beforeRenderSync",
+		(context: { data?: Record<string, unknown> }) => {
+			context.data = { ...context.data, injected: "sync-value" };
+		},
+	);
+
+	const result = ecto.renderSync("<%= injected %>", {});
+	expect(result).toBe("sync-value");
+});
+
+it("afterRenderSync hook modifies result", () => {
+	const ecto = new Ecto();
+	ecto.onHook("afterRenderSync", (renderResult: { result: string }) => {
+		renderResult.result = renderResult.result.toLowerCase();
+	});
+
+	const result = ecto.renderSync("<%= name %>", { name: "WORLD" });
+	expect(result).toBe("world");
+});
+
+it("multiple hooks chain correctly", async () => {
+	const ecto = new Ecto();
+	const order: number[] = [];
+
+	ecto.onHook("beforeRender", () => {
+		order.push(1);
+	});
+	ecto.onHook("beforeRender", () => {
+		order.push(2);
+	});
+	ecto.onHook("afterRender", () => {
+		order.push(3);
+	});
+	ecto.onHook("afterRender", () => {
+		order.push(4);
+	});
+
+	await ecto.render("<%= x %>", { x: "test" });
+	expect(order).toEqual([1, 2, 3, 4]);
+});
+
+it("hooks receive correct context", async () => {
+	const ecto = new Ecto();
+	let receivedContext: Record<string, unknown> | undefined;
+
+	ecto.onHook("beforeRender", (context: Record<string, unknown>) => {
+		receivedContext = { ...context };
+	});
+
+	await ecto.render("<%= name %>", { name: "test" }, "ejs", "/root/path");
+
+	expect(receivedContext).toBeDefined();
+	expect(receivedContext?.source).toBe("<%= name %>");
+	expect(receivedContext?.data).toEqual({ name: "test" });
+	expect(receivedContext?.engineName).toBe("ejs");
+	expect(receivedContext?.rootTemplatePath).toBe("/root/path");
+	expect(receivedContext?.cached).toBe(false);
+});
+
+it("hooks receive cached flag on cache hit", async () => {
+	const ecto = new Ecto({ cache: true });
+	let beforeCached: boolean | undefined;
+	let afterCached: boolean | undefined;
+
+	ecto.onHook("beforeRender", (context: { cached: boolean }) => {
+		beforeCached = context.cached;
+	});
+	ecto.onHook(
+		"afterRender",
+		(renderResult: { context: { cached: boolean } }) => {
+			afterCached = renderResult.context.cached;
+		},
+	);
+
+	// First render - should not be cached
+	await ecto.render("<%= x %>", { x: "1" });
+	expect(beforeCached).toBe(false);
+	expect(afterCached).toBe(false);
+
+	// Second render - should be cached
+	await ecto.render("<%= x %>", { x: "1" });
+	expect(beforeCached).toBe(true);
+	expect(afterCached).toBe(true);
+});
+
+it("hooks receive cached flag on sync cache hit", () => {
+	const ecto = new Ecto({ cacheSync: true });
+	let beforeCached: boolean | undefined;
+	let afterCached: boolean | undefined;
+
+	ecto.onHook("beforeRenderSync", (context: { cached: boolean }) => {
+		beforeCached = context.cached;
+	});
+	ecto.onHook(
+		"afterRenderSync",
+		(renderResult: { context: { cached: boolean } }) => {
+			afterCached = renderResult.context.cached;
+		},
+	);
+
+	// First render - should not be cached
+	ecto.renderSync("<%= x %>", { x: "1" });
+	expect(beforeCached).toBe(false);
+	expect(afterCached).toBe(false);
+
+	// Second render - should be cached
+	ecto.renderSync("<%= x %>", { x: "1" });
+	expect(beforeCached).toBe(true);
+	expect(afterCached).toBe(true);
+});

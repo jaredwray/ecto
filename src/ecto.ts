@@ -53,11 +53,35 @@ export type EctoOptions = {
 	cacheSync?: boolean | CacheableMemory;
 } & HookifiedOptions;
 
+/**
+ * Context passed to beforeRender and beforeRenderSync hooks
+ */
+export type RenderContext = {
+	source: string;
+	data?: Record<string, unknown>;
+	engineName: string;
+	rootTemplatePath?: string;
+	filePathOutput?: string;
+	cached: boolean;
+};
+
+/**
+ * Result passed to afterRender and afterRenderSync hooks
+ */
+export type RenderResult = {
+	result: string;
+	context: RenderContext;
+};
+
 export enum EctoEvents {
 	cacheHit = "cacheHit",
 	cacheMiss = "cacheMiss",
 	warn = "warn",
 	error = "error",
+	beforeRender = "beforeRender",
+	afterRender = "afterRender",
+	beforeRenderSync = "beforeRenderSync",
+	afterRenderSync = "afterRenderSync",
 }
 
 export class Ecto extends Hookified {
@@ -258,21 +282,6 @@ export class Ecto extends Hookified {
 		filePathOutput?: string,
 	): Promise<string> {
 		try {
-			const cacheKey = `${engineName ?? this._defaultEngine}-${source}-${JSON.stringify(data)}`;
-			if (this._cache) {
-				const cachedResult = await this._cache.get<string>(cacheKey);
-				if (cachedResult) {
-					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
-					// Write out the file
-					await this.writeFile(filePathOutput, cachedResult);
-					// Return the cached result
-					return cachedResult;
-				}
-
-				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
-			}
-
-			let result = "";
 			let renderEngineName = this._defaultEngine;
 
 			// Set the render engine
@@ -280,14 +289,62 @@ export class Ecto extends Hookified {
 				renderEngineName = engineName;
 			}
 
+			const cacheKey = `${renderEngineName}-${source}-${JSON.stringify(data)}`;
+			if (this._cache) {
+				const cachedResult = await this._cache.get<string>(cacheKey);
+				if (cachedResult) {
+					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
+
+					// Create context for hooks with cached flag
+					const context: RenderContext = {
+						source,
+						data,
+						engineName: renderEngineName,
+						rootTemplatePath,
+						filePathOutput,
+						cached: true,
+					};
+					await this.hook(EctoEvents.beforeRender, context);
+
+					// Create render result for afterRender hook
+					const renderResult: RenderResult = { result: cachedResult, context };
+					await this.hook(EctoEvents.afterRender, renderResult);
+
+					// Write out the file
+					await this.writeFile(filePathOutput, renderResult.result);
+					// Return the result (potentially modified by hooks)
+					return renderResult.result;
+				}
+
+				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
+			}
+
+			// Create context for hooks
+			const context: RenderContext = {
+				source,
+				data,
+				engineName: renderEngineName,
+				rootTemplatePath,
+				filePathOutput,
+				cached: false,
+			};
+
+			// Call beforeRender hook - allows modifying source and data
+			await this.hook(EctoEvents.beforeRender, context);
+
 			// Get the render engine
 			const renderEngine = this.getRenderEngine(renderEngineName);
 
 			// Set the root template path
-			renderEngine.rootTemplatePath = rootTemplatePath;
+			renderEngine.rootTemplatePath = context.rootTemplatePath;
 
-			// Get the output
-			result = await renderEngine.render(source, data);
+			// Get the output using potentially modified source and data
+			let result = await renderEngine.render(context.source, context.data);
+
+			// Create render result for afterRender hook
+			const renderResult: RenderResult = { result, context };
+			await this.hook(EctoEvents.afterRender, renderResult);
+			result = renderResult.result;
 
 			// If caching is enabled, store the result in the cache
 			if (this._cache) {
@@ -325,21 +382,6 @@ export class Ecto extends Hookified {
 		filePathOutput?: string,
 	): string {
 		try {
-			const cacheKey = `${engineName ?? this._defaultEngine}-${source}-${JSON.stringify(data)}`;
-			if (this._cacheSync) {
-				const cachedResult = this._cacheSync.get<string>(cacheKey);
-				if (cachedResult) {
-					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
-					// Write out the file
-					this.writeFileSync(filePathOutput, cachedResult);
-					// Return the cached result
-					return cachedResult;
-				}
-
-				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
-			}
-
-			let result = "";
 			let renderEngineName = this._defaultEngine;
 
 			// Set the render engine
@@ -347,14 +389,62 @@ export class Ecto extends Hookified {
 				renderEngineName = engineName;
 			}
 
+			const cacheKey = `${renderEngineName}-${source}-${JSON.stringify(data)}`;
+			if (this._cacheSync) {
+				const cachedResult = this._cacheSync.get<string>(cacheKey);
+				if (cachedResult) {
+					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
+
+					// Create context for hooks with cached flag
+					const context: RenderContext = {
+						source,
+						data,
+						engineName: renderEngineName,
+						rootTemplatePath,
+						filePathOutput,
+						cached: true,
+					};
+					this.runHooksSync(EctoEvents.beforeRenderSync, context);
+
+					// Create render result for afterRenderSync hook
+					const renderResult: RenderResult = { result: cachedResult, context };
+					this.runHooksSync(EctoEvents.afterRenderSync, renderResult);
+
+					// Write out the file
+					this.writeFileSync(filePathOutput, renderResult.result);
+					// Return the result (potentially modified by hooks)
+					return renderResult.result;
+				}
+
+				this.emit(EctoEvents.cacheMiss, `Cache miss for key: ${cacheKey}`);
+			}
+
+			// Create context for hooks
+			const context: RenderContext = {
+				source,
+				data,
+				engineName: renderEngineName,
+				rootTemplatePath,
+				filePathOutput,
+				cached: false,
+			};
+
+			// Call beforeRenderSync hook - allows modifying source and data
+			this.runHooksSync(EctoEvents.beforeRenderSync, context);
+
 			// Get the render engine
 			const renderEngine = this.getRenderEngine(renderEngineName);
 
 			// Set the root template path
-			renderEngine.rootTemplatePath = rootTemplatePath;
+			renderEngine.rootTemplatePath = context.rootTemplatePath;
 
-			// Get the output
-			result = renderEngine.renderSync(source, data);
+			// Get the output using potentially modified source and data
+			let result = renderEngine.renderSync(context.source, context.data);
+
+			// Create render result for afterRenderSync hook
+			const renderResult: RenderResult = { result, context };
+			this.runHooksSync(EctoEvents.afterRenderSync, renderResult);
+			result = renderResult.result;
 
 			// If caching is enabled, store the result in the cache
 			if (this._cacheSync) {
@@ -369,6 +459,21 @@ export class Ecto extends Hookified {
 		} catch (error) {
 			this.emit(EctoEvents.error, error);
 			return "";
+		}
+	}
+
+	/**
+	 * Run hooks synchronously for a specific event
+	 * @param {string} event - The event name
+	 * @param {unknown[]} args - Arguments to pass to the hooks
+	 * @private
+	 */
+	private runHooksSync(event: string, ...args: unknown[]): void {
+		const eventHooks = this.hooks.get(event);
+		if (eventHooks) {
+			for (const hook of eventHooks) {
+				hook(...args);
+			}
 		}
 	}
 
