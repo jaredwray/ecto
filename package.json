@@ -50,7 +50,7 @@
   ],
   "dependencies": {
     "@jaredwray/fumanchu": "^4.4.0",
-    "cacheable": "^2.2.0",
+    "cacheable": "^2.3.1",
     "ejs": "^3.1.10",
     "ent": "^2.2.2",
     "hookified": "^1.14.0",
