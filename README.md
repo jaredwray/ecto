@@ -42,6 +42,7 @@ Ecto is a modern template consolidation engine that enables the best template en
 * [FrontMatter Helper Functions](#frontmatter-helper-functions)
 * [Caching on Rendering](#caching-on-rendering)
 * [Emitting Events](#emitting-events)
+* [Hooks](#hooks)
 * [Creating Custom Engines](#creating-custom-engines)
   * [Direct Engine Usage](#direct-engine-usage)
   * [Creating a Custom Engine](#creating-a-custom-engine)
@@ -710,6 +711,112 @@ ecto.on('error', (data) => {
 const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 const data = { firstName: "John", lastName: "Doe" };
 await ecto.render(source, data); // <h1>Hello John Doe!</h1>
+```
+
+# Hooks
+
+Ecto supports hooks that allow you to intercept and modify data during the rendering process. Unlike events (which are notifications only), hooks let you transform the source, data, or result as it flows through the render pipeline.
+
+## Available Hooks
+
+| Hook Name | Description |
+| --------- | ----------- |
+| `beforeRender` | Called before async rendering. Allows modifying source and data. |
+| `afterRender` | Called after async rendering. Allows modifying the result. |
+| `beforeRenderSync` | Called before sync rendering. Allows modifying source and data. |
+| `afterRenderSync` | Called after sync rendering. Allows modifying the result. |
+
+## Hook Context
+
+The `beforeRender` and `beforeRenderSync` hooks receive a `RenderContext` object:
+
+```typescript
+type RenderContext = {
+  source: string;              // Template source (modifiable)
+  data?: Record<string, unknown>;  // Template data (modifiable)
+  engineName: string;          // Engine being used
+  rootTemplatePath?: string;   // Root path for partials
+  filePathOutput?: string;     // Output file path
+  cached: boolean;             // True if result came from cache
+};
+```
+
+The `afterRender` and `afterRenderSync` hooks receive a `RenderResult` object:
+
+```typescript
+type RenderResult = {
+  result: string;              // Rendered output (modifiable)
+  context: RenderContext;      // Original render context
+};
+```
+
+## Using Hooks
+
+Register hooks using the `onHook` method:
+
+```javascript
+import { Ecto, EctoEvents } from 'ecto';
+
+const ecto = new Ecto();
+
+// Modify source before rendering
+ecto.onHook(EctoEvents.beforeRender, (context) => {
+  context.source = context.source.replace('{{placeholder}}', '{{replaced}}');
+});
+
+// Inject data before rendering
+ecto.onHook(EctoEvents.beforeRender, (context) => {
+  context.data = { ...context.data, injectedValue: 'hello' };
+});
+
+// Transform result after rendering
+ecto.onHook(EctoEvents.afterRender, (renderResult) => {
+  renderResult.result = renderResult.result.toUpperCase();
+});
+
+// Check if result was cached
+ecto.onHook(EctoEvents.afterRender, (renderResult) => {
+  if (renderResult.context.cached) {
+    console.log('Result came from cache');
+  }
+});
+
+const output = await ecto.render('<%= name %>', { name: 'World' });
+```
+
+## Sync Hooks Example
+
+```javascript
+import { Ecto, EctoEvents } from 'ecto';
+
+const ecto = new Ecto();
+
+// Works the same for sync rendering
+ecto.onHook(EctoEvents.beforeRenderSync, (context) => {
+  context.data = { ...context.data, timestamp: Date.now() };
+});
+
+ecto.onHook(EctoEvents.afterRenderSync, (renderResult) => {
+  renderResult.result = `<!-- Rendered at ${Date.now()} -->\n${renderResult.result}`;
+});
+
+const output = ecto.renderSync('<%= name %>', { name: 'World' });
+```
+
+## Multiple Hooks
+
+Multiple hooks for the same event are executed in the order they are registered:
+
+```javascript
+ecto.onHook(EctoEvents.beforeRender, (context) => {
+  console.log('First hook');
+  context.source += ' - modified by first';
+});
+
+ecto.onHook(EctoEvents.beforeRender, (context) => {
+  console.log('Second hook');
+  context.source += ' - modified by second';
+});
 ```
 
 # Creating Custom Engines
