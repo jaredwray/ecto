@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@jaredwray/fumanchu':
-        specifier: ^4.5.0
-        version: 4.5.0
+        specifier: ^4.5.1
+        version: 4.5.1
       cacheable:
         specifier: ^2.3.1
         version: 2.3.1
@@ -333,8 +333,8 @@ packages:
     resolution: {integrity: sha512-ZT55BDLV0yv0RBm2czMiZ+SqCGO7AvmOM3G/w2xhVPH+te0aKgFjmBvGlL1dH+ql2tgGO3MVrbb3jCKyvpgnxA==}
     engines: {node: 20 || >=22}
 
-  '@jaredwray/fumanchu@4.5.0':
-    resolution: {integrity: sha512-EU9d2xswuF5ZsZ+95I4b2VqyApLYc/9SEOX+6S5k7KdyeuAV5se5IoE0bJ5Uo0TpZv0HqdJtDS+g+EO5hPc2Ng==}
+  '@jaredwray/fumanchu@4.5.1':
+    resolution: {integrity: sha512-gNUugpldx0lS8yFE7LRmERNcbuvx5+rugCmMtORHGtPWVkv8X2Wbbg84Bd7Urj55krXcyDMApkYTxgo/5Mlg9A==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -2423,7 +2423,7 @@ snapshots:
     dependencies:
       '@isaacs/balanced-match': 4.0.1
 
-  '@jaredwray/fumanchu@4.5.0':
+  '@jaredwray/fumanchu@4.5.1':
     dependencies:
       chrono-node: 2.9.0
       dayjs: 1.11.19
@@ -2994,7 +2994,7 @@ snapshots:
 
   ecto@4.8.0:
     dependencies:
-      '@jaredwray/fumanchu': 4.5.0
+      '@jaredwray/fumanchu': 4.5.1
       cacheable: 2.3.1
       ejs: 3.1.10
       ent: 2.2.2
