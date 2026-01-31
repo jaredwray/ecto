@@ -110,7 +110,6 @@ yarn.lock
 package-lock.json
 site/README.md
 dist-site/
-pnpm-lock.yaml
 
 # AI
 .claude

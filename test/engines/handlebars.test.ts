@@ -181,7 +181,7 @@ it("Handlebars - Partials functionality validation", async () => {
 	expect(result).toContain("Widget - $9.99");
 	expect(result).toContain("Gadget - $19.99");
 	expect(result).toContain("Doohickey - $14.99");
-	expect(result).toContain("Copyright 2025 - Test Corp");
+	expect(result).toContain(`Copyright ${new Date().getFullYear()} - Test Corp`);
 	expect(result).toContain('<div class="container">');
 	expect(result).toContain('<div class="user">');
 	expect(result).toContain('<ul class="items">');
