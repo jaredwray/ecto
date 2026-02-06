@@ -1,4 +1,4 @@
-import * as ejs from "ejs";
+import ejs from "ejs";
 import { BaseEngine } from "../base-engine.js";
 import type { EngineInterface } from "../engine-interface.js";
 
