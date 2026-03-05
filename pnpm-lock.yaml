@@ -12,8 +12,8 @@ importers:
         specifier: ^4.5.1
         version: 4.5.1
       cacheable:
-        specifier: ^2.3.2
-        version: 2.3.2
+        specifier: ^2.3.3
+        version: 2.3.3
       ejs:
         specifier: ^4.0.1
         version: 4.0.1
@@ -156,14 +156,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cacheable/memory@2.0.7':
-    resolution: {integrity: sha512-RbxnxAMf89Tp1dLhXMS7ceft/PGsDl1Ip7T20z5nZ+pwIAsQ1p2izPjVG69oCLv/jfQ7HDPHTWK0c9rcAWXN3A==}
+  '@cacheable/memory@2.0.8':
+    resolution: {integrity: sha512-FvEb29x5wVwu/Kf93IWwsOOEuhHh6dYCJF3vcKLzXc0KXIW181AOzv6ceT4ZpBHDvAfG60eqb+ekmrnLHIy+jw==}
 
   '@cacheable/net@2.0.5':
     resolution: {integrity: sha512-6csYZIIyzyt37kiqhzM4p9Mx2FuarVRpg0KXWxPPMaBDwiSPDDU+D2lkSNR27a7xRKKrV6QhgIf8p7jm0NRExg==}
 
-  '@cacheable/utils@2.3.3':
-    resolution: {integrity: sha512-JsXDL70gQ+1Vc2W/KUFfkAJzgb4puKwwKehNLuB+HrNKWf91O736kGfxn4KujXCCSuh6mRRL4XEB0PkAFjWS0A==}
+  '@cacheable/utils@2.4.0':
+    resolution: {integrity: sha512-PeMMsqjVq+bF0WBsxFBxr/WozBJiZKY0rUojuaCoIaKnEl3Ju1wfEwS+SV1DU/cSe8fqHIPiYJFif8T3MVt4cQ==}
 
   '@esbuild/aix-ppc64@0.27.2':
     resolution: {integrity: sha512-GZMB+a0mOMZs4MpDbj8RJp4cw+w1WV5NYD6xzgvzUJ5Ek2jerwfO2eADyI6ExDSUED+1X8aMbegahsJi+8mgpw==}
@@ -833,8 +833,8 @@ packages:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
 
-  cacheable@2.3.2:
-    resolution: {integrity: sha512-w+ZuRNmex9c1TR9RcsxbfTKCjSL0rh1WA5SABbrWprIHeNBdmyQLSYonlDy9gpD+63XT8DgZ/wNh1Smvc9WnJA==}
+  cacheable@2.3.3:
+    resolution: {integrity: sha512-iffYMX4zxKp54evOH27fm92hs+DeC1DhXmNVN8Tr94M/iZIV42dqTHSR2Ik4TOSPyOAwKr7Yu3rN9ALoLkbWyQ==}
 
   call-bind-apply-helpers@1.0.2:
     resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
@@ -1175,6 +1175,10 @@ packages:
     resolution: {integrity: sha512-Wn2i1In6XFxl8Az55kkgnFRiAlIAushzh26PTjL2AKtQcEfXrcLa7Hn5QOWGZEf3LU057P9TwwZjFyxfS1VuvQ==}
     engines: {node: '>=20'}
 
+  hashery@1.5.0:
+    resolution: {integrity: sha512-nhQ6ExaOIqti2FDWoEMWARUqIKyjr2VcZzXShrI+A3zpeiuPWzx6iPftt44LhP74E5sW36B75N6VHbvRtpvO6Q==}
+    engines: {node: '>=20'}
+
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
@@ -1225,6 +1229,9 @@ packages:
 
   hookified@1.15.0:
     resolution: {integrity: sha512-51w+ZZGt7Zw5q7rM3nC4t3aLn/xvKDETsXqMczndvwyVQhAHfUmUuFBRFcos8Iyebtk7OAE9dL26wFNzZVVOkw==}
+
+  hookified@1.15.1:
+    resolution: {integrity: sha512-MvG/clsADq1GPM2KGo2nyfaWVyn9naPiXrqIe4jYjXNZQt238kWyOGrsyc/DmRAQ+Re6yeo6yX/yoNCG5KAEVg==}
 
   html-dom-parser@5.1.4:
     resolution: {integrity: sha512-UGjp7y8jSrDU2RdN2J9FDOo3X+WBu+LkS/I3TjjFW020ocZWjPvave+RKk1zeuY2sUWy5fh6zHgXHthzDGlFNQ==}
@@ -2320,23 +2327,23 @@ snapshots:
   '@biomejs/cli-win32-x64@2.4.5':
     optional: true
 
-  '@cacheable/memory@2.0.7':
+  '@cacheable/memory@2.0.8':
     dependencies:
-      '@cacheable/utils': 2.3.3
+      '@cacheable/utils': 2.4.0
       '@keyv/bigmap': 1.3.1(keyv@5.6.0)
-      hookified: 1.15.0
+      hookified: 1.15.1
       keyv: 5.6.0
 
   '@cacheable/net@2.0.5':
     dependencies:
-      cacheable: 2.3.2
+      cacheable: 2.3.3
       hookified: 1.15.0
       http-cache-semantics: 4.2.0
       undici: 7.19.2
 
-  '@cacheable/utils@2.3.3':
+  '@cacheable/utils@2.4.0':
     dependencies:
-      hashery: 1.4.0
+      hashery: 1.5.0
       keyv: 5.6.0
 
   '@esbuild/aix-ppc64@0.27.2':
@@ -2449,7 +2456,7 @@ snapshots:
 
   '@keyv/bigmap@1.3.1(keyv@5.6.0)':
     dependencies:
-      hashery: 1.4.0
+      hashery: 1.5.0
       hookified: 1.15.0
       keyv: 5.6.0
 
@@ -2814,10 +2821,10 @@ snapshots:
 
   cac@6.7.14: {}
 
-  cacheable@2.3.2:
+  cacheable@2.3.3:
     dependencies:
-      '@cacheable/memory': 2.0.7
-      '@cacheable/utils': 2.3.3
+      '@cacheable/memory': 2.0.8
+      '@cacheable/utils': 2.4.0
       hookified: 1.15.0
       keyv: 5.6.0
       qified: 0.6.0
@@ -2997,7 +3004,7 @@ snapshots:
   ecto@4.8.0:
     dependencies:
       '@jaredwray/fumanchu': 4.5.1
-      cacheable: 2.3.2
+      cacheable: 2.3.3
       ejs: 3.1.10
       ent: 2.2.2
       hookified: 1.15.0
@@ -3188,6 +3195,10 @@ snapshots:
     dependencies:
       hookified: 1.15.0
 
+  hashery@1.5.0:
+    dependencies:
+      hookified: 1.15.0
+
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
@@ -3279,6 +3290,8 @@ snapshots:
   highlight.js@11.11.1: {}
 
   hookified@1.15.0: {}
+
+  hookified@1.15.1: {}
 
   html-dom-parser@5.1.4:
     dependencies:
@@ -4697,7 +4710,7 @@ snapshots:
 
   writr@5.0.3:
     dependencies:
-      cacheable: 2.3.2
+      cacheable: 2.3.3
       hashery: 1.4.0
       hookified: 1.15.0
       html-react-parser: 5.2.14(react@19.2.4)
