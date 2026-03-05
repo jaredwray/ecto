@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@jaredwray/fumanchu':
-        specifier: ^4.5.1
-        version: 4.5.1
+        specifier: ^4.6.0
+        version: 4.6.0
       cacheable:
         specifier: ^2.3.3
         version: 2.3.3
@@ -325,8 +325,8 @@ packages:
     resolution: {integrity: sha512-It0Sne6P3szg7JIi6CgKbvTZoMjxBZhcv91ZrqrNuaZQfB5WoqYYbzCUOq89YR+VY8juY9M1vDWmDDa2TzfXCw==}
     engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
-  '@jaredwray/fumanchu@4.5.1':
-    resolution: {integrity: sha512-gNUugpldx0lS8yFE7LRmERNcbuvx5+rugCmMtORHGtPWVkv8X2Wbbg84Bd7Urj55krXcyDMApkYTxgo/5Mlg9A==}
+  '@jaredwray/fumanchu@4.6.0':
+    resolution: {integrity: sha512-UFUyGb+uBJEojnkey9L+J+QWbb07GQZMdxrOt6trgDnV4vWwrdr84FpoAe8IPvRDOs6FMIgzUQmPvFMuRzrEqA==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -2427,8 +2427,9 @@ snapshots:
 
   '@faker-js/faker@10.3.0': {}
 
-  '@jaredwray/fumanchu@4.5.1':
+  '@jaredwray/fumanchu@4.6.0':
     dependencies:
+      '@cacheable/memory': 2.0.8
       chrono-node: 2.9.0
       dayjs: 1.11.19
       ent: 2.2.2
@@ -3006,7 +3007,7 @@ snapshots:
 
   ecto@4.8.0:
     dependencies:
-      '@jaredwray/fumanchu': 4.5.1
+      '@jaredwray/fumanchu': 4.6.0
       cacheable: 2.3.3
       ejs: 3.1.10
       ent: 2.2.2
