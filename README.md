@@ -819,6 +819,57 @@ ecto.onHook(EctoEvents.beforeRender, (context) => {
 });
 ```
 
+## Hook Objects and IDs
+
+Ecto extends [Hookified](https://hookified.org), so you can also register hooks using the `Hook` class. Every hook gets a unique `id` (auto-generated unless you supply one), which you can use to look up or remove a hook later — even across multiple events.
+
+```javascript
+import { Ecto, EctoEvents } from 'ecto';
+import { Hook } from 'hookified';
+
+const ecto = new Ecto();
+
+// Register with an explicit id so you can target it later
+const injectUser = new Hook(
+  EctoEvents.beforeRender,
+  (context) => {
+    context.data = { ...context.data, user: 'jared' };
+  },
+  'inject-user',
+);
+ecto.onHook(injectUser);
+
+// Insert a hook at the top of the chain so it runs first
+ecto.onHook(
+  new Hook(EctoEvents.beforeRender, (context) => {
+    context.source = context.source.trim();
+  }),
+  { position: 'Top' },
+);
+
+// Remove a single hook by its id
+ecto.removeHookById('inject-user');
+
+// Or wipe every hook for an event
+ecto.removeEventHooks(EctoEvents.afterRender);
+```
+
+## Hook Error Handling
+
+By default, an error thrown inside a hook is emitted on the `error` event and rendering continues. To make hook errors fail the render, pass `throwOnHookError` (a [HookifiedOption](https://hookified.org)) to the constructor:
+
+```javascript
+import { Ecto } from 'ecto';
+
+const ecto = new Ecto({ throwOnHookError: true });
+
+ecto.onHook('beforeRender', () => {
+  throw new Error('boom');
+});
+
+await ecto.render('<%= name %>', { name: 'World' }); // rejects with the hook error
+```
+
 # Creating Custom Engines
 
 Ecto allows you to create your own custom template engines by implementing the `EngineInterface`. This is useful when you want to integrate a template engine that isn't built into Ecto or when you need custom rendering logic.

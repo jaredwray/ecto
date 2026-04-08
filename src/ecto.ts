@@ -404,11 +404,11 @@ export class Ecto extends Hookified {
 						filePathOutput,
 						cached: true,
 					};
-					this.runHooksSync(EctoEvents.beforeRenderSync, context);
+					this.hookSync(EctoEvents.beforeRenderSync, context);
 
 					// Create render result for afterRenderSync hook
 					const renderResult: RenderResult = { result: cachedResult, context };
-					this.runHooksSync(EctoEvents.afterRenderSync, renderResult);
+					this.hookSync(EctoEvents.afterRenderSync, renderResult);
 
 					// Write out the file
 					this.writeFileSync(filePathOutput, renderResult.result);
@@ -430,7 +430,7 @@ export class Ecto extends Hookified {
 			};
 
 			// Call beforeRenderSync hook - allows modifying source and data
-			this.runHooksSync(EctoEvents.beforeRenderSync, context);
+			this.hookSync(EctoEvents.beforeRenderSync, context);
 
 			// Get the render engine
 			const renderEngine = this.getRenderEngine(renderEngineName);
@@ -443,7 +443,7 @@ export class Ecto extends Hookified {
 
 			// Create render result for afterRenderSync hook
 			const renderResult: RenderResult = { result, context };
-			this.runHooksSync(EctoEvents.afterRenderSync, renderResult);
+			this.hookSync(EctoEvents.afterRenderSync, renderResult);
 			result = renderResult.result;
 
 			// If caching is enabled, store the result in the cache
@@ -459,21 +459,6 @@ export class Ecto extends Hookified {
 		} catch (error) {
 			this.emit(EctoEvents.error, error);
 			return "";
-		}
-	}
-
-	/**
-	 * Run hooks synchronously for a specific event
-	 * @param {string} event - The event name
-	 * @param {unknown[]} args - Arguments to pass to the hooks
-	 * @private
-	 */
-	private runHooksSync(event: string, ...args: unknown[]): void {
-		const eventHooks = this.hooks.get(event);
-		if (eventHooks) {
-			for (const hook of eventHooks) {
-				hook(...args);
-			}
 		}
 	}
 
