@@ -51,7 +51,7 @@
   "dependencies": {
     "@jaredwray/fumanchu": "^4.6.1",
     "cacheable": "^2.3.4",
-    "ejs": "^4.0.1",
+    "ejs": "^5.0.1",
     "ent": "^2.2.2",
     "hookified": "^1.15.0",
     "liquidjs": "^10.25.3",
