@@ -715,159 +715,75 @@ await ecto.render(source, data); // <h1>Hello John Doe!</h1>
 
 # Hooks
 
-Ecto supports hooks that allow you to intercept and modify data during the rendering process. Unlike events (which are notifications only), hooks let you transform the source, data, or result as it flows through the render pipeline.
+Ecto supports hooks that intercept and modify data during the render pipeline. Unlike events (notifications only), hooks can transform the source, data, or result.
 
 ## Available Hooks
 
-| Hook Name | Description |
-| --------- | ----------- |
-| `beforeRender` | Called before async rendering. Allows modifying source and data. |
-| `afterRender` | Called after async rendering. Allows modifying the result. |
-| `beforeRenderSync` | Called before sync rendering. Allows modifying source and data. |
-| `afterRenderSync` | Called after sync rendering. Allows modifying the result. |
-
-## Hook Context
-
-The `beforeRender` and `beforeRenderSync` hooks receive a `RenderContext` object:
+| Hook | Receives | Purpose |
+| ---- | -------- | ------- |
+| `beforeRender` / `beforeRenderSync` | `RenderContext` | Modify source and data before rendering. |
+| `afterRender` / `afterRenderSync` | `RenderResult` | Modify the result after rendering. |
 
 ```typescript
 type RenderContext = {
-  source: string;              // Template source (modifiable)
+  source: string;                  // Template source (modifiable)
   data?: Record<string, unknown>;  // Template data (modifiable)
-  engineName: string;          // Engine being used
-  rootTemplatePath?: string;   // Root path for partials
-  filePathOutput?: string;     // Output file path
-  cached: boolean;             // True if result came from cache
+  engineName: string;              // Engine being used
+  rootTemplatePath?: string;       // Root path for partials
+  filePathOutput?: string;         // Output file path
+  cached: boolean;                 // True if result came from cache
 };
-```
 
-The `afterRender` and `afterRenderSync` hooks receive a `RenderResult` object:
-
-```typescript
 type RenderResult = {
-  result: string;              // Rendered output (modifiable)
-  context: RenderContext;      // Original render context
+  result: string;                  // Rendered output (modifiable)
+  context: RenderContext;          // Original render context
 };
 ```
 
 ## Using Hooks
 
-Register hooks using the `onHook` method:
+Register hooks with `onHook`. Multiple hooks for the same event run in registration order, and the sync variants (`beforeRenderSync`, `afterRenderSync`) work identically.
 
 ```javascript
 import { Ecto, EctoEvents } from 'ecto';
 
 const ecto = new Ecto();
 
-// Modify source before rendering
+// Modify source / inject data before rendering
 ecto.onHook(EctoEvents.beforeRender, (context) => {
   context.source = context.source.replace('{{placeholder}}', '{{replaced}}');
+  context.data = { ...(context.data ?? {}), injectedValue: 'hello' };
 });
 
-// Inject data before rendering
-ecto.onHook(EctoEvents.beforeRender, (context) => {
-  context.data = { ...context.data, injectedValue: 'hello' };
-});
-
-// Transform result after rendering
+// Transform the result after rendering
 ecto.onHook(EctoEvents.afterRender, (renderResult) => {
+  if (renderResult.context.cached) console.log('from cache');
   renderResult.result = renderResult.result.toUpperCase();
-});
-
-// Check if result was cached
-ecto.onHook(EctoEvents.afterRender, (renderResult) => {
-  if (renderResult.context.cached) {
-    console.log('Result came from cache');
-  }
 });
 
 const output = await ecto.render('<%= name %>', { name: 'World' });
 ```
 
-## Sync Hooks Example
+## Hook Objects, IDs, and Errors
 
-```javascript
-import { Ecto, EctoEvents } from 'ecto';
-
-const ecto = new Ecto();
-
-// Works the same for sync rendering
-ecto.onHook(EctoEvents.beforeRenderSync, (context) => {
-  context.data = { ...context.data, timestamp: Date.now() };
-});
-
-ecto.onHook(EctoEvents.afterRenderSync, (renderResult) => {
-  renderResult.result = `<!-- Rendered at ${Date.now()} -->\n${renderResult.result}`;
-});
-
-const output = ecto.renderSync('<%= name %>', { name: 'World' });
-```
-
-## Multiple Hooks
-
-Multiple hooks for the same event are executed in the order they are registered:
-
-```javascript
-ecto.onHook(EctoEvents.beforeRender, (context) => {
-  console.log('First hook');
-  context.source += ' - modified by first';
-});
-
-ecto.onHook(EctoEvents.beforeRender, (context) => {
-  console.log('Second hook');
-  context.source += ' - modified by second';
-});
-```
-
-## Hook Objects and IDs
-
-Ecto extends [Hookified](https://hookified.org), so you can also register hooks using the `Hook` class. Every hook gets a unique `id` (auto-generated unless you supply one), which you can use to look up or remove a hook later — even across multiple events.
+Ecto extends [Hookified](https://hookified.org), so you can also register hooks via the `Hook` class. Every hook has a unique `id` (auto-generated unless supplied) for later lookup or removal across events. Pass `throwOnHookError: true` to the `Ecto` constructor to make hook errors fail the render instead of just emitting on `error`.
 
 ```javascript
 import { Ecto, EctoEvents } from 'ecto';
 import { Hook } from 'hookified';
 
-const ecto = new Ecto();
-
-// Register with an explicit id so you can target it later
-const injectUser = new Hook(
-  EctoEvents.beforeRender,
-  (context) => {
-    context.data = { ...context.data, user: 'jared' };
-  },
-  'inject-user',
-);
-ecto.onHook(injectUser);
-
-// Insert a hook at the top of the chain so it runs first
-ecto.onHook(
-  new Hook(EctoEvents.beforeRender, (context) => {
-    context.source = context.source.trim();
-  }),
-  { position: 'Top' },
-);
-
-// Remove a single hook by its id
-ecto.removeHookById('inject-user');
-
-// Or wipe every hook for an event
-ecto.removeEventHooks(EctoEvents.afterRender);
-```
-
-## Hook Error Handling
-
-By default, an error thrown inside a hook is emitted on the `error` event and rendering continues. To make hook errors fail the render, pass `throwOnHookError` (a [HookifiedOption](https://hookified.org)) to the constructor:
-
-```javascript
-import { Ecto } from 'ecto';
-
 const ecto = new Ecto({ throwOnHookError: true });
 
-ecto.onHook('beforeRender', () => {
-  throw new Error('boom');
-});
+const injectUser = new Hook(
+  EctoEvents.beforeRender,
+  (context) => { context.data = { ...(context.data ?? {}), user: 'jared' }; },
+  'inject-user',
+);
+ecto.onHook(injectUser);                       // append to chain
+ecto.onHook(injectUser, { position: 'Top' }); // or insert at top
 
-await ecto.render('<%= name %>', { name: 'World' }); // rejects with the hook error
+ecto.removeHookById('inject-user');             // remove one hook by id
+ecto.removeEventHooks(EctoEvents.afterRender); // or all hooks for an event
 ```
 
 # Creating Custom Engines
