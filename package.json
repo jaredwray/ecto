@@ -3,12 +3,12 @@
   "version": "4.8.3",
   "description": "Modern Template Consolidation Engine for EJS, Markdown, Pug, Nunjucks, Liquid, and Handlebars",
   "type": "module",
-  "main": "./dist/ecto.js",
-  "module": "./dist/ecto.js",
-  "types": "./dist/ecto.d.ts",
+  "main": "./dist/ecto.mjs",
+  "module": "./dist/ecto.mjs",
+  "types": "./dist/ecto.d.mts",
   "exports": {
     ".": {
-      "import": "./dist/ecto.js"
+      "import": "./dist/ecto.mjs"
     }
   },
   "repository": {
@@ -23,7 +23,7 @@
     "clean": "rimraf ./dist yarn.lock package-lock.json pnpm-lock.yaml ./coverage ./node_modules ./site/readme.md ./dist-site",
     "test": "pnpm lint && vitest run --coverage",
     "test:ci": "pnpm lint:ci && vitest run --coverage",
-    "build": "rimraf ./dist && tsup src/ecto.ts --format esm --dts --clean",
+    "build": "tsdown",
     "prepare": "pnpm build",
     "website:build": "rimraf ./site/readme.md && npx -y docula build -s ./site -o ./dist-site",
     "website:serve": "rimraf ./site/readme.md && npx -y docula serve -s ./site -o ./dist-site"
@@ -70,7 +70,7 @@
     "@vitest/coverage-v8": "^4.1.2",
     "docula": "^0.40.0",
     "rimraf": "^6.1.3",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.21.7",
     "typescript": "^5.9.3",
     "vite": "^8.0.5",
     "vitest": "^4.1.2"
