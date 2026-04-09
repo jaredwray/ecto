@@ -8,6 +8,7 @@
   "types": "./dist/ecto.d.mts",
   "exports": {
     ".": {
+      "types": "./dist/ecto.d.mts",
       "import": "./dist/ecto.mjs"
     }
   },
