@@ -21,6 +21,6 @@ export const onPrepare = async (
 	const readmeSitePath = path.join(config.sitePath, "README.md");
 	const readme = await fs.promises.readFile(readmePath, "utf8");
 	const updatedReadme = readme.replace('![Ecto](site/logo.svg "Ecto")\n\n', "");
-	console.log(`writing updated readme to ${readmeSitePath}`);
+	console.info(`writing updated readme to ${readmeSitePath}`);
 	await fs.promises.writeFile(readmeSitePath, updatedReadme);
 };
