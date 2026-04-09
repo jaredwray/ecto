@@ -109,7 +109,8 @@ testing/output
 yarn.lock
 package-lock.json
 site/README.md
-dist-site/
+site/dist/
+site/.cache
 
 # AI
 .claude

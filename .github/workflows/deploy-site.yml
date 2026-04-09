@@ -41,4 +41,4 @@ jobs:
       uses: cloudflare/wrangler-action@v3
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        command: pages deploy dist-site --project-name=ecto --branch=main
+        command: pages deploy site/dist --project-name=ecto --branch=main
