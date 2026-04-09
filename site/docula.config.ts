@@ -15,12 +15,20 @@ export const options: Partial<DoculaOptions> = {
 
 export const onPrepare = async (
 	config: DoculaOptions,
-	console: DoculaConsole,
+	doculaConsole?: DoculaConsole,
 ): Promise<void> => {
 	const readmePath = path.join(process.cwd(), "./README.md");
 	const readmeSitePath = path.join(config.sitePath, "README.md");
 	const readme = await fs.promises.readFile(readmePath, "utf8");
-	const updatedReadme = readme.replace('![Ecto](site/logo.svg "Ecto")\n\n', "");
-	console.info(`writing updated readme to ${readmeSitePath}`);
+	const updatedReadme = readme.replace(
+		/^!\[Ecto\]\(site\/logo\.svg(?:\s+"[^"]*")?\)\s*\n+/,
+		"",
+	);
+	const message = `writing updated readme to ${readmeSitePath}`;
+	if (doculaConsole) {
+		doculaConsole.info(message);
+	} else {
+		console.info(message);
+	}
 	await fs.promises.writeFile(readmeSitePath, updatedReadme);
 };
