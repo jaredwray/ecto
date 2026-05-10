@@ -62,7 +62,7 @@
     "writr": "^6.1.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.10",
+    "@biomejs/biome": "^2.4.14",
     "@faker-js/faker": "^10.4.0",
     "@types/ejs": "^3.1.5",
     "@types/ent": "^2.2.8",
