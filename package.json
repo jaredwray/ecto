@@ -69,7 +69,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
     "@vitest/coverage-v8": "^4.1.3",
-    "docula": "^1.12.0",
+    "docula": "^1.14.0",
     "rimraf": "^6.1.3",
     "tsdown": "^0.21.7",
     "typescript": "^6.0.2",
