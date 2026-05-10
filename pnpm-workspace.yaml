@@ -1,5 +1,5 @@
-onlyBuiltDependencies:
-  - esbuild
-  - unrs-resolver
-  - '@biomejs/biome'
 minimumReleaseAge: 2880
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+  '@biomejs/biome': true
