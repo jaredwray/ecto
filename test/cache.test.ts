@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { faker } from "@faker-js/faker";
 import { Cacheable, CacheableMemory } from "cacheable";
 import { expect, it } from "vitest";
 import { Ecto } from "../src/ecto.js";
@@ -76,10 +77,12 @@ it("render via ejs with caching enabled with sync", async () => {
 
 it("render via ejs synchronous with file with caching enabled", async () => {
 	const ecto = new Ecto({ cache: new Cacheable() });
-	const filePath = `${testOutputDirectory}/ejs/ecto-ejs-test.html`;
+	const uniqueId = faker.string.alphanumeric(10);
+	const testOutputFullDirectory = `${testOutputDirectory}/cache-${uniqueId}`;
+	const filePath = `${testOutputFullDirectory}/ecto-ejs-test.html`;
 
-	if (fs.existsSync(testOutputDirectory)) {
-		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
+	if (fs.existsSync(testOutputFullDirectory)) {
+		fs.rmSync(testOutputFullDirectory, { recursive: true, force: true });
 	}
 
 	const content = await ecto.render(
@@ -93,19 +96,17 @@ it("render via ejs synchronous with file with caching enabled", async () => {
 	expect(content).toBe("<h2>bar</h2>");
 	expect(fs.existsSync(filePath)).toBe(true);
 
-	// Add small delay before cleanup to ensure file operations are complete
-	await new Promise((resolve) => setTimeout(resolve, 10));
-	if (fs.existsSync(testOutputDirectory)) {
-		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
-	}
+	fs.rmSync(testOutputFullDirectory, { recursive: true, force: true });
 });
 
 it("render via ejs synchronous with file with caching enabled sync", () => {
 	const ecto = new Ecto({ cacheSync: new CacheableMemory() });
-	const filePath = `${testOutputDirectory}/ejs/ecto-ejs-test.html`;
+	const uniqueId = faker.string.alphanumeric(10);
+	const testOutputFullDirectory = `${testOutputDirectory}/cache-${uniqueId}`;
+	const filePath = `${testOutputFullDirectory}/ecto-ejs-test.html`;
 
-	if (fs.existsSync(testOutputDirectory)) {
-		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
+	if (fs.existsSync(testOutputFullDirectory)) {
+		fs.rmSync(testOutputFullDirectory, { recursive: true, force: true });
 	}
 
 	const content = ecto.renderSync(
@@ -119,9 +120,7 @@ it("render via ejs synchronous with file with caching enabled sync", () => {
 	expect(content).toBe("<h2>bar</h2>");
 	expect(fs.existsSync(filePath)).toBe(true);
 
-	if (fs.existsSync(testOutputDirectory)) {
-		fs.rmSync(testOutputDirectory, { recursive: true, force: true });
-	}
+	fs.rmSync(testOutputFullDirectory, { recursive: true, force: true });
 });
 
 it("render via ejs hello from docs with caching disabled", async () => {

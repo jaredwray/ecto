@@ -324,7 +324,9 @@ it("write via ejs", async () => {
 
 it("write via ejs with long path", async () => {
 	const ecto = new Ecto();
-	const filePath = `${testOutputDirectory}/ejs/foo/wow/ecto-ejs-test.html`;
+	const uniqueId = faker.string.alphanumeric(10);
+	const testOutputFullDirectory = `${testOutputDirectory}/ejs-long-${uniqueId}`;
+	const filePath = `${testOutputFullDirectory}/foo/wow/ecto-ejs-test.html`;
 	if (fs.existsSync(filePath)) {
 		fs.rmSync(filePath);
 	}
@@ -340,7 +342,7 @@ it("write via ejs with long path", async () => {
 
 	expect(fileSource).toBe("<h2>bar</h2>");
 
-	await fs.promises.rm(testOutputDirectory, { recursive: true });
+	await fs.promises.rm(testOutputFullDirectory, { recursive: true });
 });
 
 it("Render from Template - EJS", async () => {
