@@ -3,3 +3,4 @@ allowBuilds:
   esbuild: true
   unrs-resolver: true
   '@biomejs/biome': true
+  workerd: true
