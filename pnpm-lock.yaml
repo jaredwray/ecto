@@ -24,8 +24,8 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
       liquidjs:
-        specifier: ^10.25.7
-        version: 10.25.7
+        specifier: ^10.27.0
+        version: 10.27.0
       nunjucks:
         specifier: ^3.2.4
         version: 3.2.4
@@ -1390,13 +1390,13 @@ packages:
   linkify-it@5.0.0:
     resolution: {integrity: sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ==}
 
-  liquidjs@10.25.5:
-    resolution: {integrity: sha512-GKiKeZjJDdVoQAu+S9rzkYsYnYhcep5W3WwZXgb5f+yq484P/k9JqamBbGYu+LBEixcUAXZr2jogdAIjB3ki1w==}
+  liquidjs@10.25.7:
+    resolution: {integrity: sha512-rPCjJLiD4eDhQjvv964AeXFC+HbeYBbZrd7Z82Q6hqv1lX7G+5w4SJcKLn9CAAAwHI4aS3dTdo083UB79K3pDA==}
     engines: {node: '>=16'}
     hasBin: true
 
-  liquidjs@10.25.7:
-    resolution: {integrity: sha512-rPCjJLiD4eDhQjvv964AeXFC+HbeYBbZrd7Z82Q6hqv1lX7G+5w4SJcKLn9CAAAwHI4aS3dTdo083UB79K3pDA==}
+  liquidjs@10.27.0:
+    resolution: {integrity: sha512-tw/OA59K7aIBlMKIrKlumr37fiZUheShVHXY8cVctWisgY1p9mc5hreOvlreoS0wTiwlWk14Ya7305c2a/Cg5w==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -2972,7 +2972,7 @@ snapshots:
       ejs: 5.0.1
       ent: 2.2.2
       hookified: 2.1.1
-      liquidjs: 10.25.5
+      liquidjs: 10.25.7
       nunjucks: 3.2.4
       pug: 3.0.4
       writr: 6.1.1
@@ -3444,11 +3444,11 @@ snapshots:
     dependencies:
       uc.micro: 2.1.0
 
-  liquidjs@10.25.5:
+  liquidjs@10.25.7:
     dependencies:
       commander: 10.0.1
 
-  liquidjs@10.25.7:
+  liquidjs@10.27.0:
     dependencies:
       commander: 10.0.1
 
