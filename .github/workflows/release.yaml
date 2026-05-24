@@ -8,7 +8,7 @@ on:
 jobs:
   build-release:
     runs-on: ubuntu-latest
-    
+
     permissions:
       id-token: write
       contents: read
@@ -26,17 +26,16 @@ jobs:
       with:
         node-version: 24
         cache: 'pnpm'
+        registry-url: 'https://registry.npmjs.org'
 
     - name: Install Dependencies
       run: pnpm install --no-frozen-lockfile
 
-    - name: Build    
+    - name: Build
       run: pnpm build
 
-    - name: Testing    
+    - name: Testing
       run: pnpm test:ci
 
     - name: Publish
-      run: |
-        pnpm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-        pnpm publish --provenance
+      run: pnpm publish --provenance --access public --no-git-checks
