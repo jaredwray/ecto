@@ -1,4 +1,11 @@
-minimumReleaseAge: 2880
+minimumReleaseAge: 10080
+minimumReleaseAgeStrict: true
+minimumReleaseAgeIgnoreMissingTime: false
+blockExoticSubdeps: true
+strictDepBuilds: true
+dangerouslyAllowAllBuilds: false
+trustPolicy: no-downgrade
+
 allowBuilds:
   esbuild: true
   unrs-resolver: true
