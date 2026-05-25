@@ -36,7 +36,7 @@ jobs:
       run: pnpm test
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       with:
         token: ${{ secrets.CODECOV_KEY }}
         files: ./coverage/lcov.info
