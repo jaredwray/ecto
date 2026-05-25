@@ -6,8 +6,13 @@ strictDepBuilds: true
 dangerouslyAllowAllBuilds: false
 trustPolicy: no-downgrade
 
+minimumReleaseAgeExclude:
+  - rolldown
+  - '@rolldown/binding-*'
+
 allowBuilds:
   esbuild: true
   unrs-resolver: true
   '@biomejs/biome': true
   workerd: true
+  sharp: true
