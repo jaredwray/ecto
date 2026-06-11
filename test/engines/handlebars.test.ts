@@ -7,6 +7,8 @@ const exampleSource1 =
 	"<p>Hello, my name is {{name}}. I'm from {{hometown}}. I have {{kids.length}} kids:</p> <ul>{{#kids}}<li>{{name}} is {{age}}</li>{{/kids}}</ul>";
 const exampleSource2 =
 	"<p>Hello, my name is {{name}}. I'm from {{hometown}}. </p>";
+// The apostrophe exercises standard `{{var}}` HTML-escaping: it
+// renders as `&#x27;` (see the expectations below).
 const exampleData1 = {
 	name: "Alan O'Connor",
 	hometown: "Somewhere, TX",
@@ -42,21 +44,21 @@ it("Handlebars - Extension should be a count of 1", () => {
 it("Handlebars - Rendering a simple string", async () => {
 	const engine = new Handlebars();
 	expect(await engine.render(exampleSource1, exampleData1)).toContain(
-		"Alan O'Connor",
+		"Alan O&#x27;Connor",
 	);
 });
 
 it("Handlebars - Rendering a simple string synchronous", () => {
 	const engine = new Handlebars();
 	expect(engine.renderSync(exampleSource1, exampleData1)).toContain(
-		"Alan O'Connor",
+		"Alan O&#x27;Connor",
 	);
 });
 
 it("Handlebars - Rendering a simple string after inital render", async () => {
 	const engine = new Handlebars();
 	expect(await engine.render(exampleSource1, exampleData1)).toContain(
-		"Alan O'Connor",
+		"Alan O&#x27;Connor",
 	);
 	expect(await engine.render(exampleSource2, exampleData1)).toContain(
 		"Somewhere, TX",
@@ -88,7 +90,7 @@ it("Handlebars - Rendering with Partials", async () => {
 	engine.rootTemplatePath = testTemplateDirectory;
 	const result = await engine.render(source, exampleData1);
 
-	expect(result).toContain("Alan O'Connor");
+	expect(result).toContain("Alan O&#x27;Connor");
 	expect(result).toContain("Foo!");
 	expect(result).toContain("ux layout");
 });
@@ -101,7 +103,9 @@ it("Handlebars - Render Sync with Partials", () => {
 	);
 	engine.rootTemplatePath = testTemplateDirectory;
 
-	expect(engine.renderSync(source, exampleData1)).toContain("Alan O'Connor");
+	expect(engine.renderSync(source, exampleData1)).toContain(
+		"Alan O&#x27;Connor",
+	);
 	expect(engine.renderSync(source, exampleData1)).toContain("Foo!");
 });
 
@@ -439,4 +443,28 @@ it("Handlebars - forEach with navigation sidebar like docula example", async () 
 
 	expect(result).toContain('title="How to install the library"');
 	expect(result).toContain('title="Get up and running quickly"');
+});
+
+it("Handlebars - double-stash escapes HTML in data", async () => {
+	const engine = new Handlebars();
+	const result = await engine.render("{{content}}", {
+		content: "<script>alert(1)</script>",
+	});
+	expect(result).toBe("&lt;script&gt;alert(1)&lt;/script&gt;");
+});
+
+it("Handlebars - triple-stash inserts raw HTML without decoding entities", async () => {
+	const engine = new Handlebars();
+	// Pre-escaped entities (e.g. from a rendered markdown code block)
+	// must survive verbatim — a post-render entity decode would turn
+	// `&#x3C;APP_ID>` into `<APP_ID>`, which a browser then swallows
+	// as an unknown tag.
+	const html = "<pre><code>curl /v1/apps/&#x3C;APP_ID>/config</code></pre>";
+	const result = await engine.render("{{{generatedHtml}}}", {
+		generatedHtml: html,
+	});
+	expect(result).toBe(html);
+	expect(
+		engine.renderSync("{{{generatedHtml}}}", { generatedHtml: html }),
+	).toBe(html);
 });

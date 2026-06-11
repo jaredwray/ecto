@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { fumanchu } from "@jaredwray/fumanchu";
-import { decode } from "ent";
 import { BaseEngine } from "../base-engine.js";
 import type { EngineInterface } from "../engine-interface.js";
 
@@ -29,10 +28,12 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
 		const template = this.engine.compile(source, this.opts);
 
-		let result = template(data, this.opts);
-		result = decode(result);
-
-		return result;
+		// Standard Handlebars semantics: `{{var}}` HTML-escapes, `{{{var}}}`
+		// inserts raw. No post-render entity decoding — a blanket decode
+		// corrupts legitimately escaped content in the data (for example
+		// `&#x3C;` inside pre-rendered code blocks) and re-activates
+		// escaped markup.
+		return template(data, this.opts);
 	}
 
 	renderSync(source: string, data?: Record<string, unknown>): string {
@@ -43,10 +44,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
 		const template = this.engine.compile(source, this.opts);
 
-		let result = template(data, this.opts);
-		result = decode(result);
-
-		return result;
+		return template(data, this.opts);
 	}
 
 	initPartials(): void {

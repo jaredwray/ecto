@@ -287,7 +287,7 @@ it("render via handlebars", async () => {
 			"handlebars",
 		),
 	).toBe(
-		"<p>Hello, my name is Alan O'Connor. I'm from Somewhere, TX. I have 2 kids:</p> <ul><li>Jimmy is 12</li><li>Sally is 4</li></ul>",
+		"<p>Hello, my name is Alan O&#x27;Connor. I'm from Somewhere, TX. I have 2 kids:</p> <ul><li>Jimmy is 12</li><li>Sally is 4</li></ul>",
 	);
 });
 
@@ -386,7 +386,7 @@ it("Render from Template - Handlebars", async () => {
 		`${testRootDirectory}/handlebars`,
 	);
 
-	expect(source).toContain("<title>Alan O'Connor - Header Title </title>");
+	expect(source).toContain("<title>Alan O&#x27;Connor - Header Title </title>");
 	expect(source).toContain("Foo!");
 });
 
@@ -397,7 +397,7 @@ it("Render from Template - Handlebars infers root path for partials", async () =
 		handlebarsExampleData,
 	);
 
-	expect(source).toContain("<title>Alan O'Connor - Header Title </title>");
+	expect(source).toContain("<title>Alan O&#x27;Connor - Header Title </title>");
 	expect(source).toContain("Foo!");
 	expect(source).toContain("ux layout");
 });
@@ -409,7 +409,7 @@ it("Render from Template - Handlebars infers root path for partials synchronousl
 		handlebarsExampleData,
 	);
 
-	expect(source).toContain("<title>Alan O'Connor - Header Title </title>");
+	expect(source).toContain("<title>Alan O&#x27;Connor - Header Title </title>");
 	expect(source).toContain("Foo!");
 	expect(source).toContain("ux layout");
 });
