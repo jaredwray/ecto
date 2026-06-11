@@ -17,9 +17,6 @@ importers:
       ejs:
         specifier: ^5.0.2
         version: 5.0.2
-      ent:
-        specifier: ^2.2.2
-        version: 2.2.2
       hookified:
         specifier: ^2.2.0
         version: 2.2.0
@@ -45,9 +42,6 @@ importers:
       '@types/ejs':
         specifier: ^3.1.5
         version: 3.1.5
-      '@types/ent':
-        specifier: ^2.2.8
-        version: 2.2.8
       '@types/node':
         specifier: ^24.12.4
         version: 24.12.4
@@ -900,9 +894,6 @@ packages:
 
   '@types/ejs@3.1.5':
     resolution: {integrity: sha512-nv+GSx77ZtXiJzwKdsASqi+YQ5Z7vwHsTP0JY2SiQgjGckkBRKZnk8nIM+7oUZ1VCtuTz0+By4qVR7fqzp/Dfg==}
-
-  '@types/ent@2.2.8':
-    resolution: {integrity: sha512-T7OSxLcPBbcUxTIeJTpmV8cMsFfx/OasIDHlq+PO1choUQnYIcoxQj45n9NpzrR9yOJDwte8tmvs6Y+axitRFg==}
 
   '@types/estree-jsx@1.0.5':
     resolution: {integrity: sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==}
@@ -3198,8 +3189,6 @@ snapshots:
   '@types/deep-eql@4.0.2': {}
 
   '@types/ejs@3.1.5': {}
-
-  '@types/ent@2.2.8': {}
 
   '@types/estree-jsx@1.0.5':
     dependencies:

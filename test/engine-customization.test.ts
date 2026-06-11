@@ -30,9 +30,11 @@ it("Engine Customization - Customize multiple engines", async () => {
 		(text: string) => `<strong>${text}</strong>`,
 	);
 
-	// Test Handlebars customization
+	// Test Handlebars customization. Helpers returning plain HTML
+	// strings get escaped by `{{…}}` (standard Handlebars semantics);
+	// triple-stash inserts the markup raw.
 	const hbsResult = await ecto.render(
-		"{{bold name}}",
+		"{{{bold name}}}",
 		{ name: "Test" },
 		"handlebars",
 	);
