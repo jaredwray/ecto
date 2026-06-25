@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Install pnpm
       uses: pnpm/action-setup@v6
 
@@ -36,7 +36,7 @@ jobs:
       run: pnpm test
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v6
+      uses: codecov/codecov-action@v7
       with:
         token: ${{ secrets.CODECOV_KEY }}
         files: ./coverage/lcov.info
