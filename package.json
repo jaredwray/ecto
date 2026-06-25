@@ -19,6 +19,9 @@
   "author": "Jared Wray <me@jaredwray.com>",
   "license": "MIT",
   "packageManager": "pnpm@11.0.9",
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
     "lint": "biome check --write --error-on-warnings",
     "lint:ci": "biome check --error-on-warnings",
@@ -54,7 +57,7 @@
     "@jaredwray/fumanchu": "^4.7.0",
     "cacheable": "^2.3.5",
     "ejs": "^6.0.1",
-    "hookified": "^2.2.0",
+    "hookified": "^3.0.0",
     "liquidjs": "^10.27.0",
     "nunjucks": "^3.2.4",
     "pug": "^3.0.4",
