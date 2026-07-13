@@ -551,9 +551,7 @@ export class Ecto extends Hookified {
 		const normalizedPath = nodePath.normalize(path);
 		const directory = nodePath.dirname(normalizedPath);
 
-		if (!fs.existsSync(directory)) {
-			await fs.promises.mkdir(directory, { recursive: true });
-		}
+		await fs.promises.mkdir(directory, { recursive: true });
 	}
 
 	/**
@@ -567,9 +565,7 @@ export class Ecto extends Hookified {
 		const normalizedPath = nodePath.normalize(path);
 		const directory = nodePath.dirname(normalizedPath);
 
-		if (!fs.existsSync(directory)) {
-			fs.mkdirSync(directory, { recursive: true });
-		}
+		fs.mkdirSync(directory, { recursive: true });
 	}
 
 	/**

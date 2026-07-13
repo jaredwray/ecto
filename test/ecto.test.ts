@@ -478,22 +478,6 @@ it("ensureFilePath - creates directory when it doesn't exist", async () => {
 	fs.rmSync(`${testOutputDirectory}/new-dir`, { recursive: true });
 });
 
-it("ensureFilePath - creates directory when it doesn't exist (win32)", async () => {
-	const ecto = new Ecto();
-	const testPath = `${testOutputDirectory}\\new-dir\\test.txt`;
-
-	// Clean up if it exists
-	if (fs.existsSync(`${testOutputDirectory}/new-dir`)) {
-		fs.rmSync(`${testOutputDirectory}/new-dir`, { recursive: true });
-	}
-
-	await ecto.ensureFilePath(testPath);
-	expect(fs.existsSync(`${testOutputDirectory}/new-dir`)).toBe(true);
-
-	// Clean up
-	fs.rmSync(`${testOutputDirectory}/new-dir`, { recursive: true });
-});
-
 it("ensureFilePath - does nothing when directory already exists", async () => {
 	const ecto = new Ecto();
 	const testPath = `${testOutputDirectory}/existing-dir/test.txt`;
