@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import nodePath from "node:path";
 import { faker } from "@faker-js/faker";
 import { expect, it } from "vitest";
 import { Ecto } from "../src/ecto.js";
@@ -418,14 +419,14 @@ it("Find Template without Extension", async () => {
 	const ecto = new Ecto();
 	const templatePath = `${testRootDirectory}/find-templates`;
 	const filePath = await ecto.findTemplateWithoutExtension(templatePath, "bar");
-	expect(filePath).toBe(`${templatePath}/bar.njk`);
+	expect(filePath).toBe(nodePath.join(templatePath, "bar.njk"));
 });
 
 it("Find Template without Extension Sync", () => {
 	const ecto = new Ecto();
 	const templatePath = `${testRootDirectory}/find-templates`;
 	const filePath = ecto.findTemplateWithoutExtensionSync(templatePath, "bar");
-	expect(filePath).toBe(`${templatePath}/bar.njk`);
+	expect(filePath).toBe(nodePath.join(templatePath, "bar.njk"));
 });
 
 it("Find Template without Extension Sync - not found", () => {
@@ -442,7 +443,7 @@ it("Find Template without Extension on duplicate Sync", async () => {
 	const ecto = new Ecto();
 	const templatePath = `${testRootDirectory}/find-templates`;
 	const filePath = await ecto.findTemplateWithoutExtension(templatePath, "foo");
-	expect(filePath).toBe(`${templatePath}/foo.ejs`);
+	expect(filePath).toBe(nodePath.join(templatePath, "foo.ejs"));
 });
 
 it("Render with Configuration via Nunjucks", async () => {

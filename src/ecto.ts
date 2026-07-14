@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import path from "node:path";
+import nodePath from "node:path";
 import { Cacheable, CacheableMemory } from "cacheable";
 import { Hookified, type HookifiedOptions } from "hookified";
 import { Writr } from "writr";
@@ -485,7 +485,7 @@ export class Ecto extends Hookified {
 		// Select which engine
 		engineName ??= this.getEngineByFilePath(filePath);
 
-		const templateRootPath = rootTemplatePath ?? path.dirname(filePath);
+		const templateRootPath = rootTemplatePath ?? nodePath.dirname(filePath);
 
 		// Get the source
 		const source = await fs.promises.readFile(filePath, "utf8");
@@ -524,7 +524,7 @@ export class Ecto extends Hookified {
 		// Select which engine
 		engineName ??= this.getEngineByFilePath(filePath);
 
-		const templateRootPath = rootTemplatePath ?? path.dirname(filePath);
+		const templateRootPath = rootTemplatePath ?? nodePath.dirname(filePath);
 
 		// Get the source
 		const source = fs.readFileSync(filePath, "utf8");
@@ -548,14 +548,10 @@ export class Ecto extends Hookified {
 	 * await ecto.ensureFilePath('/path/to/file.txt');
 	 */
 	public async ensureFilePath(path: string) {
-		const pathList = path.split("/");
-		pathList.pop();
+		const normalizedPath = nodePath.normalize(path);
+		const directory = nodePath.dirname(normalizedPath);
 
-		const directory = pathList.join("/");
-
-		if (!fs.existsSync(directory)) {
-			fs.mkdirSync(directory, { recursive: true });
-		}
+		await fs.promises.mkdir(directory, { recursive: true });
 	}
 
 	/**
@@ -566,14 +562,10 @@ export class Ecto extends Hookified {
 	 * ecto.ensureFilePathSync('/path/to/file.txt');
 	 */
 	public ensureFilePathSync(path: string) {
-		const pathList = path.split("/");
-		pathList.pop();
+		const normalizedPath = nodePath.normalize(path);
+		const directory = nodePath.dirname(normalizedPath);
 
-		const directory = pathList.join("/");
-
-		if (!fs.existsSync(directory)) {
-			fs.mkdirSync(directory, { recursive: true });
-		}
+		fs.mkdirSync(directory, { recursive: true });
 	}
 
 	/**
@@ -587,9 +579,8 @@ export class Ecto extends Hookified {
 		let result = this._defaultEngine;
 
 		if (filePath !== undefined) {
-			const extension = filePath.includes(".")
-				? filePath.slice(filePath.lastIndexOf(".") + 1)
-				: "";
+			const { ext } = nodePath.parse(filePath);
+			const extension = ext.startsWith(".") ? ext.slice(1) : ext;
 
 			const engExtension = this._mapping.getName(extension);
 			if (engExtension !== undefined) {
@@ -618,7 +609,7 @@ export class Ecto extends Hookified {
 
 		for (const file of files) {
 			if (file.startsWith(`${templateName}.`)) {
-				result = `${path}/${file}`;
+				result = nodePath.join(path, file);
 				break;
 			}
 		}
@@ -644,7 +635,7 @@ export class Ecto extends Hookified {
 
 		for (const file of files) {
 			if (file.startsWith(`${templateName}.`)) {
-				result = `${path}/${file}`;
+				result = nodePath.join(path, file);
 				break;
 			}
 		}
