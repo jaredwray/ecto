@@ -61,7 +61,7 @@
     "liquidjs": "^10.27.0",
     "nunjucks": "^3.2.4",
     "pug": "^3.0.4",
-    "writr": "^6.1.2"
+    "writr": "^6.1.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.4",
