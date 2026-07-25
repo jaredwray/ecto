@@ -18,8 +18,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       hookified:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.0.1
+        version: 3.0.1
       liquidjs:
         specifier: ^10.27.0
         version: 10.27.0
@@ -1745,10 +1745,6 @@ packages:
 
   hookified@2.2.0:
     resolution: {integrity: sha512-p/LgFzRN5FeoD3DLS6bkUapeye6E4SI6yJs6KetENd18S+FBthqYq2amJUWpt5z0EQwwHemidjY5OqJGEKm5uA==}
-
-  hookified@3.0.0:
-    resolution: {integrity: sha512-x+jzDjd9CWxdgl6u/K4pjnvw7PZx6ZSpiPGAV43uXlJiJy7r2jIEUxxU1Cv7+rwy1GK5Qt5S+Jp7n81DpcUvTA==}
-    engines: {node: '>=22.18.0'}
 
   hookified@3.0.1:
     resolution: {integrity: sha512-mtpUIV7U9reosQ16+OHWBd0Ca07fs1ryChQjBPuUMZnrRdLTCW+kEfkTcFudkaevp3gVe5H9FxDCBxYIdO+QQA==}
@@ -4249,8 +4245,6 @@ snapshots:
   hookified@1.15.1: {}
 
   hookified@2.2.0: {}
-
-  hookified@3.0.0: {}
 
   hookified@3.0.1: {}
 
