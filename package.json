@@ -18,7 +18,7 @@
   },
   "author": "Jared Wray <me@jaredwray.com>",
   "license": "MIT",
-  "packageManager": "pnpm@11.0.9",
+  "packageManager": "pnpm@11.15.0",
   "engines": {
     "node": ">=22.18.0"
   },
@@ -71,7 +71,7 @@
     "@types/nunjucks": "^3.2.6",
     "@types/pug": "^2.0.10",
     "@vitest/coverage-v8": "^4.1.10",
-    "docula": "^2.0.0",
+    "docula": "^2.2.0",
     "rimraf": "^6.1.3",
     "tsdown": "^0.22.9",
     "typescript": "^7.0.2",
