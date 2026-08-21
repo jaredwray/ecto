@@ -6,8 +6,8 @@ Profile: npm library · public
 
 ## 1. Security docs
 
-- [ ] `SECURITY.md` present — contact info + "How this repository is secured" summary (PR pending)
-- [ ] `DEFENSE_IN_DEPTH.md` present (this file) (PR pending)
+- [ ] `SECURITY.md` present — contact info + "How this repository is secured" summary (PR #392 pending)
+- [ ] `DEFENSE_IN_DEPTH.md` present (this file) (PR #392 pending)
 
 ## 2. CODEOWNERS and cloud bootstrap
 
