@@ -6,13 +6,13 @@ Profile: npm library · public
 
 ## 1. Security docs
 
-- [ ] `SECURITY.md` present — contact info + "How this repository is secured" summary (PR #392 pending)
-- [ ] `DEFENSE_IN_DEPTH.md` present (this file) (PR #392 pending)
+- [x] `SECURITY.md` present — contact info + "How this repository is secured" summary — PR #392
+- [x] `DEFENSE_IN_DEPTH.md` present (this file) — PR #392
 
 ## 2. CODEOWNERS and cloud bootstrap
 
-- [ ] `.github/CODEOWNERS` covers `/.github/`, `/.cursor/`, `/.devcontainer/`, `/scripts/` with owners the maintainer names
-- [ ] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile)
+- [ ] `.github/CODEOWNERS` covers `/.github/`, `/.cursor/`, `/.devcontainer/`, `/scripts/` with owners the maintainer names (PR #399 pending)
+- [ ] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile) (PR #399 pending)
 
 ## 3. Dependencies (pnpm)
 
