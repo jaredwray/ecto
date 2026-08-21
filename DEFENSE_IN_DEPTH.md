@@ -11,8 +11,8 @@ Profile: npm library · public
 
 ## 2. CODEOWNERS and cloud bootstrap
 
-- [ ] `.github/CODEOWNERS` covers `/.github/`, `/.cursor/`, `/.devcontainer/`, `/scripts/` with owners the maintainer names (PR pending)
-- [ ] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile) (PR pending)
+- [ ] `.github/CODEOWNERS` covers `/.github/`, `/.cursor/`, `/.devcontainer/`, `/scripts/` with owners the maintainer names (PR #393 pending)
+- [ ] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile) (PR #393 pending)
 
 ## 3. Dependencies (pnpm)
 
@@ -21,25 +21,25 @@ Profile: npm library · public
 - [x] `trustPolicy: no-downgrade`; no first-party `trustPolicyExclude` — verified
 - [x] Lifecycle scripts blocked: `strictDepBuilds: true`, `dangerouslyAllowAllBuilds: false`, `allowBuilds: {}` baseline — verified (third-party `allowBuilds` exceptions: esbuild, unrs-resolver, `@biomejs/biome`, workerd, sharp)
 - [x] `blockExoticSubdeps: true` — verified
-- [ ] Lockfile committed; CI installs with `pnpm install --frozen-lockfile` (PR pending)
+- [ ] Lockfile committed; CI installs with `pnpm install --frozen-lockfile` (PR #394 pending)
 - [x] No `.github/dependabot.yml`; other dependency-update tools (if any) open PRs only — never auto-merge — verified
 
 ## 4. GitHub Actions
 
-- [ ] `permissions: contents: read` (or `{}` + per-job grants) on every workflow (PR pending)
-- [ ] No `contents: write` except jobs whose purpose is mutating the repo (GitHub Release, Changesets version PR); generated output is a workflow artifact, never committed back from CI (PR pending)
-- [ ] Every action pinned to a full commit SHA (`npx actions-up`) (PR pending)
-- [ ] Every job installs Socket Firewall (`SocketDev/action` SHA-pinned, `firewall-version` pinned); `pnpm install` / `npm install` run as `sfw pnpm install` / `sfw npm install` (PR pending)
-- [ ] `.github/workflows/check-workflows.yaml` lints workflows with zizmor on every PR (PR pending)
-- [ ] `persist-credentials: false` on checkouts that don't push (PR pending)
+- [ ] `permissions: contents: read` (or `{}` + per-job grants) on every workflow (PR #394 pending)
+- [ ] No `contents: write` except jobs whose purpose is mutating the repo (GitHub Release, Changesets version PR); generated output is a workflow artifact, never committed back from CI (PR #394 pending)
+- [ ] Every action pinned to a full commit SHA (`npx actions-up`) (PR #396 pending)
+- [ ] Every job installs Socket Firewall (`SocketDev/action` SHA-pinned, `firewall-version` pinned); `pnpm install` / `npm install` run as `sfw pnpm install` / `sfw npm install` (PR #397 pending)
+- [ ] `.github/workflows/check-workflows.yaml` lints workflows with zizmor on every PR (PR #395 pending)
+- [ ] `persist-credentials: false` on checkouts that don't push (PR #396 pending)
 - [x] No `pull_request_target` on workflows that run untrusted PR code — verified
-- [ ] Artifact-publishing workflows disable `actions/setup-node` default caching (`package-manager-cache: false`) to prevent cache poisoning (PR pending)
+- [ ] Artifact-publishing workflows disable `actions/setup-node` default caching (`package-manager-cache: false`) to prevent cache poisoning (PR #396 pending)
 - [x] No npm tokens (or other registry credentials) in Actions secrets — verified (no npm/registry tokens in workflow YAML; publish uses OIDC `id-token`)
 
 ## 5. npm publishing — npm libraries only
 
 - [ ] OIDC trusted publishing configured **stage-only** on npmjs.com for the publish workflow — it can stage, never publish live (manual)
-- [ ] `.github/workflows/release.yaml` packs then stages with `pnpm stage publish ./packed/*.tgz --no-git-checks` (PR pending)
+- [ ] `.github/workflows/release.yaml` packs then stages with `pnpm stage publish ./packed/*.tgz --no-git-checks` (PR #398 pending)
 - [ ] Maintainer promotes staged versions with 2FA (manual)
 - [ ] Drydock connected — staged releases reviewed before promotion (manual)
 - [ ] No direct publish rights: package requires 2FA and disallows tokens (manual)
@@ -48,7 +48,7 @@ Profile: npm library · public
 ## 6. Security tooling
 
 - [ ] Aikido runs on every build
-- [ ] Aikido release gate: the release workflow's stage-publish job `needs:` a passing `scan-release` (PR pending)
+- [ ] Aikido release gate: the release workflow's stage-publish job `needs:` a passing `scan-release` (PR #398 pending)
 - [x] Socket reviews every PR that changes dependencies — verified (Socket Security GitHub app on pull requests)
 
 ## 7. Repository lockdown
