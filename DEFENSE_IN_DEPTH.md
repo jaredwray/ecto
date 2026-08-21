@@ -28,12 +28,12 @@ Profile: npm library · public
 
 - [ ] `permissions: contents: read` (or `{}` + per-job grants) on every workflow (PR pending)
 - [ ] No `contents: write` except jobs whose purpose is mutating the repo (GitHub Release, Changesets version PR); generated output is a workflow artifact, never committed back from CI (PR pending)
-- [ ] Every action pinned to a full commit SHA (`npx actions-up`)
+- [ ] Every action pinned to a full commit SHA (`npx actions-up`) (PR pending)
 - [ ] Every job installs Socket Firewall (`SocketDev/action` SHA-pinned, `firewall-version` pinned); `pnpm install` / `npm install` run as `sfw pnpm install` / `sfw npm install`
 - [ ] `.github/workflows/check-workflows.yaml` lints workflows with zizmor on every PR
-- [ ] `persist-credentials: false` on checkouts that don't push
+- [ ] `persist-credentials: false` on checkouts that don't push (PR pending)
 - [x] No `pull_request_target` on workflows that run untrusted PR code — verified
-- [ ] Artifact-publishing workflows disable `actions/setup-node` default caching (`package-manager-cache: false`) to prevent cache poisoning
+- [ ] Artifact-publishing workflows disable `actions/setup-node` default caching (`package-manager-cache: false`) to prevent cache poisoning (PR pending)
 - [x] No npm tokens (or other registry credentials) in Actions secrets — verified (no npm/registry tokens in workflow YAML; publish uses OIDC `id-token`)
 
 ## 5. npm publishing — npm libraries only
