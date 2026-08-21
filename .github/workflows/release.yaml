@@ -5,6 +5,9 @@ on:
   release:
     types: [released]
 
+permissions:
+  contents: read
+
 jobs:
   build-release:
     runs-on: ubuntu-latest
@@ -27,7 +30,7 @@ jobs:
         node-version: 24
 
     - name: Install Dependencies
-      run: pnpm install --no-frozen-lockfile
+      run: pnpm install --frozen-lockfile
 
     - name: Build
       run: pnpm build
