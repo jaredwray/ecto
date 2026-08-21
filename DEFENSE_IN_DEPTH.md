@@ -11,8 +11,8 @@ Profile: npm library · public
 
 ## 2. CODEOWNERS and cloud bootstrap
 
-- [ ] `.github/CODEOWNERS` covers `/.github/`, `/.cursor/`, `/.devcontainer/`, `/scripts/` with owners the maintainer names (PR #399 pending)
-- [ ] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile) (PR #399 pending)
+- [x] `.github/CODEOWNERS` covers `/.github/`, `/.cursor/`, `/.devcontainer/`, `/scripts/` with owners the maintainer names — PR #399
+- [x] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile) — PR #399
 
 ## 3. Dependencies (pnpm)
 
@@ -21,13 +21,13 @@ Profile: npm library · public
 - [x] `trustPolicy: no-downgrade`; no first-party `trustPolicyExclude` — verified
 - [x] Lifecycle scripts blocked: `strictDepBuilds: true`, `dangerouslyAllowAllBuilds: false`, `allowBuilds: {}` baseline — verified (third-party `allowBuilds` exceptions: esbuild, workerd, sharp)
 - [x] `blockExoticSubdeps: true` — verified
-- [ ] Lockfile committed; CI installs with `pnpm install --frozen-lockfile`
+- [ ] Lockfile committed; CI installs with `pnpm install --frozen-lockfile` (PR #400 pending)
 - [x] No `.github/dependabot.yml`; other dependency-update tools (if any) open PRs only — never auto-merge — verified
 
 ## 4. GitHub Actions
 
-- [ ] `permissions: contents: read` (or `{}` + per-job grants) on every workflow
-- [ ] No `contents: write` except jobs whose purpose is mutating the repo (GitHub Release, Changesets version PR); generated output is a workflow artifact, never committed back from CI
+- [ ] `permissions: contents: read` (or `{}` + per-job grants) on every workflow (PR #400 pending)
+- [ ] No `contents: write` except jobs whose purpose is mutating the repo (GitHub Release, Changesets version PR); generated output is a workflow artifact, never committed back from CI (PR #400 pending)
 - [ ] Every action pinned to a full commit SHA (`npx actions-up`)
 - [ ] Every job installs Socket Firewall (`SocketDev/action` SHA-pinned, `firewall-version` pinned); `pnpm install` / `npm install` run as `sfw pnpm install` / `sfw npm install`
 - [ ] `.github/workflows/check-workflows.yaml` lints workflows with zizmor on every PR
@@ -47,7 +47,7 @@ Profile: npm library · public
 
 ## 6. Security tooling
 
-- [ ] Aikido runs on every build
+- [x] Aikido runs on every build — verified (Aikido Security GitHub app on pull requests)
 - [ ] Aikido release gate: the release workflow's stage-publish job `needs:` a passing `scan-release`
 - [x] Socket reviews every PR that changes dependencies — verified (Socket Security GitHub app on pull requests)
 
