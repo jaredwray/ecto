@@ -17,9 +17,9 @@ Profile: npm library · public
 ## 3. Dependencies (pnpm)
 
 - [x] `packageManager: pnpm@11.3+` pinned in `package.json` — verified `pnpm@11.15.0`
-- [x] 7-day cooldown: `minimumReleaseAge: 10080`, `minimumReleaseAgeStrict: true`, `minimumReleaseAgeIgnoreMissingTime: false`; no first-party `minimumReleaseAgeExclude` — verified (third-party `rolldown` / `@rolldown/binding-*` excludes)
+- [x] 7-day cooldown: `minimumReleaseAge: 10080`, `minimumReleaseAgeStrict: true`, `minimumReleaseAgeIgnoreMissingTime: false`; no first-party `minimumReleaseAgeExclude` — verified
 - [x] `trustPolicy: no-downgrade`; no first-party `trustPolicyExclude` — verified
-- [x] Lifecycle scripts blocked: `strictDepBuilds: true`, `dangerouslyAllowAllBuilds: false`, `allowBuilds: {}` baseline — verified (third-party `allowBuilds` exceptions: esbuild, unrs-resolver, `@biomejs/biome`, workerd, sharp)
+- [x] Lifecycle scripts blocked: `strictDepBuilds: true`, `dangerouslyAllowAllBuilds: false`, `allowBuilds: {}` baseline — verified (third-party `allowBuilds` exceptions: esbuild, workerd, sharp)
 - [x] `blockExoticSubdeps: true` — verified
 - [ ] Lockfile committed; CI installs with `pnpm install --frozen-lockfile`
 - [x] No `.github/dependabot.yml`; other dependency-update tools (if any) open PRs only — never auto-merge — verified
