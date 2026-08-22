@@ -36,7 +36,7 @@ jobs:
     - name: Enable Corepack
       run: |
         unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy ALL_PROXY all_proxy
-        command -v corepack >/dev/null || npm install -g corepack
+        command -v corepack >/dev/null || sfw npm install -g corepack
         corepack enable && corepack prepare
 
     - name: Install Dependencies
