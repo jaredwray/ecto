@@ -29,8 +29,8 @@ Profile: npm library · public
 - [x] `permissions: contents: read` (or `{}` + per-job grants) on every workflow — PR #400
 - [x] No `contents: write` except jobs whose purpose is mutating the repo (GitHub Release, Changesets version PR); generated output is a workflow artifact, never committed back from CI — PR #400
 - [x] Every action pinned to a full commit SHA (`npx actions-up`) — PR #401
-- [ ] Every job installs Socket Firewall (`SocketDev/action` SHA-pinned, `firewall-version` pinned); `pnpm install` / `npm install` run as `sfw pnpm install` / `sfw npm install` (PR #402 pending)
-- [ ] `.github/workflows/check-workflows.yaml` lints workflows with zizmor on every PR
+- [x] Every job installs Socket Firewall (`SocketDev/action` SHA-pinned, `firewall-version` pinned); `pnpm install` / `npm install` run as `sfw pnpm install` / `sfw npm install` — PR #402
+- [ ] `.github/workflows/check-workflows.yaml` lints workflows with zizmor on every PR (PR #403 pending)
 - [x] `persist-credentials: false` on checkouts that don't push — PR #401
 - [x] No `pull_request_target` on workflows that run untrusted PR code — verified
 - [x] Artifact-publishing workflows disable `actions/setup-node` default caching (`package-manager-cache: false`) to prevent cache poisoning — PR #401
