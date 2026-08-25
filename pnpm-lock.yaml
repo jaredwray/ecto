@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@jaredwray/fumanchu':
-        specifier: ^4.7.1
-        version: 4.7.1
+        specifier: ^4.7.2
+        version: 4.7.2
       cacheable:
         specifier: ^2.5.0
         version: 2.5.0
@@ -593,8 +593,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@jaredwray/fumanchu@4.7.1':
-    resolution: {integrity: sha512-ClcmTJCAXTcZDeBGC3g4ol+gI+tkfwRfmERMD8mWy0pmg5tluBKy9OZdnTjkOpL1sNIt864XGe/L4yFg5pMitw==}
+  '@jaredwray/fumanchu@4.7.2':
+    resolution: {integrity: sha512-LTiNhIH6RvsiUBN13osqXgezY/JNNMHydlx6mMLPJQq4mox6C+Y5NXV1YZwRq+25S6tVlTCcDOPUY24iVwefmg==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -1368,8 +1368,8 @@ packages:
   character-reference-invalid@2.0.1:
     resolution: {integrity: sha512-iBZ4F4wRbyORVsu0jPV7gXkOsGYjGHPmAyv+HiHG8gi5PtC9KI2j1+v8/tlibRvjoWX027ypmG/n0HtO5t7unw==}
 
-  chrono-node@2.9.1:
-    resolution: {integrity: sha512-nqP8Zp11efCYQIESXPxeDM8ikzN5BDb3Zzou+a66fZq+X2hzKFdsNLQE2/uBAh//BZEMbaMo1eTnagK7hOenAg==}
+  chrono-node@2.10.1:
+    resolution: {integrity: sha512-tPOsBzYVAK5zth+CiHCgp5NGeqRc4mMD8FPthQ5IxkgjPWWxIFdM5odnmfw//IRAzl6C++Xy8olQW7wn5qBR1g==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   cli-boxes@3.0.0:
@@ -3202,10 +3202,10 @@ snapshots:
   '@img/sharp-win32-x64@0.35.2':
     optional: true
 
-  '@jaredwray/fumanchu@4.7.1':
+  '@jaredwray/fumanchu@4.7.2':
     dependencies:
       '@cacheable/memory': 2.2.0
-      chrono-node: 2.9.1
+      chrono-node: 2.10.1
       dayjs: 1.11.21
       handlebars: 4.7.9
       markdown-it: 14.3.0
@@ -3756,7 +3756,7 @@ snapshots:
 
   character-reference-invalid@2.0.1: {}
 
-  chrono-node@2.9.1: {}
+  chrono-node@2.10.1: {}
 
   cli-boxes@3.0.0: {}
 
@@ -3875,7 +3875,7 @@ snapshots:
 
   ecto@5.0.0(supports-color@10.2.2):
     dependencies:
-      '@jaredwray/fumanchu': 4.7.1
+      '@jaredwray/fumanchu': 4.7.2
       cacheable: 2.5.0
       ejs: 6.0.1
       hookified: 3.0.1
