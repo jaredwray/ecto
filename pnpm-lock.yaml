@@ -21,8 +21,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       liquidjs:
-        specifier: ^10.27.2
-        version: 10.27.2
+        specifier: ^10.29.0
+        version: 10.29.0
       nunjucks:
         specifier: ^3.2.4
         version: 3.2.4
@@ -1930,8 +1930,8 @@ packages:
   linkify-it@5.0.2:
     resolution: {integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==}
 
-  liquidjs@10.27.2:
-    resolution: {integrity: sha512-kvknfAEtOHjHkAAv7GxLEJh8ghpMQm3Fc4uWVyF7hERSTsSRsdC7saWs0p5aDG7GDcWsu5o+T4232O+8KZO55w==}
+  liquidjs@10.29.0:
+    resolution: {integrity: sha512-pCVOhs6FLAR8su3ItJ07diN26t6W5dHQRnmTMy8HPyTFuv1+oSCVJIGp5pGjfQyOZfh50KswvKtMTp6p4JEIdw==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -3823,7 +3823,7 @@ snapshots:
       cacheable: 2.5.0
       ejs: 6.0.1
       hookified: 3.0.2
-      liquidjs: 10.27.2
+      liquidjs: 10.29.0
       nunjucks: 3.2.4
       pug: 3.0.4
       writr: 6.1.5(supports-color@10.2.2)
@@ -4295,7 +4295,7 @@ snapshots:
     dependencies:
       uc.micro: 2.1.0
 
-  liquidjs@10.27.2:
+  liquidjs@10.29.0:
     dependencies:
       commander: 10.0.1
 
