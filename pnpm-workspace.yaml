@@ -10,9 +10,3 @@ allowBuilds:
   esbuild: true
   workerd: true
   sharp: true
-
-# undici 7.28.0 (via writr/docula → ai → @ai-sdk/provider-utils) is vulnerable
-# to Cache-Control private-directive cache leaks / parse crash (fixed in 7.29.0).
-# Target only 7.28.0 so the already-patched 8.10.0 line is not downgraded.
-overrides:
-  undici@7.28.0: 7.29.0
