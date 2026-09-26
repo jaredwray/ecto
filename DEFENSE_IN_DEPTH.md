@@ -16,7 +16,7 @@ Profile: npm library · public
 
 ## 3. Dependencies (pnpm)
 
-- [x] `packageManager: pnpm@11.3+` pinned in `package.json` — verified `pnpm@11.22.0`
+- [x] `packageManager: pnpm@11.3+` pinned in `package.json` — verified `pnpm@12.5.1`
 - [x] 7-day cooldown: `minimumReleaseAge: 10080`, `minimumReleaseAgeStrict: true`, `minimumReleaseAgeIgnoreMissingTime: false`; no first-party `minimumReleaseAgeExclude` — verified
 - [x] `trustPolicy: no-downgrade`; no first-party `trustPolicyExclude` — verified
 - [x] Lifecycle scripts blocked: `strictDepBuilds: true`, `dangerouslyAllowAllBuilds: false`, `allowBuilds: {}` baseline — verified (third-party `allowBuilds` exceptions: esbuild, workerd, sharp)
