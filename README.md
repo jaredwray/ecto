@@ -7,6 +7,7 @@
 [![GitHub license](https://img.shields.io/github/license/jaredwray/ecto)](https://github.com/jaredwray/ecto/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/jaredwray/ecto/branch/main/graph/badge.svg?token=dpbFqSW5Kh)](https://codecov.io/gh/jaredwray/ecto)
 [![npm](https://img.shields.io/npm/dm/ecto)](https://npmjs.com/package/ecto)
+[![Drydock review](https://img.shields.io/endpoint?url=https%3A%2F%2Fdrydock.org%2Fpublic%2Fbadge%2Fnpm%2Fecto)](https://drydock.org/diff/ecto)
 
 -----
 
