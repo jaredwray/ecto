@@ -13,7 +13,9 @@ allowBuilds:
 
 # Transitive security floors. fumanchu still declares handlebars ^4.7.9.
 # undici 7 and 8 are separate lines (@cacheable/net, AI SDK, miniflare, docula).
+# miniflare pins undici 7.29.0 and sharp 0.35.4 exactly, so those cannot float.
 overrides:
   handlebars: ">=4.7.10"
-  "undici@7": ">=7.29.1 <8"
-  "undici@8": ">=8.10.2 <9"
+  "undici@7": ">=7.30.1 <8"
+  "undici@8": ">=8.12.2 <9"
+  sharp: ">=0.35.5 <0.36"
