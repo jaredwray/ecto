@@ -163,7 +163,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  undici@7: '>=7.30.1 <8'
+  undici@7: 8.12.2
   undici@8: '>=8.12.2 <9'
   sharp: '>=0.35.5 <0.36'
 
@@ -2677,10 +2677,6 @@ packages:
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
-  undici@7.30.1:
-    resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
-    engines: {node: '>=20.18.1'}
-
   undici@8.12.2:
     resolution: {integrity: sha512-XtuDWVdqTLr3NAxm2ly9/hU6kUsJOgGh1RASzMBbsw6aWCOaQzHdW+QQDfdERjfJ2V5vL5pRPa4RetO9UfivDg==}
     engines: {node: '>=22.19.0'}
@@ -2946,7 +2942,7 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.1.0
-      undici: 7.30.1
+      undici: 8.12.2
       zod: 4.6.7
 
   '@ai-sdk/provider-utils@5.0.45(zod@4.6.7)':
@@ -2955,7 +2951,7 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.1.0
-      undici: 7.30.1
+      undici: 8.12.2
       zod: 4.6.7
 
   '@ai-sdk/provider@4.0.17':
@@ -3042,7 +3038,7 @@ snapshots:
       cacheable: 2.5.0
       hookified: 1.15.1
       http-cache-semantics: 4.2.0
-      undici: 7.30.1
+      undici: 8.12.2
 
   '@cacheable/utils@2.5.0':
     dependencies:
@@ -4824,7 +4820,7 @@ snapshots:
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       sharp: 0.35.5(@types/node@24.13.6)
-      undici: 7.30.1
+      undici: 8.12.2
       workerd: 1.20260918.1
       ws: 8.21.0
       youch: 4.1.0-beta.10
@@ -5376,8 +5372,6 @@ snapshots:
       quansync: 1.0.0
 
   undici-types@7.18.2: {}
-
-  undici@7.30.1: {}
 
   undici@8.12.2: {}
 
