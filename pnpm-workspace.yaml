@@ -12,10 +12,9 @@ allowBuilds:
   sharp: true
 
 # Transitive security floors.
-# undici@7 requests are pinned to 8.12.2; undici@8 stays on its own floor
+# undici@7 requests are pinned to 8.12.2
 # (@cacheable/net, AI SDK, miniflare, docula).
 # miniflare pins undici 7.29.0 and sharp 0.35.4 exactly, so those cannot float.
 overrides:
   "undici@7": "8.12.2"
-  "undici@8": ">=8.12.2 <9"
   sharp: ">=0.35.5 <0.36"
