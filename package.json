@@ -56,7 +56,7 @@
   "dependencies": {
     "@jaredwray/fumanchu": "^4.7.4",
     "cacheable": "^2.5.0",
-    "ejs": "^6.0.1",
+    "ejs": "^7.0.2",
     "hookified": "^3.0.4",
     "liquidjs": "^10.30.0",
     "nunjucks": "^3.2.4",
