@@ -170,8 +170,8 @@ importers:
   .:
     dependencies:
       '@jaredwray/fumanchu':
-        specifier: ^4.7.3
-        version: 4.7.3
+        specifier: ^4.7.4
+        version: 4.7.4
       cacheable:
         specifier: ^2.5.0
         version: 2.5.0
@@ -761,6 +761,9 @@ packages:
 
   '@jaredwray/fumanchu@4.7.3':
     resolution: {integrity: sha512-YVWU9zL75VSaeMZz5+IyGP8+BOlhCBN7NTZJnypp7LMLf4SJq0csK9hK4OJnLGxw+CueVRG+TM455dEwfgBObQ==}
+
+  '@jaredwray/fumanchu@4.7.4':
+    resolution: {integrity: sha512-jsuTA4pbmFEtQs7T9vMy0LKpdOLiDvZuP2CHaDkNzlNcwnM5vbktKpIhT8WGsG3yvZElOqrjaI+SW5iPO0kLhQ==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -3143,6 +3146,15 @@ snapshots:
     optional: true
 
   '@jaredwray/fumanchu@4.7.3':
+    dependencies:
+      '@cacheable/memory': 2.2.0
+      chrono-node: 2.10.1
+      dayjs: 1.11.23
+      handlebars: 4.7.10
+      markdown-it: 15.0.2
+      micromatch: 4.0.8
+
+  '@jaredwray/fumanchu@4.7.4':
     dependencies:
       '@cacheable/memory': 2.2.0
       chrono-node: 2.10.1
