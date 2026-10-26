@@ -2,7 +2,7 @@ import fs from "node:fs";
 import nodePath from "node:path";
 import { faker } from "@faker-js/faker";
 import { expect, it } from "vitest";
-import { Ecto } from "../src/ecto.js";
+import { Ecto, EctoEvents } from "../src/ecto.js";
 
 const engines: string[] = [
 	"ejs",
@@ -691,4 +691,329 @@ it("hooks receive cached flag on sync cache hit", () => {
 	ecto.renderSync("<%= x %>", { x: "1" });
 	expect(beforeCached).toBe(true);
 	expect(afterCached).toBe(true);
+});
+
+it("render should handle errors and return empty string", async () => {
+	const ecto = new Ecto();
+	let errorEmitted = false;
+
+	ecto.on("error", () => {
+		errorEmitted = true;
+	});
+
+	const malformedEjsSource =
+		"<% if (test) { %><h2><%= test.foo %></h2><% } %><%";
+	const result = await ecto.render(malformedEjsSource, ejsExampleData);
+
+	expect(result).toBe("");
+	expect(errorEmitted).toBe(true);
+});
+
+it("forwards Hookified options from the constructor", () => {
+	const ecto = new Ecto({ throwOnHookError: true, enforceBeforeAfter: true });
+	expect(ecto.throwOnHookError).toBe(true);
+	expect(ecto.enforceBeforeAfter).toBe(true);
+	expect(() => {
+		ecto.onHook("render", () => {});
+	}).toThrow(/before/);
+});
+
+it("beforeRender awaits async handlers", async () => {
+	const ecto = new Ecto();
+	ecto.onHook(
+		EctoEvents.beforeRender,
+		async (context: { data?: Record<string, unknown> }) => {
+			await Promise.resolve();
+			context.data = { name: "async" };
+		},
+	);
+
+	expect(await ecto.render("<%= name %>", { name: "sync" })).toBe("async");
+});
+
+it("renderSync skips async hook handlers", () => {
+	const ecto = new Ecto();
+	ecto.onHook(
+		"beforeRenderSync",
+		async (context: { data?: Record<string, unknown> }) => {
+			context.data = { name: "async" };
+		},
+	);
+
+	expect(ecto.renderSync("<%= name %>", { name: "sync" })).toBe("sync");
+});
+
+it("multiple sync hooks chain in registration order", () => {
+	const ecto = new Ecto();
+	const order: number[] = [];
+
+	ecto.onHook("beforeRenderSync", () => {
+		order.push(1);
+	});
+	ecto.onHook("beforeRenderSync", () => {
+		order.push(2);
+	});
+	ecto.onHook("afterRenderSync", () => {
+		order.push(3);
+	});
+	ecto.onHook("afterRenderSync", () => {
+		order.push(4);
+	});
+
+	ecto.renderSync("<%= x %>", { x: "test" });
+	expect(order).toEqual([1, 2, 3, 4]);
+});
+
+it("onHook position Top runs before hooks registered earlier", async () => {
+	const ecto = new Ecto();
+	const order: string[] = [];
+
+	ecto.onHook(EctoEvents.beforeRender, () => {
+		order.push("bottom");
+	});
+	ecto.onHook(
+		{
+			event: EctoEvents.beforeRender,
+			handler: () => {
+				order.push("top");
+			},
+		},
+		{ position: "Top" },
+	);
+
+	await ecto.render("<%= x %>", { x: "test" });
+	expect(order).toEqual(["top", "bottom"]);
+});
+
+it("removeHookById stops a beforeRender hook", async () => {
+	const ecto = new Ecto();
+	ecto.onHook({
+		id: "inject-user",
+		event: EctoEvents.beforeRender,
+		handler: (context: { data?: Record<string, unknown> }) => {
+			context.data = { ...(context.data ?? {}), name: "jared" };
+		},
+	});
+
+	expect(await ecto.render("<%= name %>", { name: "World" })).toBe("jared");
+	ecto.removeHookById("inject-user");
+	expect(await ecto.render("<%= name %>", { name: "World" })).toBe("World");
+});
+
+it("afterRender runs once per cached call", async () => {
+	const ecto = new Ecto({ cache: true });
+	ecto.onHook("afterRender", (renderResult: { result: string }) => {
+		renderResult.result = `${renderResult.result}!`;
+	});
+
+	expect(await ecto.render("<%= name %>", { name: "Ada" })).toBe("Ada!");
+	expect(await ecto.render("<%= name %>", { name: "Ada" })).toBe("Ada!");
+});
+
+it("afterRenderSync runs once per cached call", () => {
+	const ecto = new Ecto({ cacheSync: true });
+	ecto.onHook("afterRenderSync", (renderResult: { result: string }) => {
+		renderResult.result = `${renderResult.result}!`;
+	});
+
+	expect(ecto.renderSync("<%= name %>", { name: "Ada" })).toBe("Ada!");
+	expect(ecto.renderSync("<%= name %>", { name: "Ada" })).toBe("Ada!");
+});
+
+it("beforeRender data is reused from the cached engine output", async () => {
+	const ecto = new Ecto({ cache: true });
+	ecto.onHook("beforeRender", (context: { data?: Record<string, unknown> }) => {
+		context.data = { ...(context.data ?? {}), name: "Ada" };
+	});
+
+	expect(await ecto.render("<%= name %>", { name: "World" })).toBe("Ada");
+	expect(await ecto.render("<%= name %>", { name: "World" })).toBe("Ada");
+});
+
+it("beforeRenderSync data is reused from the cached engine output", () => {
+	const ecto = new Ecto({ cacheSync: true });
+	ecto.onHook(
+		"beforeRenderSync",
+		(context: { data?: Record<string, unknown> }) => {
+			context.data = { ...(context.data ?? {}), name: "Ada" };
+		},
+	);
+
+	expect(ecto.renderSync("<%= name %>", { name: "World" })).toBe("Ada");
+	expect(ecto.renderSync("<%= name %>", { name: "World" })).toBe("Ada");
+});
+
+it("beforeRender can change the output path", async () => {
+	const ecto = new Ecto();
+	const uniqueId = faker.string.alphanumeric(10);
+	const directory = `${testOutputDirectory}/hooks-${uniqueId}`;
+	const originalPath = `${directory}/original.html`;
+	const redirectedPath = `${directory}/redirected.html`;
+
+	ecto.onHook("beforeRender", (context: { filePathOutput?: string }) => {
+		context.filePathOutput = redirectedPath;
+	});
+
+	const content = await ecto.render(
+		"<%= name %>",
+		{ name: "Ada" },
+		"ejs",
+		undefined,
+		originalPath,
+	);
+
+	expect(content).toBe("Ada");
+	expect(fs.existsSync(originalPath)).toBe(false);
+	expect(fs.readFileSync(redirectedPath, "utf8")).toBe("Ada");
+	fs.rmSync(directory, { recursive: true, force: true });
+});
+
+it("afterRender result is what gets written", async () => {
+	const ecto = new Ecto();
+	const uniqueId = faker.string.alphanumeric(10);
+	const directory = `${testOutputDirectory}/hooks-write-${uniqueId}`;
+	const filePath = `${directory}/out.html`;
+
+	ecto.onHook("afterRender", (renderResult: { result: string }) => {
+		renderResult.result = renderResult.result.toUpperCase();
+	});
+
+	const content = await ecto.render(
+		"<%= name %>",
+		{ name: "Ada" },
+		"ejs",
+		undefined,
+		filePath,
+	);
+
+	expect(content).toBe("ADA");
+	expect(fs.readFileSync(filePath, "utf8")).toBe("ADA");
+	fs.rmSync(directory, { recursive: true, force: true });
+});
+
+it("beforeRenderSync can change the output path", () => {
+	const ecto = new Ecto();
+	const uniqueId = faker.string.alphanumeric(10);
+	const directory = `${testOutputDirectory}/hooks-sync-${uniqueId}`;
+	const originalPath = `${directory}/original.html`;
+	const redirectedPath = `${directory}/redirected.html`;
+
+	ecto.onHook("beforeRenderSync", (context: { filePathOutput?: string }) => {
+		context.filePathOutput = redirectedPath;
+	});
+
+	const content = ecto.renderSync(
+		"<%= name %>",
+		{ name: "Ada" },
+		"ejs",
+		undefined,
+		originalPath,
+	);
+
+	expect(content).toBe("Ada");
+	expect(fs.existsSync(originalPath)).toBe(false);
+	expect(fs.readFileSync(redirectedPath, "utf8")).toBe("Ada");
+	fs.rmSync(directory, { recursive: true, force: true });
+});
+
+it("hook errors continue rendering by default", async () => {
+	const ecto = new Ecto();
+	const messages: string[] = [];
+	ecto.on("error", (error: Error) => {
+		messages.push(error.message);
+	});
+	ecto.onHook("beforeRender", () => {
+		throw new Error("nope");
+	});
+
+	expect(await ecto.render("<%= name %>", { name: "ok" })).toBe("ok");
+	expect(messages.some((message) => message.includes("nope"))).toBe(true);
+});
+
+it("hook errors continue rendering when nobody is listening", async () => {
+	const ecto = new Ecto();
+	ecto.onHook("beforeRender", () => {
+		throw new Error("nope");
+	});
+
+	expect(await ecto.render("<%= name %>", { name: "ok" })).toBe("ok");
+	expect(ecto.listenerCount("error")).toBe(0);
+});
+
+it("sync hook errors continue rendering by default", () => {
+	const ecto = new Ecto();
+	const messages: string[] = [];
+	ecto.on("error", (error: Error) => {
+		messages.push(error.message);
+	});
+	ecto.onHook("beforeRenderSync", () => {
+		throw new Error("nope");
+	});
+
+	expect(ecto.renderSync("<%= name %>", { name: "ok" })).toBe("ok");
+	expect(messages.some((message) => message.includes("nope"))).toBe(true);
+});
+
+it("sync hook errors continue rendering when nobody is listening", () => {
+	const ecto = new Ecto();
+	ecto.onHook("beforeRenderSync", () => {
+		throw new Error("nope");
+	});
+
+	expect(ecto.renderSync("<%= name %>", { name: "ok" })).toBe("ok");
+	expect(ecto.listenerCount("error")).toBe(0);
+});
+
+it("throwOnHookError rejects render and emits once", async () => {
+	const ecto = new Ecto({ throwOnHookError: true });
+	let count = 0;
+	ecto.on("error", () => {
+		count += 1;
+	});
+	ecto.onHook("beforeRender", () => {
+		throw new Error("nope");
+	});
+
+	await expect(ecto.render("<%= name %>", { name: "ok" })).rejects.toThrow(
+		/nope/,
+	);
+	expect(count).toBe(1);
+});
+
+it("throwOnHookError rejects render when nobody is listening", async () => {
+	const ecto = new Ecto({ throwOnHookError: true });
+	ecto.onHook("afterRender", () => {
+		throw new Error("after failed");
+	});
+
+	await expect(ecto.render("<%= name %>", { name: "ok" })).rejects.toThrow(
+		/after failed/,
+	);
+});
+
+it("throwOnHookError throws from renderSync", () => {
+	const ecto = new Ecto({ throwOnHookError: true });
+	let count = 0;
+	ecto.on("error", () => {
+		count += 1;
+	});
+	ecto.onHook("afterRenderSync", () => {
+		throw new Error("sync failed");
+	});
+
+	expect(() => {
+		ecto.renderSync("<%= name %>", { name: "ok" });
+	}).toThrow(/sync failed/);
+	expect(count).toBe(1);
+});
+
+it("throwOnHookError throws from renderSync when nobody is listening", () => {
+	const ecto = new Ecto({ throwOnHookError: true });
+	ecto.onHook("beforeRenderSync", () => {
+		throw new Error("sync nope");
+	});
+
+	expect(() => {
+		ecto.renderSync("<%= name %>", { name: "ok" });
+	}).toThrow(/sync nope/);
 });

@@ -731,8 +731,8 @@ type RenderContext = {
   data?: Record<string, unknown>;  // Template data (modifiable)
   engineName: string;              // Engine being used
   rootTemplatePath?: string;       // Root path for partials
-  filePathOutput?: string;         // Output file path
-  cached: boolean;                 // True if result came from cache
+  filePathOutput?: string;         // Output file path (modifiable; used when writing)
+  cached: boolean;                 // True when this call was served from cache
 };
 
 type RenderResult = {
@@ -765,9 +765,17 @@ ecto.onHook(EctoEvents.afterRender, (renderResult) => {
 const output = await ecto.render('<%= name %>', { name: 'World' });
 ```
 
+## Hooks and Caching
+
+The async cache (`cache`) and sync cache (`cacheSync`) store the template engine output taken after the before-hook and before the after-hook. The cache key is the original source, data, and engine name.
+
+On a cache hit, `beforeRender` / `beforeRenderSync` still run with `cached: true`, and the stored engine output is reused. Edits those hooks make to `source` or `data` are rendered on a cache miss. `afterRender` / `afterRenderSync` run on every call, including cache hits, and can still change `result` and the file written from `filePathOutput`.
+
+`renderSync` uses Hookified's synchronous runner, which skips handlers declared with `async`.
+
 ## Hook Objects, IDs, and Errors
 
-Ecto extends [Hookified](https://hookified.org), so you can also register hooks via the `Hook` class. Every hook has a unique `id` (auto-generated unless supplied) for later lookup or removal across events. Pass `throwOnHookError: true` to the `Ecto` constructor to make hook errors fail the render instead of just emitting on `error`.
+Ecto extends [Hookified](https://hookified.org), so constructor options such as `throwOnHookError` are passed through, and you can register hooks via the `Hook` class. Every hook has a unique `id` (auto-generated unless supplied) for later lookup or removal across events. The default is to emit `error` and continue rendering. Pass `throwOnHookError: true` to make a hook error reject `render` and throw from `renderSync`.
 
 ```javascript
 import { Ecto, EctoEvents } from 'ecto';

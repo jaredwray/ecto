@@ -66,6 +66,17 @@ export type RenderContext = {
 };
 
 /**
+ * Hook failure that should reject the render when `throwOnHookError` is set.
+ * Hookified has already emitted `error` when any listeners are attached.
+ */
+class HookRenderError extends Error {
+	constructor(cause: Error) {
+		super(cause.message, { cause });
+		this.name = "HookRenderError";
+	}
+}
+
+/**
  * Result passed to afterRender and afterRenderSync hooks
  */
 export type RenderResult = {
@@ -107,7 +118,7 @@ export class Ecto extends Hookified {
 	 * @param {EctoOptions} [options] - The options for the ecto engine
 	 */
 	constructor(options?: EctoOptions) {
-		super();
+		super(options);
 		// Engines
 		this._ejs = new EJS(options?.engineOptions?.ejs);
 		this._markdown = new Markdown(options?.engineOptions?.markdown);
@@ -264,7 +275,8 @@ export class Ecto extends Hookified {
 	}
 
 	/**
-	 * Asynchronously render a template source with data using the specified engine
+	 * Asynchronously render a template source with data using the specified engine.
+	 * `beforeRender` can modify the source and data. `afterRender` can modify the returned string.
 	 * @param {string} source - The template source string to render
 	 * @param {Record<string, unknown>} [data] - Data object to pass to the template engine
 	 * @param {string} [engineName] - Name of the engine to use (e.g., 'ejs', 'pug'). Defaults to defaultEngine
@@ -304,15 +316,14 @@ export class Ecto extends Hookified {
 						filePathOutput,
 						cached: true,
 					};
-					await this.hook(EctoEvents.beforeRender, context);
+					await this.invokeHook(EctoEvents.beforeRender, context);
 
-					// Create render result for afterRender hook
+					// Cache stores engine output. afterRender runs on every call.
 					const renderResult: RenderResult = { result: cachedResult, context };
-					await this.hook(EctoEvents.afterRender, renderResult);
+					await this.invokeHook(EctoEvents.afterRender, renderResult);
 
 					// Write out the file
-					await this.writeFile(filePathOutput, renderResult.result);
-					// Return the result (potentially modified by hooks)
+					await this.writeFile(context.filePathOutput, renderResult.result);
 					return renderResult.result;
 				}
 
@@ -330,7 +341,7 @@ export class Ecto extends Hookified {
 			};
 
 			// Call beforeRender hook - allows modifying source and data
-			await this.hook(EctoEvents.beforeRender, context);
+			await this.invokeHook(EctoEvents.beforeRender, context);
 
 			// Get the render engine
 			const renderEngine = this.getRenderEngine(renderEngineName);
@@ -339,32 +350,34 @@ export class Ecto extends Hookified {
 			renderEngine.rootTemplatePath = context.rootTemplatePath;
 
 			// Get the output using potentially modified source and data
-			let result = await renderEngine.render(context.source, context.data);
+			const rendered = await renderEngine.render(context.source, context.data);
 
 			// Create render result for afterRender hook
-			const renderResult: RenderResult = { result, context };
-			await this.hook(EctoEvents.afterRender, renderResult);
-			result = renderResult.result;
+			const renderResult: RenderResult = { result: rendered, context };
+			await this.invokeHook(EctoEvents.afterRender, renderResult);
 
-			// If caching is enabled, store the result in the cache
+			// Store engine output so a later hit does not run afterRender twice
 			if (this._cache) {
-				await this._cache.set(cacheKey, result);
+				await this._cache.set(cacheKey, rendered);
 			}
 
 			// Write out the file
-			await this.writeFile(filePathOutput, result);
+			await this.writeFile(context.filePathOutput, renderResult.result);
 
-			return result;
+			return renderResult.result;
 		} catch (error) {
-			/* v8 ignore next -- @preserve */
+			if (error instanceof HookRenderError) {
+				throw error.cause;
+			}
 			this.emit(EctoEvents.error, error);
-			/* v8 ignore next -- @preserve */
 			return "";
 		}
 	}
 
 	/**
-	 * Synchronously render a template source with data using the specified engine
+	 * Synchronously render a template source with data using the specified engine.
+	 * `beforeRenderSync` can modify the source and data. `afterRenderSync` can modify the returned string.
+	 * Async hook handlers are skipped.
 	 * @param {string} source - The template source string to render
 	 * @param {Record<string, unknown>} [data] - Data object to pass to the template engine
 	 * @param {string} [engineName] - Name of the engine to use (e.g., 'ejs', 'pug'). Defaults to defaultEngine
@@ -404,15 +417,14 @@ export class Ecto extends Hookified {
 						filePathOutput,
 						cached: true,
 					};
-					this.hookSync(EctoEvents.beforeRenderSync, context);
+					this.invokeHookSync(EctoEvents.beforeRenderSync, context);
 
-					// Create render result for afterRenderSync hook
+					// Cache stores engine output. afterRenderSync runs on every call.
 					const renderResult: RenderResult = { result: cachedResult, context };
-					this.hookSync(EctoEvents.afterRenderSync, renderResult);
+					this.invokeHookSync(EctoEvents.afterRenderSync, renderResult);
 
 					// Write out the file
-					this.writeFileSync(filePathOutput, renderResult.result);
-					// Return the result (potentially modified by hooks)
+					this.writeFileSync(context.filePathOutput, renderResult.result);
 					return renderResult.result;
 				}
 
@@ -430,7 +442,7 @@ export class Ecto extends Hookified {
 			};
 
 			// Call beforeRenderSync hook - allows modifying source and data
-			this.hookSync(EctoEvents.beforeRenderSync, context);
+			this.invokeHookSync(EctoEvents.beforeRenderSync, context);
 
 			// Get the render engine
 			const renderEngine = this.getRenderEngine(renderEngineName);
@@ -439,24 +451,25 @@ export class Ecto extends Hookified {
 			renderEngine.rootTemplatePath = context.rootTemplatePath;
 
 			// Get the output using potentially modified source and data
-			let result = renderEngine.renderSync(context.source, context.data);
+			const rendered = renderEngine.renderSync(context.source, context.data);
 
 			// Create render result for afterRenderSync hook
-			const renderResult: RenderResult = { result, context };
-			this.hookSync(EctoEvents.afterRenderSync, renderResult);
-			result = renderResult.result;
+			const renderResult: RenderResult = { result: rendered, context };
+			this.invokeHookSync(EctoEvents.afterRenderSync, renderResult);
 
-			// If caching is enabled, store the result in the cache
+			// Store engine output so a later hit does not run afterRenderSync twice
 			if (this._cacheSync) {
-				this._cacheSync.set(cacheKey, result);
+				this._cacheSync.set(cacheKey, rendered);
 			}
 
 			// Write out the file
-			this.writeFileSync(filePathOutput, result);
+			this.writeFileSync(context.filePathOutput, renderResult.result);
 
-			return result;
-			/* c8 ignore next 4 */
+			return renderResult.result;
 		} catch (error) {
+			if (error instanceof HookRenderError) {
+				throw error.cause;
+			}
 			this.emit(EctoEvents.error, error);
 			return "";
 		}
@@ -1061,6 +1074,71 @@ export class Ecto extends Hookified {
 	public removeFrontMatter(source: string): string {
 		const writr = new Writr(source);
 		return writr.body;
+	}
+
+	/**
+	 * Run an async render hook.
+	 * Hookified throws from `emit('error')` when no error listener is attached.
+	 * A temporary listener keeps that from aborting the render unless
+	 * `throwOnHookError` is set. Handler failures then reject the render.
+	 * @param {EctoEvents} event - Hook event name
+	 * @param {T} payload - Context or result object passed to handlers
+	 * @returns {Promise<void>}
+	 */
+	private async invokeHook<T>(event: EctoEvents, payload: T): Promise<void> {
+		if (!this.throwOnHookError) {
+			const ignoreHookError = () => {};
+			const swallowEmpty = this.listenerCount(EctoEvents.error) === 0;
+			if (swallowEmpty) {
+				this.on(EctoEvents.error, ignoreHookError);
+			}
+			try {
+				await this.hook(event, payload);
+			} finally {
+				if (swallowEmpty) {
+					this.off(EctoEvents.error, ignoreHookError);
+				}
+			}
+			return;
+		}
+
+		try {
+			await this.hook(event, payload);
+		} catch (error) {
+			// Hookified reports handler failures as Error instances.
+			throw new HookRenderError(error as Error);
+		}
+	}
+
+	/**
+	 * Run a synchronous render hook. Async handlers are skipped by Hookified.
+	 * @param {EctoEvents} event - Hook event name
+	 * @param {T} payload - Context or result object passed to handlers
+	 * @returns {void}
+	 */
+	private invokeHookSync<T>(event: EctoEvents, payload: T): void {
+		if (!this.throwOnHookError) {
+			const ignoreHookError = () => {};
+			const swallowEmpty = this.listenerCount(EctoEvents.error) === 0;
+			if (swallowEmpty) {
+				this.on(EctoEvents.error, ignoreHookError);
+			}
+			try {
+				this.hookSync(event, payload);
+			} finally {
+				if (swallowEmpty) {
+					this.off(EctoEvents.error, ignoreHookError);
+				}
+			}
+			return;
+		}
+
+		try {
+			this.hookSync(event, payload);
+		} catch (error) {
+			// Hookified reports handler failures as Error instances.
+			throw new HookRenderError(error as Error);
+		}
 	}
 
 	/**
