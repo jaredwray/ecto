@@ -182,8 +182,8 @@ importers:
         specifier: ^3.0.4
         version: 3.0.4
       liquidjs:
-        specifier: ^10.29.0
-        version: 10.29.0
+        specifier: ^10.30.0
+        version: 10.30.0
       nunjucks:
         specifier: ^3.2.4
         version: 3.2.4
@@ -1920,6 +1920,11 @@ packages:
 
   liquidjs@10.29.0:
     resolution: {integrity: sha512-pCVOhs6FLAR8su3ItJ07diN26t6W5dHQRnmTMy8HPyTFuv1+oSCVJIGp5pGjfQyOZfh50KswvKtMTp6p4JEIdw==}
+    engines: {node: '>=16'}
+    hasBin: true
+
+  liquidjs@10.30.0:
+    resolution: {integrity: sha512-Fw4wA+8CZsJkaeLEIlPE3AoponfjEZhj7FQvYNcAEcg7jNRik7mEMoaco382FBdrYlykVf6w4vClPNctz2OYjg==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -4160,6 +4165,10 @@ snapshots:
       uc.micro: 3.0.0
 
   liquidjs@10.29.0:
+    dependencies:
+      commander: 10.0.1
+
+  liquidjs@10.30.0:
     dependencies:
       commander: 10.0.1
 
