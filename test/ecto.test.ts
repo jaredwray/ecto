@@ -822,12 +822,9 @@ it("afterRenderSync runs once per cached call", () => {
 
 it("beforeRender data is reused from the cached engine output", async () => {
 	const ecto = new Ecto({ cache: true });
-	ecto.onHook(
-		"beforeRender",
-		(context: { data?: Record<string, unknown> }) => {
-			context.data = { ...(context.data ?? {}), name: "Ada" };
-		},
-	);
+	ecto.onHook("beforeRender", (context: { data?: Record<string, unknown> }) => {
+		context.data = { ...(context.data ?? {}), name: "Ada" };
+	});
 
 	expect(await ecto.render("<%= name %>", { name: "World" })).toBe("Ada");
 	expect(await ecto.render("<%= name %>", { name: "World" })).toBe("Ada");
