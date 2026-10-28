@@ -1,6 +1,11 @@
 minimumReleaseAge: 10080
 minimumReleaseAgeStrict: true
 minimumReleaseAgeIgnoreMissingTime: false
+# Exact version only. @jaredwray/fumanchu@4.7.5 was published 2026-10-26 and is
+# inside the 7-day cooldown. It is the release that depends on markdown-it
+# ^15.0.3 (CVE-2026-111758). Needs Jared's sign-off.
+minimumReleaseAgeExclude:
+  - "@jaredwray/fumanchu@4.7.5"
 blockExoticSubdeps: true
 strictDepBuilds: true
 dangerouslyAllowAllBuilds: false
