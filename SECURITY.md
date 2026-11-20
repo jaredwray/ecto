@@ -27,6 +27,6 @@ hardening checklist; progress is tracked in [DEFENSE_IN_DEPTH.md](./DEFENSE_IN_D
 - Tags can only be created by repository admins; published GitHub Releases are immutable (assets and tags cannot be changed after publish).
 - Workflow runs from outside collaborators always require maintainer approval, and only allowlisted GitHub Actions can run.
 - Dependencies install through pnpm with a 7-day cooldown on new versions, lifecycle scripts blocked by default, and `trustPolicy: no-downgrade`. Socket reviews every dependency change; Aikido scans every build.
-- Codespaces and Cursor Cloud Agents install through Aikido Safe Chain; package-manager shims must not be bypassed.
+- Codespaces and Cursor Cloud Agents install through Aikido Safe Chain; package-manager shims must not be bypassed. The bootstrap pins Safe Chain 1.5.29. Safe Chain 1.5.20 and later support pnpm 12.
 - CI installs with a frozen lockfile and runs with read-only contents permissions; generated output is an artifact, never committed back; every action is pinned to a full commit SHA; Socket Firewall (`sfw`) wraps `pnpm install` / `npm install`; workflows are security-linted with zizmor on every PR.
 - npm releases are staged, never published directly: CI publishes via stage-only OIDC trusted publishing, Drydock reviews the exact staged artifact, and a maintainer promotes it with 2FA. There are no npm tokens. The release job `needs:` a passing Aikido `scan-release` before staging.

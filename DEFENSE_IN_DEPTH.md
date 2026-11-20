@@ -12,7 +12,7 @@ Profile: npm library · public
 ## 2. CODEOWNERS and cloud bootstrap
 
 - [x] `.github/CODEOWNERS` covers `/.github/`, `/.cursor/`, `/.devcontainer/`, `/scripts/` with owners the maintainer names — PR #399
-- [x] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile) — PR #399
+- [x] Codespaces and Cursor Cloud Agents bootstrap Aikido Safe Chain via scripts/setup-cloud-environment.sh (--ci shims, frozen lockfile). The script pins Safe Chain 1.5.29 so the shim supports pnpm 12 (support starts at 1.5.20) — PR #399
 
 ## 3. Dependencies (pnpm)
 
