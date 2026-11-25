@@ -30,14 +30,13 @@ export class Liquid extends BaseEngine implements EngineInterface {
 	}
 
 	/**
-	 * Return the engine for this root. Each canonical root gets its own
-	 * engine and a copy of the options. An empty root has no file system
-	 * root, so includes fail. Liquid must not use the current directory.
+	 * Return the engine for this root. The map keeps that engine only.
+	 * A new root replaces it. The engine gets a copy of the options.
+	 * An empty root has no file root, so includes fail.
 	 */
 	private engineForRender(): LiquidEngine {
 		const root = this.rootForRender();
-		const key = root.key;
-		const cached = this._engines.get(key);
+		const cached = this._engines.get(root.key);
 		if (cached) {
 			this.engine = cached;
 			return cached;
@@ -48,7 +47,8 @@ export class Liquid extends BaseEngine implements EngineInterface {
 			root: root.value,
 		};
 		const engine = new LiquidEngine(options);
-		this._engines.set(key, engine);
+		this._engines.clear();
+		this._engines.set(root.key, engine);
 		this.engine = engine;
 		return engine;
 	}
