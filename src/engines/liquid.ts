@@ -73,17 +73,14 @@ export class Liquid extends BaseEngine implements EngineInterface {
 
 	private canonicalTemplateRoot(): string | undefined {
 		const root = this.rootTemplatePath;
-		if (typeof root !== "string") return undefined;
-		const trimmed = root.trim();
-		if (trimmed === "") return undefined;
-		return nodePath.resolve(trimmed);
+		if (typeof root !== "string" || root.trim() === "") return undefined;
+		return nodePath.resolve(root);
 	}
 
 	private explicitRoot(): string | string[] | undefined {
 		const root = this.opts?.root;
 		if (typeof root === "string") {
-			const trimmed = root.trim();
-			return trimmed === "" ? undefined : trimmed;
+			return root.trim() === "" ? undefined : root;
 		}
 		if (!Array.isArray(root)) return undefined;
 

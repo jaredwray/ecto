@@ -143,6 +143,30 @@ it("Liquid - include fails when no root is set", () => {
 	}
 });
 
+it("Liquid - a root keeps spaces in the directory name", () => {
+	const plain = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-liquid-plain-"));
+	const spaced = `${plain} `;
+	const source = "{% render 'partials/mark.liquid' %}";
+	fs.mkdirSync(path.join(plain, "partials"));
+	fs.mkdirSync(path.join(spaced, "partials"), { recursive: true });
+	fs.writeFileSync(path.join(plain, "partials", "mark.liquid"), "PLAIN");
+	fs.writeFileSync(path.join(spaced, "partials", "mark.liquid"), "SPACED");
+	try {
+		const byPath = new Liquid();
+		byPath.rootTemplatePath = spaced;
+		expect(byPath.renderSync(source)).toContain("SPACED");
+
+		const byOption = new Liquid({ root: spaced });
+		expect(byOption.renderSync(source)).toContain("SPACED");
+
+		const byList = new Liquid({ root: [spaced] });
+		expect(byList.renderSync(source)).toContain("SPACED");
+	} finally {
+		fs.rmSync(spaced, { recursive: true, force: true });
+		fs.rmSync(plain, { recursive: true, force: true });
+	}
+});
+
 it("Liquid - explicit root option is used when the template root is absent", async () => {
 	const source = fs.readFileSync(
 		`${testTemplateDirectory}/example1.liquid`,
