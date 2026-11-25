@@ -59,6 +59,7 @@ Never bypass the shims.
 - Keep `~/.safe-chain/shims` first on `PATH`.
 - Run `npm`, `npx`, `pnpm`, and `pnpx` only through the shims. Do not run a different copy by its
   full path.
+- Run `pip`, `pip3`, `pipx`, `uv`, `uvx`, `poetry`, and `python -m pip` only through the shims.
 - Do not install a package with `curl | sh` or with a package manager that has no shim.
 - If Safe Chain blocks a package, stop. Do not use a different command, path, or package to get the
   same code. Tell the user the package name and the Safe Chain message.
