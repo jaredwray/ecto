@@ -1,7 +1,7 @@
-import fs from "node:fs";
 import nodePath from "node:path";
 import * as nunjucks from "nunjucks";
 import { BaseEngine } from "../base-engine.js";
+import { readInsideRoot } from "../confined-read.js";
 import type { EngineInterface } from "../engine-interface.js";
 
 type ConfinedLoader = {
@@ -13,7 +13,7 @@ type ConfinedLoader = {
 
 export class Nunjucks extends BaseEngine implements EngineInterface {
 	private activeRoot = "\0";
-	private activeOptions?: Record<string, unknown>;
+	private activeSignature = "\0";
 	private activeEnvironment?: nunjucks.Environment;
 
 	constructor(options?: Record<string, unknown>) {
@@ -58,10 +58,11 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
 	private environment(): nunjucks.Environment {
 		const root = this.rootTemplatePath?.trim() ?? "";
 		const key = root === "" ? "" : nodePath.resolve(root);
+		const signature = JSON.stringify(this.opts ?? null);
 		if (
 			this.activeEnvironment &&
 			this.activeRoot === key &&
-			this.activeOptions === this.opts
+			this.activeSignature === signature
 		) {
 			return this.activeEnvironment;
 		}
@@ -74,7 +75,7 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
 			this.opts as nunjucks.ConfigureOptions | undefined,
 		);
 		this.activeRoot = key;
-		this.activeOptions = this.opts;
+		this.activeSignature = signature;
 		this.activeEnvironment = environment;
 		return environment;
 	}
@@ -85,14 +86,6 @@ export class Nunjucks extends BaseEngine implements EngineInterface {
  * A symlink that leaves the root is rejected.
  */
 function createConfinedLoader(root: string, noCache: boolean): ConfinedLoader {
-	let realRoot: string | undefined;
-	try {
-		realRoot = fs.realpathSync(root);
-		if (!fs.statSync(realRoot).isDirectory()) realRoot = undefined;
-	} catch {
-		realRoot = undefined;
-	}
-
 	return {
 		cache: {},
 		isRelative(filename: string): boolean {
@@ -102,34 +95,13 @@ function createConfinedLoader(root: string, noCache: boolean): ConfinedLoader {
 			return nodePath.resolve(nodePath.dirname(from), to);
 		},
 		getSource(name: string): nunjucks.LoaderSource | null {
-			if (!realRoot || name.includes("\0")) return null;
-
-			const candidate = nodePath.resolve(realRoot, name);
-			let target = candidate;
+			if (name.includes("\0")) return null;
 			try {
-				target = fs.realpathSync(candidate);
-			} catch {
-				target = candidate;
-			}
-
-			const relative = nodePath.relative(realRoot, target);
-			if (relative.startsWith("..") || nodePath.isAbsolute(relative)) {
-				return null;
-			}
-
-			let stat: fs.Stats;
-			try {
-				stat = fs.statSync(target);
+				const file = readInsideRoot(root, name);
+				return { src: file.text, path: file.filename, noCache };
 			} catch {
 				return null;
 			}
-			if (!stat.isFile()) return null;
-
-			return {
-				src: fs.readFileSync(target, "utf8"),
-				path: target,
-				noCache,
-			};
 		},
 	};
 }

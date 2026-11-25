@@ -93,6 +93,32 @@ it("EJS - an include cannot leave the template root", () => {
 	}
 });
 
+it("EJS - a swapped include is not read", () => {
+	const root = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-ejs-swap-"));
+	const file = path.join(root, "page.ejs");
+	const other = path.join(root, "other.ejs");
+	fs.writeFileSync(file, "OLD");
+	fs.writeFileSync(other, "NEW");
+	const original = fs.openSync;
+	fs.openSync = ((target: fs.PathLike, flags: fs.OpenMode) => {
+		if (String(target) === file) {
+			fs.rmSync(file);
+			fs.linkSync(other, file);
+		}
+		return original.call(fs, target, flags);
+	}) as typeof fs.openSync;
+	try {
+		const engine = new EJS();
+		engine.rootTemplatePath = root;
+		expect(() => engine.renderSync("<%- include('/page') %>")).toThrow(
+			/leaves the template root/,
+		);
+	} finally {
+		fs.openSync = original;
+		fs.rmSync(root, { recursive: true, force: true });
+	}
+});
+
 it("EJS - a file include fails when the root is not set", () => {
 	const file = path.join(os.tmpdir(), `ecto-ejs-noroot-${Date.now()}.ejs`);
 	fs.writeFileSync(file, "EJS-SECRET");
@@ -119,6 +145,29 @@ it("EJS - a caller include stays inside the template root", () => {
 		});
 		virtual.rootTemplatePath = root;
 		expect(virtual.renderSync("<%- include('/page') %>")).toBe("VIRTUAL");
+		expect(virtual.renderSync("<%- include('virtual') %>")).toBe("VIRTUAL");
+		const virtualWithoutRoot = new EJS({
+			includer: () => ({ template: "VIRTUAL" }),
+		});
+		expect(virtualWithoutRoot.renderSync("<%- include('virtual') %>")).toBe(
+			"VIRTUAL",
+		);
+
+		const named = new EJS({
+			includer: () =>
+				({
+					template: "VIRTUAL",
+					filename: path.join(root, "page.ejs"),
+				}) as unknown as { template: string },
+		});
+		named.rootTemplatePath = root;
+		expect(named.renderSync("<%- include('virtual') %>")).toBe("VIRTUAL");
+
+		const fallback = new EJS({
+			includer: () => undefined as unknown as { filename: string },
+		});
+		fallback.rootTemplatePath = root;
+		expect(fallback.renderSync("<%- include('/page') %>")).toContain("INSIDE");
 
 		const passthrough = new EJS({
 			includer: (_original: string, parsed: string) => ({ filename: parsed }),

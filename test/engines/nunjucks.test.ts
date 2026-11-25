@@ -111,6 +111,17 @@ it("Nunjucks - Rendering with configuration", async () => {
 	);
 });
 
+it("Nunjucks - an option change applies on the next render", () => {
+	const options = { autoescape: false };
+	const engine = new Nunjucks(options);
+	expect(engine.renderSync("{{ name }}", { name: "<b>" })).toBe("<b>");
+	options.autoescape = true;
+	expect(engine.renderSync("{{ name }}", { name: "<b>" })).toBe("&lt;b&gt;");
+	expect(engine.renderSync("{{ name }}", { name: "<b>" })).toBe("&lt;b&gt;");
+	engine.opts = undefined;
+	expect(engine.renderSync("{{ name }}", { name: "<b>" })).toBe("&lt;b&gt;");
+});
+
 it("Nunjucks - render does not change the global environment", () => {
 	nunjucks.configure({ autoescape: true });
 	const engine = new Nunjucks({ autoescape: false });
@@ -137,6 +148,7 @@ it("Nunjucks - an include cannot leave the template root", () => {
 	);
 	fs.mkdirSync(path.join(root, "subdir"));
 	fs.symlinkSync(outside, path.join(root, "leak.txt"));
+	fs.symlinkSync(path.dirname(outside), path.join(root, "trap"));
 	const engine = new Nunjucks();
 	engine.rootTemplatePath = root;
 	try {
@@ -148,8 +160,15 @@ it("Nunjucks - an include cannot leave the template root", () => {
 			engine.renderSync("{% include '../njk-root-secret.txt' %}"),
 		).toThrow();
 		expect(() => engine.renderSync("{% include 'leak.txt' %}")).toThrow();
+		expect(() =>
+			engine.renderSync("{% include 'trap/njk-root-secret.txt' %}"),
+		).toThrow();
+		expect(engine.renderSync("{% include 'ok.njk' %}")).not.toContain(
+			"NJK-SECRET",
+		);
 		expect(() => engine.renderSync("{% include 'missing.njk' %}")).toThrow();
 		expect(() => engine.renderSync("{% include 'subdir' %}")).toThrow();
+		expect(() => engine.renderSync("{% include '.' %}")).toThrow();
 		expect(() => engine.renderSync("{% include 'bad\0name.njk' %}")).toThrow();
 
 		const watched = new Nunjucks({ autoescape: true, watch: true });

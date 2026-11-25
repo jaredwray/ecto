@@ -116,6 +116,10 @@ describe("Ecto detectEngine", () => {
 		it("should detect Pug with attributes", () => {
 			expect(ecto.detectEngine('a(href="/about") About')).toBe("pug");
 			expect(ecto.detectEngine('img(src="logo.png" alt="Logo")')).toBe("pug");
+			expect(ecto.detectEngine('input(type="text")')).toBe("pug");
+			expect(ecto.detectEngine('span(class="label") Hello')).toBe("pug");
+			expect(ecto.detectEngine("p= name")).toBe("pug");
+			expect(ecto.detectEngine("h1= title")).toBe("pug");
 		});
 
 		it("should detect complex Pug templates", () => {

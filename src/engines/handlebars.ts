@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import nodePath from "node:path";
 import { BaseEngine } from "../base-engine.js";
+import { readInsideRoot } from "../confined-read.js";
 import type { EngineInterface } from "../engine-interface.js";
 import { createSafeFumanchu } from "./fumanchu-safety.js";
 
@@ -58,8 +59,8 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 			...(options ?? {}),
 			partials: {
 				...this.engine.partials,
-				...configured,
 				...this.filePartials(),
+				...configured,
 			},
 		};
 
@@ -147,21 +148,17 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 				continue;
 			}
 
-			let realFile: string;
-			try {
-				realFile = fs.realpathSync(fullPath);
-			} catch {
-				continue;
-			}
-
-			const relativeFile = nodePath.relative(realRoot, realFile);
-			if (relativeFile.startsWith("..") || nodePath.isAbsolute(relativeFile)) {
-				continue;
-			}
 			if (!entry.isFile()) continue;
 
 			const extension = nodePath.extname(entry.name).slice(1).toLowerCase();
 			if (!allowed.has(extension)) continue;
+
+			let text: string;
+			try {
+				text = readInsideRoot(realRoot, fullPath).text;
+			} catch {
+				continue;
+			}
 
 			const relativeParent = nodePath.relative(base, current);
 			const stem = nodePath.basename(entry.name, nodePath.extname(entry.name));
@@ -169,7 +166,7 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 				relativeParent === ""
 					? stem
 					: `${relativeParent.split(nodePath.sep).join("/")}/${stem}`;
-			partials[name] = fs.readFileSync(realFile, "utf8");
+			partials[name] = text;
 		}
 	}
 }

@@ -627,12 +627,21 @@ it("Handlebars - file partials stay inside one root", () => {
 	fs.mkdirSync(locked);
 	fs.writeFileSync(path.join(locked, "secret.hbs"), "LOCKED-SECRET");
 	fs.chmodSync(locked, 0);
+	fs.writeFileSync(
+		path.join(rootA, "partials", "blocked.hbs"),
+		"BLOCKED-SECRET",
+	);
+	fs.chmodSync(path.join(rootA, "partials", "blocked.hbs"), 0);
 	const linked = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-hbs-link-"));
 	fs.writeFileSync(path.join(linked, "hid.hbs"), "LINKED-SECRET");
 	fs.symlinkSync(linked, path.join(rootA, "partials", "linked"));
 	const engine = new Handlebars();
 	try {
 		engine.rootTemplatePath = rootA;
+		expect(engine.renderSync("{{> onlya}}")).toContain("ONLY-A");
+		engine.opts = { partials: { onlya: "CUSTOM" } };
+		expect(engine.renderSync("{{> onlya}}")).toBe("CUSTOM");
+		engine.opts = undefined;
 		expect(engine.renderSync("{{> onlya}}")).toContain("ONLY-A");
 		expect(() => engine.renderSync("{{> linked/hid}}")).toThrow();
 		expect(engine.renderSync("{{> header.v2}}")).toContain("VERSIONED");
@@ -641,6 +650,7 @@ it("Handlebars - file partials stay inside one root", () => {
 		expect(() => engine.renderSync("{{> broken}}")).toThrow();
 		expect(() => engine.renderSync("{{> pipe}}")).toThrow();
 		expect(() => engine.renderSync("{{> locked/secret}}")).toThrow();
+		expect(() => engine.renderSync("{{> blocked}}")).toThrow();
 		expect(engine.renderSync("{{> onlya}}")).not.toContain("LOCKED-SECRET");
 
 		engine.rootTemplatePath = rootB;
