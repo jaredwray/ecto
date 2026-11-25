@@ -58,7 +58,7 @@
     "cacheable": "^2.5.0",
     "ejs": "^7.0.2",
     "hookified": "^3.0.4",
-    "liquidjs": "^10.30.0",
+    "liquidjs": "^10.30.1",
     "nunjucks": "^3.2.4",
     "pug": "^3.0.4",
     "writr": "^6.1.6"
