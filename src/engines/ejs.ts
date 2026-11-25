@@ -65,7 +65,12 @@ export class EJS extends BaseEngine implements EngineInterface {
 				};
 				if (typeof result?.template === "string") {
 					if (typeof result.filename === "string") {
-						return includeResult(result.template, result.filename);
+						// The reader resolves a relative name from the template root.
+						const filename =
+							root && !nodePath.isAbsolute(result.filename)
+								? nodePath.resolve(root, result.filename)
+								: result.filename;
+						return includeResult(result.template, filename);
 					}
 					return { template: result.template };
 				}
