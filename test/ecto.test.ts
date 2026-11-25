@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import os from "node:os";
 import nodePath from "node:path";
 import { faker } from "@faker-js/faker";
 import { expect, it } from "vitest";
@@ -1016,4 +1017,121 @@ it("throwOnHookError throws from renderSync when nobody is listening", () => {
 	expect(() => {
 		ecto.renderSync("<%= name %>", { name: "ok" });
 	}).toThrow(/sync nope/);
+});
+
+it("an explicit engine name wins over the file extension", () => {
+	const directory = fs.mkdtempSync(nodePath.join(os.tmpdir(), "ecto-named-"));
+	const filePath = nodePath.join(directory, "page.md");
+	fs.writeFileSync(filePath, "<%= 6 * 7 %>\n");
+	const ecto = new Ecto();
+	try {
+		expect(
+			ecto.renderFromFileSync(filePath, {}, undefined, undefined, "ejs"),
+		).toBe("42\n");
+	} finally {
+		fs.rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+it("a blank engine name uses the file extension", async () => {
+	const directory = fs.mkdtempSync(nodePath.join(os.tmpdir(), "ecto-blank-"));
+	const filePath = nodePath.join(directory, "page.md");
+	fs.writeFileSync(filePath, "<%= 6 * 7 %>\n");
+	const ecto = new Ecto();
+	ecto.on("error", () => {});
+	try {
+		const asyncResult = await ecto.renderFromFile(
+			filePath,
+			{},
+			undefined,
+			undefined,
+			"",
+		);
+		const syncResult = ecto.renderFromFileSync(
+			filePath,
+			{},
+			undefined,
+			undefined,
+			"  ",
+		);
+		expect(asyncResult).not.toBe("42");
+		expect(asyncResult).toContain("6 * 7");
+		expect(syncResult).not.toBe("42");
+		expect(syncResult).toContain("6 * 7");
+	} finally {
+		fs.rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+it("a removed ejs mapping does not render EJS", async () => {
+	const ecto = new Ecto();
+	ecto.on("error", () => {});
+	ecto.mappings.delete("ejs");
+	expect(await ecto.render("<%= 6 * 7 %>")).not.toBe("42");
+	expect(ecto.defaultEngine).toBe("markdown");
+	expect(ecto.getRenderEngine("ejs").names.toString()).toBe("markdown");
+	expect(ecto.getEngineByFilePath("sample.ejs")).toBe("markdown");
+});
+
+it("the default engine name is stored in lower case", async () => {
+	const ecto = new Ecto({ defaultEngine: "MARKDOWN" });
+	expect(ecto.defaultEngine).toBe("markdown");
+	expect(await ecto.render("<%= 6 * 7 %>")).not.toBe("42");
+	ecto.mappings.set("custom", ["txt"]);
+	ecto.defaultEngine = "custom";
+	expect(ecto.defaultEngine).toBe("markdown");
+});
+
+it("an unknown mapping name uses the default engine", async () => {
+	const ecto = new Ecto({ defaultEngine: "markdown" });
+	ecto.mappings.set("custom", ["txt"]);
+	const output = await ecto.render("<%= 6 * 7 %>", {}, "custom");
+	expect(output).not.toBe("42");
+	expect(output).toContain("6 * 7");
+});
+
+it("getRenderEngine throws when no built-in engine remains", () => {
+	const ecto = new Ecto();
+	for (const name of [
+		"ejs",
+		"markdown",
+		"pug",
+		"nunjucks",
+		"handlebars",
+		"mustache",
+		"liquid",
+	]) {
+		ecto.mappings.delete(name);
+	}
+	expect(() => ecto.getRenderEngine("ejs")).toThrow(/Unknown engine/);
+	expect(() => ecto.getRenderEngine("cool")).toThrow(/Unknown engine/);
+});
+
+it("findTemplateWithoutExtension ignores unsafe names", async () => {
+	const ecto = new Ecto();
+	const directory = fs.mkdtempSync(nodePath.join(os.tmpdir(), "ecto-find-"));
+	fs.writeFileSync(nodePath.join(directory, ".env"), "SECRET");
+	fs.writeFileSync(nodePath.join(directory, ".env.local"), "SECRET");
+	fs.writeFileSync(nodePath.join(directory, "page.ejs"), "PAGE");
+	fs.mkdirSync(nodePath.join(directory, "page.d"));
+	try {
+		expect(ecto.findTemplateWithoutExtensionSync(directory, "")).toBe("");
+		expect(ecto.findTemplateWithoutExtensionSync(directory, ".env")).toBe("");
+		expect(ecto.findTemplateWithoutExtensionSync(directory, "env")).toBe("");
+		expect(ecto.findTemplateWithoutExtensionSync(directory, "page/ejs")).toBe(
+			"",
+		);
+		expect(ecto.findTemplateWithoutExtensionSync(directory, "page")).toBe(
+			nodePath.join(directory, "page.ejs"),
+		);
+		expect(await ecto.findTemplateWithoutExtension(directory, ".env")).toBe("");
+		fs.writeFileSync(nodePath.join(directory, "page.aaa"), "NO");
+		fs.writeFileSync(nodePath.join(directory, "plain"), "NO");
+		expect(ecto.findTemplateWithoutExtensionSync(directory, "plain")).toBe("");
+		expect(ecto.findTemplateWithoutExtensionSync(directory, "page")).toBe(
+			nodePath.join(directory, "page.ejs"),
+		);
+	} finally {
+		fs.rmSync(directory, { recursive: true, force: true });
+	}
 });

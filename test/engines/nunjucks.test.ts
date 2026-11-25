@@ -1,4 +1,7 @@
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import * as nunjucks from "nunjucks";
 import { expect, it } from "vitest";
 import { Nunjucks } from "../../src/engines/nunjucks.js";
 
@@ -106,4 +109,75 @@ it("Nunjucks - Rendering with configuration", async () => {
 	expect(output).toContain(
 		"Hello &lt;script&gt;alert(&#39;XSS&#39;)&lt;/script&gt;",
 	);
+});
+
+it("Nunjucks - render does not change the global environment", () => {
+	nunjucks.configure({ autoescape: true });
+	const engine = new Nunjucks({ autoescape: false });
+	expect(engine.renderSync("{{ name }}", { name: "<b>" })).toBe("<b>");
+	expect(nunjucks.renderString("{{ name }}", { name: "<b>" })).toBe(
+		"&lt;b&gt;",
+	);
+});
+
+it("Nunjucks - an include cannot leave the template root", () => {
+	const parent = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-njk-"));
+	const root = path.join(parent, "njk-root");
+	const outside = path.join(parent, "njk-root-secret.txt");
+	fs.mkdirSync(root);
+	fs.writeFileSync(outside, "NJK-SECRET");
+	fs.writeFileSync(path.join(root, "ok.njk"), "INSIDE");
+	fs.mkdirSync(path.join(root, "sub"));
+	fs.writeFileSync(path.join(root, "sub", "a.njk"), "{% include './b.njk' %}");
+	fs.writeFileSync(path.join(root, "sub", "b.njk"), "NEAR");
+	fs.writeFileSync(path.join(root, "shared.njk"), "SHARED");
+	fs.writeFileSync(
+		path.join(root, "sub", "up.njk"),
+		"{% include '../shared.njk' %}",
+	);
+	fs.mkdirSync(path.join(root, "subdir"));
+	fs.symlinkSync(outside, path.join(root, "leak.txt"));
+	const engine = new Nunjucks();
+	engine.rootTemplatePath = root;
+	try {
+		expect(engine.renderSync("{% include 'ok.njk' %}")).toContain("INSIDE");
+		expect(engine.renderSync("{% include './ok.njk' %}")).toContain("INSIDE");
+		expect(engine.renderSync("{% include 'sub/a.njk' %}")).toContain("NEAR");
+		expect(engine.renderSync("{% include 'sub/up.njk' %}")).toContain("SHARED");
+		expect(() =>
+			engine.renderSync("{% include '../njk-root-secret.txt' %}"),
+		).toThrow();
+		expect(() => engine.renderSync("{% include 'leak.txt' %}")).toThrow();
+		expect(() => engine.renderSync("{% include 'missing.njk' %}")).toThrow();
+		expect(() => engine.renderSync("{% include 'subdir' %}")).toThrow();
+		expect(() => engine.renderSync("{% include 'bad\0name.njk' %}")).toThrow();
+
+		const watched = new Nunjucks({ autoescape: true, watch: true });
+		watched.rootTemplatePath = root;
+		expect(watched.renderSync("{% include 'ok.njk' %}")).toContain("INSIDE");
+		const uncached = new Nunjucks({ autoescape: true, noCache: true });
+		uncached.rootTemplatePath = root;
+		expect(uncached.renderSync("{% include 'ok.njk' %}")).toContain("INSIDE");
+
+		const fileRoot = new Nunjucks();
+		fileRoot.rootTemplatePath = path.join(root, "ok.njk");
+		expect(fileRoot.renderSync("Hello")).toBe("Hello");
+		expect(() => fileRoot.renderSync("{% include 'ok.njk' %}")).toThrow();
+		fileRoot.rootTemplatePath = path.join(parent, "missing-root");
+		expect(() => fileRoot.renderSync("{% include 'ok.njk' %}")).toThrow();
+	} finally {
+		fs.rmSync(parent, { recursive: true, force: true });
+	}
+});
+
+it("Nunjucks - an include fails when the root is not set", () => {
+	const fileName = `ecto-njk-${Date.now()}.njk`;
+	const filePath = path.join(process.cwd(), fileName);
+	fs.writeFileSync(filePath, "NJK-CWD");
+	try {
+		const engine = new Nunjucks();
+		expect(() => engine.renderSync(`{% include '${fileName}' %}`)).toThrow();
+	} finally {
+		fs.rmSync(filePath, { force: true });
+	}
 });

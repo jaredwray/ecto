@@ -539,6 +539,8 @@ The `detectEngine` method recognizes the following syntax patterns:
 - **Liquid**: `{% assign %}`, `{% capture %}`, pipe filters `{{ var | filter }}`
 - **Markdown**: Headers `#`, lists, code blocks, links, tables
 
+Ecto ignores template tags inside a Markdown code fence. A line that starts with the letter p is not a Pug tag. The Pug tag is `p` only when `p` is the whole tag.
+
 Note: For ambiguous syntax (like simple `{{ }}` which could be Handlebars, Mustache, or Liquid), the method makes intelligent decisions based on additional context clues in the template.
 
 
@@ -698,6 +700,8 @@ const data = { firstName: "John", lastName: "Doe" };
 const result = ecto.renderSync(source, data);
 console.log(result); // <h1>Hello John Doe!</h1>
 ```
+
+When `cache` or `cacheSync` is `true`, Ecto keeps at most 1000 results. Each result expires after 5 minutes. The cache key is a hash of the engine, the template, the data, and the template root. Ecto does not cache a function, a Map, or a value that JSON cannot store. Each Ecto instance uses its own cache keys.
 
 If you want to provide your own caching configuration, you can do so by passing `Cacheable` instance to the `Ecto` constructor:
 

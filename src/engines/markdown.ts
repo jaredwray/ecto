@@ -19,14 +19,15 @@ export class Markdown extends BaseEngine implements EngineInterface {
 
 	async render(
 		source: string,
-		data?: Record<string, unknown>,
+		_data?: Record<string, unknown>,
 	): Promise<string> {
 		this.engine.content = source;
-		return this.engine.render(data) as Promise<string>;
+		// Template data is not a Writr render option.
+		return this.engine.render() as Promise<string>;
 	}
 
-	renderSync(source: string, data?: Record<string, unknown>): string {
+	renderSync(source: string, _data?: Record<string, unknown>): string {
 		this.engine.content = source;
-		return this.engine.renderSync(data) as string;
+		return this.engine.renderSync() as string;
 	}
 }
