@@ -120,6 +120,7 @@ describe("Ecto detectEngine", () => {
 			expect(ecto.detectEngine('span(class="label") Hello')).toBe("pug");
 			expect(ecto.detectEngine("p= name")).toBe("pug");
 			expect(ecto.detectEngine("h1= title")).toBe("pug");
+			expect(ecto.detectEngine("div: span Hello")).toBe("pug");
 		});
 
 		it("should detect complex Pug templates", () => {
@@ -645,6 +646,8 @@ Some text
 			expect(ecto.detectEngine("plain text")).toBe("ejs");
 			expect(ecto.detectEngine("please review")).toBe("ejs");
 			expect(ecto.detectEngine("Note (draft)")).toBe("ejs");
+			expect(ecto.detectEngine("Note: draft")).toBe("ejs");
+			expect(ecto.detectEngine("https://example.com")).toBe("ejs");
 		});
 
 		it("should ignore template tags inside a Markdown code fence", () => {

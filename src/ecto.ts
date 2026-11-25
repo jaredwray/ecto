@@ -1279,7 +1279,7 @@ const builtinEngineNames = [
 	"liquid",
 ] as const;
 const pugTagPattern =
-	/^(?:doctype|html|head|body|title|div|p|h[1-6])(?:\s|$)|^[\w-]+(?:[=(:]|[.#])/;
+	/^(?:doctype|html|head|body|title|div|p|h[1-6])(?:\s|$|:)|^[\w-]+(?:[=(]|[.#])/;
 
 function readFences(source: string): { text: string; fenced: boolean[] } {
 	const lines = source.split("\n");
