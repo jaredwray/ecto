@@ -655,7 +655,7 @@ The double curly brace delimiters `{{ }}` denote output, and the curly brace per
 
 ### Include paths
 
-Ecto builds a Liquid engine for the current root path. A new root replaces the previous engine. Ecto resolves `.` and `..` in that path. The engine receives a copy of the options.
+Ecto builds a Liquid engine for the current root path. A new root replaces the previous engine. A custom filter or tag stays on the new engine. Ecto resolves `.` and `..` in that path. The engine receives a copy of the options.
 
 When you omit the root template path, Ecto sets no file root. An include or a render tag then fails. Ecto does not use the current directory as the file root.
 

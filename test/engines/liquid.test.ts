@@ -167,6 +167,44 @@ it("Liquid - a root keeps spaces in the directory name", () => {
 	}
 });
 
+it("Liquid - custom filters and tags survive a root change", () => {
+	const rootA = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-liquid-ext-a-"));
+	const rootB = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-liquid-ext-b-"));
+	const engine = new Liquid();
+	try {
+		engine.rootTemplatePath = rootA;
+		expect(engine.renderSync("{{ name }}", { name: "Ada" })).toBe("Ada");
+		engine.engine.registerFilter("shout", (value: unknown) =>
+			String(value).toUpperCase(),
+		);
+		engine.engine.registerTag("loud", {
+			render(_ctx: unknown, emitter: { write: (value: string) => void }) {
+				emitter.write("LOUD");
+			},
+		});
+		expect(engine.renderSync("{{ name | shout }}", { name: "Ada" })).toBe(
+			"ADA",
+		);
+		expect(engine.renderSync("{% loud %}")).toBe("LOUD");
+
+		engine.rootTemplatePath = rootB;
+		expect(engine.renderSync("{{ name | shout }}", { name: "Ada" })).toBe(
+			"ADA",
+		);
+		expect(engine.renderSync("{% loud %}")).toBe("LOUD");
+
+		engine.engine.unregisterFilter("shout");
+		engine.rootTemplatePath = rootA;
+		expect(engine.renderSync("{{ name | shout }}", { name: "Ada" })).toBe(
+			"Ada",
+		);
+		expect(engine.renderSync("{% loud %}")).toBe("LOUD");
+	} finally {
+		fs.rmSync(rootA, { recursive: true, force: true });
+		fs.rmSync(rootB, { recursive: true, force: true });
+	}
+});
+
 it("Liquid - explicit root option is used when the template root is absent", async () => {
 	const source = fs.readFileSync(
 		`${testTemplateDirectory}/example1.liquid`,
