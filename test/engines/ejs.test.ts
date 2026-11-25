@@ -93,29 +93,47 @@ it("EJS - an include cannot leave the template root", () => {
 	}
 });
 
-it("EJS - a swapped include is not read", () => {
-	const root = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-ejs-swap-"));
-	const file = path.join(root, "page.ejs");
-	const other = path.join(root, "other.ejs");
-	fs.writeFileSync(file, "OLD");
-	fs.writeFileSync(other, "NEW");
-	const original = fs.openSync;
+it("EJS - a swapped directory does not expose another file", () => {
+	const parent = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-ejs-swap-"));
+	const root = path.join(parent, "root");
+	const outside = path.join(parent, "outside");
+	fs.mkdirSync(path.join(root, "sub"), { recursive: true });
+	fs.mkdirSync(outside, { recursive: true });
+	fs.writeFileSync(path.join(root, "sub", "page.ejs"), "INSIDE");
+	fs.writeFileSync(path.join(outside, "page.ejs"), "EJS-SECRET");
+	const directory = path.join(root, "sub");
+	const originalOpen = fs.openSync;
+	const originalLstat = fs.lstatSync;
+	let armed = true;
+	const swapDirectory = () => {
+		if (!armed) return;
+		armed = false;
+		fs.rmSync(directory, { recursive: true });
+		fs.symlinkSync(outside, directory);
+	};
+	// The old reader checks `sub` with lstat, then checks the file.
+	// Swap in that gap so both later calls follow the symlink.
+	fs.lstatSync = ((target: fs.PathLike, options?: fs.StatOptions) => {
+		const stat = originalLstat.call(fs, target, options);
+		if (String(target) === directory) swapDirectory();
+		return stat;
+	}) as typeof fs.lstatSync;
+	// The new reader opens the root first, then opens `sub` from that descriptor.
 	fs.openSync = ((target: fs.PathLike, flags: fs.OpenMode) => {
-		if (String(target) === file) {
-			fs.rmSync(file);
-			fs.linkSync(other, file);
-		}
-		return original.call(fs, target, flags);
+		const fd = originalOpen.call(fs, target, flags);
+		if (String(target) === root) swapDirectory();
+		return fd;
 	}) as typeof fs.openSync;
 	try {
 		const engine = new EJS();
 		engine.rootTemplatePath = root;
-		expect(() => engine.renderSync("<%- include('/page') %>")).toThrow(
+		expect(() => engine.renderSync("<%- include('/sub/page') %>")).toThrow(
 			/leaves the template root/,
 		);
 	} finally {
-		fs.openSync = original;
-		fs.rmSync(root, { recursive: true, force: true });
+		fs.openSync = originalOpen;
+		fs.lstatSync = originalLstat;
+		fs.rmSync(parent, { recursive: true, force: true });
 	}
 });
 
