@@ -181,6 +181,59 @@ it("EJS - a caller include stays inside the template root", () => {
 		named.rootTemplatePath = root;
 		expect(named.renderSync("<%- include('virtual') %>")).toBe("VIRTUAL");
 
+		const missingName = new EJS({
+			includer: () =>
+				({
+					template: "VIRTUAL",
+					filename: path.join(root, "missing.ejs"),
+				}) as unknown as { template: string },
+		});
+		missingName.rootTemplatePath = root;
+		expect(missingName.renderSync("<%- include('virtual') %>")).toBe("VIRTUAL");
+
+		const outsideName = new EJS({
+			includer: () =>
+				({
+					template: "VIRTUAL",
+					filename: outside,
+				}) as unknown as { template: string },
+		});
+		outsideName.rootTemplatePath = root;
+		expect(outsideName.renderSync("<%- include('virtual') %>")).toBe("VIRTUAL");
+
+		fs.mkdirSync(path.join(root, "dir"));
+		fs.writeFileSync(path.join(root, "dir", "page.ejs"), "INSIDE");
+		const nested = new EJS({
+			includer: (original: string) => {
+				if (original === "virtual") {
+					return {
+						template: "<%- include('./page') %>",
+						filename: path.join(root, "dir", "logical.ejs"),
+					} as unknown as { filename: string };
+				}
+				return undefined as unknown as { filename: string };
+			},
+		});
+		nested.rootTemplatePath = root;
+		expect(nested.renderSync("<%- include('virtual') %>")).toContain("INSIDE");
+
+		fs.writeFileSync(path.join(parent, "page.ejs"), "EJS-SECRET");
+		const nestedOutside = new EJS({
+			includer: (original: string) => {
+				if (original === "virtual") {
+					return {
+						template: "<%- include('./page') %>",
+						filename: path.join(parent, "logical.ejs"),
+					} as unknown as { filename: string };
+				}
+				return undefined as unknown as { filename: string };
+			},
+		});
+		nestedOutside.rootTemplatePath = root;
+		expect(() => nestedOutside.renderSync("<%- include('virtual') %>")).toThrow(
+			/leaves the template root/,
+		);
+
 		const fallback = new EJS({
 			includer: () => undefined as unknown as { filename: string },
 		});
