@@ -1,4 +1,5 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: test file
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -599,4 +600,87 @@ it("Handlebars - triple-stash inserts raw HTML without decoding entities", async
 	expect(
 		engine.renderSync("{{{generatedHtml}}}", { generatedHtml: html }),
 	).toBe(html);
+});
+
+it("Handlebars - file partials stay inside one root", () => {
+	const rootA = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-hbs-a-"));
+	const rootB = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-hbs-b-"));
+	const outside = path.join(os.tmpdir(), `ecto-hbs-out-${Date.now()}.hbs`);
+	fs.mkdirSync(path.join(rootA, "partials"));
+	fs.mkdirSync(path.join(rootB, "partials"));
+	fs.writeFileSync(path.join(rootA, "partials", "onlya.hbs"), "ONLY-A");
+	fs.writeFileSync(path.join(rootA, "partials", "header.v2.hbs"), "VERSIONED");
+	fs.writeFileSync(path.join(rootA, "partials", "notes.txt"), "TEXT-SECRET");
+	fs.writeFileSync(path.join(rootB, "partials", "header.hbs"), "FROM-B");
+	fs.writeFileSync(outside, "OUTSIDE-SECRET");
+	fs.writeFileSync(path.join(rootA, "notes.txt"), "TEXT-SECRET");
+	const outsidePartials = path.join(path.dirname(rootA), "outside-partials");
+	fs.mkdirSync(outsidePartials);
+	fs.writeFileSync(path.join(outsidePartials, "onlya.hbs"), "ESCAPED");
+	fs.symlinkSync(outside, path.join(rootA, "partials", "link.hbs"));
+	fs.symlinkSync(
+		path.join(rootA, "missing.hbs"),
+		path.join(rootA, "partials", "broken.hbs"),
+	);
+	execFileSync("mkfifo", [path.join(rootA, "partials", "pipe.hbs")]);
+	const locked = path.join(rootA, "partials", "locked");
+	fs.mkdirSync(locked);
+	fs.writeFileSync(path.join(locked, "secret.hbs"), "LOCKED-SECRET");
+	fs.chmodSync(locked, 0);
+	fs.writeFileSync(
+		path.join(rootA, "partials", "blocked.hbs"),
+		"BLOCKED-SECRET",
+	);
+	fs.chmodSync(path.join(rootA, "partials", "blocked.hbs"), 0);
+	const linked = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-hbs-link-"));
+	fs.writeFileSync(path.join(linked, "hid.hbs"), "LINKED-SECRET");
+	fs.symlinkSync(linked, path.join(rootA, "partials", "linked"));
+	const engine = new Handlebars();
+	try {
+		engine.rootTemplatePath = rootA;
+		expect(engine.renderSync("{{> onlya}}")).toContain("ONLY-A");
+		engine.opts = { partials: { onlya: "CUSTOM" } };
+		expect(engine.renderSync("{{> onlya}}")).toBe("CUSTOM");
+		engine.opts = undefined;
+		expect(engine.renderSync("{{> onlya}}")).toContain("ONLY-A");
+		expect(() => engine.renderSync("{{> linked/hid}}")).toThrow();
+		expect(engine.renderSync("{{> header.v2}}")).toContain("VERSIONED");
+		expect(() => engine.renderSync("{{> notes}}")).toThrow();
+		expect(() => engine.renderSync("{{> link}}")).toThrow();
+		expect(() => engine.renderSync("{{> broken}}")).toThrow();
+		expect(() => engine.renderSync("{{> pipe}}")).toThrow();
+		expect(() => engine.renderSync("{{> locked/secret}}")).toThrow();
+		expect(() => engine.renderSync("{{> blocked}}")).toThrow();
+		expect(engine.renderSync("{{> onlya}}")).not.toContain("LOCKED-SECRET");
+
+		engine.rootTemplatePath = rootB;
+		expect(engine.renderSync("{{> header}}")).toContain("FROM-B");
+		expect(() => engine.renderSync("{{> onlya}}")).toThrow();
+
+		engine.rootTemplatePath = rootA;
+		engine.partialsPath = ["../outside-partials", "notes.txt"];
+		expect(() => engine.renderSync("{{> onlya}}")).toThrow();
+		expect(engine.renderSync("Hello {{name}}", { name: "Ada" })).toContain(
+			"Ada",
+		);
+
+		const fileRoot = new Handlebars();
+		fileRoot.rootTemplatePath = path.join(rootA, "partials", "onlya.hbs");
+		expect(() => fileRoot.renderSync("{{> onlya}}")).toThrow();
+		fileRoot.rootTemplatePath = path.join(rootA, "missing-root");
+		expect(() => fileRoot.renderSync("{{> onlya}}")).toThrow();
+
+		engine.partialsPath = ["partials", "includes", "templates"];
+		engine.rootTemplatePath = undefined;
+		engine.engine.registerPartial("mine", "MANUAL");
+		expect(engine.renderSync("{{> mine}}")).toContain("MANUAL");
+		expect(() => engine.renderSync("{{> header}}")).toThrow();
+	} finally {
+		fs.chmodSync(path.join(rootA, "partials", "locked"), 0o700);
+		fs.rmSync(rootA, { recursive: true, force: true });
+		fs.rmSync(rootB, { recursive: true, force: true });
+		fs.rmSync(outside, { force: true });
+		fs.rmSync(outsidePartials, { recursive: true, force: true });
+		fs.rmSync(linked, { recursive: true, force: true });
+	}
 });

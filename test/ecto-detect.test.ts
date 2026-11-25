@@ -116,6 +116,11 @@ describe("Ecto detectEngine", () => {
 		it("should detect Pug with attributes", () => {
 			expect(ecto.detectEngine('a(href="/about") About')).toBe("pug");
 			expect(ecto.detectEngine('img(src="logo.png" alt="Logo")')).toBe("pug");
+			expect(ecto.detectEngine('input(type="text")')).toBe("pug");
+			expect(ecto.detectEngine('span(class="label") Hello')).toBe("pug");
+			expect(ecto.detectEngine("p= name")).toBe("pug");
+			expect(ecto.detectEngine("h1= title")).toBe("pug");
+			expect(ecto.detectEngine("div: span Hello")).toBe("pug");
 		});
 
 		it("should detect complex Pug templates", () => {
@@ -631,6 +636,37 @@ Some text
 			const template = "# Header\n\n{{ name }}";
 			// Should detect as Handlebars, not markdown
 			expect(ecto.detectEngine(template)).toBe("handlebars");
+		});
+
+		it("should detect a Pug id that has no space", () => {
+			expect(ecto.detectEngine("#main")).toBe("pug");
+		});
+
+		it("should not treat ordinary words as Pug", () => {
+			expect(ecto.detectEngine("plain text")).toBe("ejs");
+			expect(ecto.detectEngine("please review")).toBe("ejs");
+			expect(ecto.detectEngine("Note (draft)")).toBe("ejs");
+			expect(ecto.detectEngine("Note: draft")).toBe("ejs");
+			expect(ecto.detectEngine("https://example.com")).toBe("ejs");
+		});
+
+		it("should ignore template tags inside a Markdown code fence", () => {
+			const template = "# Example\n\n```ejs\n<%= 2 + 2 %>\n```\n";
+			expect(ecto.detectEngine(template)).toBe("markdown");
+			expect(ecto.detectEngine("# Hello\n\n```ejs\n<%= 2 + 2 %>\n")).toBe(
+				"markdown",
+			);
+			expect(ecto.detectEngine("~~~\nejs\n<%= 2 + 2 %>\n~~~")).toBe("markdown");
+			expect(ecto.detectEngine("~~~\npug\ndiv.box\n~~~")).toBe("markdown");
+			const longer = "# Hello\n\n````md\n```ejs\n<%= 2 + 2 %>\n```\n````\n";
+			expect(ecto.detectEngine(longer)).toBe("markdown");
+		});
+
+		it("should skip a detected engine after its mapping is removed", () => {
+			const local = new Ecto();
+			local.mappings.delete("ejs");
+			expect(local.detectEngine("<%= name %>")).toBe("markdown");
+			expect(local.detectEngine("")).toBe("markdown");
 		});
 	});
 });

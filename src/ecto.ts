@@ -1,6 +1,7 @@
+import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs";
 import nodePath from "node:path";
-import { Cacheable, CacheableMemory } from "cacheable";
+import { Cacheable, CacheableMemory, createKeyv } from "cacheable";
 import { Hookified, type HookifiedOptions } from "hookified";
 import { Writr } from "writr";
 import type { BaseEngine } from "./base-engine.js";
@@ -104,6 +105,7 @@ export class Ecto extends Hookified {
 	private _cacheSync: CacheableMemory | undefined;
 
 	private _defaultEngine = "ejs";
+	private readonly cacheScope = randomUUID();
 
 	// Engines
 	private readonly _ejs: EJS;
@@ -142,23 +144,33 @@ export class Ecto extends Hookified {
 
 		// Set the cacheable instance if caching is enabled
 		if (options?.cache === true) {
-			// Set with default options
-			this._cache = new Cacheable();
+			this._cache = new Cacheable({
+				primary: createKeyv({
+					lruSize: defaultCacheLimit,
+					ttl: defaultCacheTtl,
+				}),
+				ttl: defaultCacheTtl,
+			});
 		} else if (options?.cache instanceof Cacheable) {
 			this._cache = options.cache;
 		}
 
 		// Set the cacheable memory instance if caching is enabled
 		if (options?.cacheSync === true) {
-			// Set with default options
-			this._cacheSync = new CacheableMemory();
+			this._cacheSync = new CacheableMemory({
+				lruSize: defaultCacheLimit,
+				ttl: defaultCacheTtl,
+			});
 		} else if (options?.cacheSync instanceof CacheableMemory) {
 			this._cacheSync = options.cacheSync;
 		}
 
 		// Set the options
-		if (options?.defaultEngine && this.isValidEngine(options.defaultEngine)) {
-			this._defaultEngine = options.defaultEngine;
+		if (options?.defaultEngine) {
+			const name = options.defaultEngine.trim().toLowerCase();
+			if (this.engineByName(name) && this.isValidEngine(name)) {
+				this._defaultEngine = name;
+			}
 		}
 	}
 
@@ -167,7 +179,7 @@ export class Ecto extends Hookified {
 	 * @returns {string} - the engine name such as 'ejs', 'markdown', 'pug', 'nunjucks', 'handlebars', 'liquid'
 	 */
 	public get defaultEngine(): string {
-		return this._defaultEngine;
+		return this.ensureDefaultEngine();
 	}
 
 	/**
@@ -176,12 +188,13 @@ export class Ecto extends Hookified {
 	 */
 	public set defaultEngine(value: string) {
 		value = value.toLowerCase().trim();
-		if (this.isValidEngine(value)) {
+		if (this.engineByName(value) && this.isValidEngine(value)) {
 			this._defaultEngine = value;
 		} else {
+			const fallback = this.ensureDefaultEngine();
 			this.emit(
 				EctoEvents.warn,
-				`Invalid engine name: ${value}. Defaulting to ${this._defaultEngine}.`,
+				`Invalid engine name: ${value}. Defaulting to ${fallback}.`,
 			);
 		}
 	}
@@ -294,15 +307,14 @@ export class Ecto extends Hookified {
 		filePathOutput?: string,
 	): Promise<string> {
 		try {
-			let renderEngineName = this._defaultEngine;
-
-			// Set the render engine
-			if (this.isValidEngine(engineName) && engineName !== undefined) {
-				renderEngineName = engineName;
-			}
-
-			const cacheKey = `${renderEngineName}-${source}-${JSON.stringify(data)}`;
-			if (this._cache) {
+			const renderEngineName = this.resolveEngineName(engineName);
+			const cacheKey = this.cacheKey(
+				renderEngineName,
+				source,
+				data,
+				rootTemplatePath,
+			);
+			if (this._cache && cacheKey !== undefined) {
 				const cachedResult = await this._cache.get<string>(cacheKey);
 				if (cachedResult) {
 					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
@@ -357,7 +369,7 @@ export class Ecto extends Hookified {
 			await this.invokeHook(EctoEvents.afterRender, renderResult);
 
 			// Store engine output so a later hit does not run afterRender twice
-			if (this._cache) {
+			if (this._cache && cacheKey !== undefined) {
 				await this._cache.set(cacheKey, rendered);
 			}
 
@@ -395,15 +407,14 @@ export class Ecto extends Hookified {
 		filePathOutput?: string,
 	): string {
 		try {
-			let renderEngineName = this._defaultEngine;
-
-			// Set the render engine
-			if (this.isValidEngine(engineName) && engineName !== undefined) {
-				renderEngineName = engineName;
-			}
-
-			const cacheKey = `${renderEngineName}-${source}-${JSON.stringify(data)}`;
-			if (this._cacheSync) {
+			const renderEngineName = this.resolveEngineName(engineName);
+			const cacheKey = this.cacheKey(
+				renderEngineName,
+				source,
+				data,
+				rootTemplatePath,
+			);
+			if (this._cacheSync && cacheKey !== undefined) {
 				const cachedResult = this._cacheSync.get<string>(cacheKey);
 				if (cachedResult) {
 					this.emit(EctoEvents.cacheHit, `Cache hit for key: ${cacheKey}`);
@@ -458,7 +469,7 @@ export class Ecto extends Hookified {
 			this.invokeHookSync(EctoEvents.afterRenderSync, renderResult);
 
 			// Store engine output so a later hit does not run afterRenderSync twice
-			if (this._cacheSync) {
+			if (this._cacheSync && cacheKey !== undefined) {
 				this._cacheSync.set(cacheKey, rendered);
 			}
 
@@ -495,9 +506,7 @@ export class Ecto extends Hookified {
 	): Promise<string> {
 		let result = "";
 
-		// Select which engine
-		engineName ??= this.getEngineByFilePath(filePath);
-
+		const selected = this.engineNameForFile(filePath, engineName);
 		const templateRootPath = rootTemplatePath ?? nodePath.dirname(filePath);
 
 		// Get the source
@@ -506,7 +515,7 @@ export class Ecto extends Hookified {
 		result = await this.render(
 			source,
 			data,
-			engineName,
+			selected,
 			templateRootPath,
 			filePathOutput,
 		);
@@ -534,9 +543,7 @@ export class Ecto extends Hookified {
 	): string {
 		let result = "";
 
-		// Select which engine
-		engineName ??= this.getEngineByFilePath(filePath);
-
+		const selected = this.engineNameForFile(filePath, engineName);
 		const templateRootPath = rootTemplatePath ?? nodePath.dirname(filePath);
 
 		// Get the source
@@ -545,7 +552,7 @@ export class Ecto extends Hookified {
 		result = this.renderSync(
 			source,
 			data,
-			engineName,
+			selected,
 			templateRootPath,
 			filePathOutput,
 		);
@@ -589,19 +596,20 @@ export class Ecto extends Hookified {
 	 * const engine = ecto.getEngineByFilePath('template.ejs'); // Returns 'ejs'
 	 */
 	public getEngineByFilePath(filePath: string): string {
-		let result = this._defaultEngine;
-
 		if (filePath !== undefined) {
 			const { ext } = nodePath.parse(filePath);
 			const extension = ext.startsWith(".") ? ext.slice(1) : ext;
-
 			const engExtension = this._mapping.getName(extension);
-			if (engExtension !== undefined) {
-				result = engExtension;
+			if (
+				engExtension !== undefined &&
+				this.engineByName(engExtension) &&
+				this.isValidEngine(engExtension)
+			) {
+				return engExtension;
 			}
 		}
 
-		return result;
+		return this.ensureDefaultEngine();
 	}
 
 	/**
@@ -616,18 +624,8 @@ export class Ecto extends Hookified {
 		path: string,
 		templateName: string,
 	): Promise<string> {
-		let result = "";
-
-		const files = await fs.promises.readdir(path);
-
-		for (const file of files) {
-			if (file.startsWith(`${templateName}.`)) {
-				result = nodePath.join(path, file);
-				break;
-			}
-		}
-
-		return result;
+		const files = await fs.promises.readdir(path, { withFileTypes: true });
+		return this.matchTemplateFile(path, templateName, files);
 	}
 
 	/**
@@ -642,18 +640,8 @@ export class Ecto extends Hookified {
 		path: string,
 		templateName: string,
 	): string {
-		let result = "";
-
-		const files = fs.readdirSync(path);
-
-		for (const file of files) {
-			if (file.startsWith(`${templateName}.`)) {
-				result = nodePath.join(path, file);
-				break;
-			}
-		}
-
-		return result;
+		const files = fs.readdirSync(path, { withFileTypes: true });
+		return this.matchTemplateFile(path, templateName, files);
 	}
 
 	/**
@@ -688,22 +676,25 @@ export class Ecto extends Hookified {
 	 */
 	public detectEngine(source: string): string {
 		if (!source || typeof source !== "string") {
-			return this._defaultEngine;
+			return this.ensureDefaultEngine();
 		}
 
+		const fences = readFences(source);
+		const syntaxSource = fences.text;
+
 		// Check for EJS (uses <% %> tags)
-		if (source.includes("<%")) {
+		if (syntaxSource.includes("<%")) {
 			if (
-				source.includes("<%=") ||
-				source.includes("<%-") ||
-				source.includes("%>")
+				syntaxSource.includes("<%=") ||
+				syntaxSource.includes("<%-") ||
+				syntaxSource.includes("%>")
 			) {
-				return "ejs";
+				return this.acceptedEngine("ejs");
 			}
 		}
 
 		// Check for Liquid first (has unique keywords that Nunjucks doesn't have)
-		if (source.includes("{%")) {
+		if (syntaxSource.includes("{%")) {
 			// Check for Liquid-specific keywords
 			const liquidKeywords = [
 				"liquid",
@@ -721,17 +712,17 @@ export class Ecto extends Hookified {
 			];
 			for (const keyword of liquidKeywords) {
 				if (
-					source.includes(`{% ${keyword}`) ||
-					source.includes(`{%${keyword}`)
+					syntaxSource.includes(`{% ${keyword}`) ||
+					syntaxSource.includes(`{%${keyword}`)
 				) {
-					return "liquid";
+					return this.acceptedEngine("liquid");
 				}
 			}
 			// Check for Liquid filters with pipe syntax
 			if (
-				source.includes("{{") &&
-				source.includes("|") &&
-				source.includes("}}")
+				syntaxSource.includes("{{") &&
+				syntaxSource.includes("|") &&
+				syntaxSource.includes("}}")
 			) {
 				// Make sure it's not Nunjucks by checking for Nunjucks-specific keywords
 				const nunjucksSpecific = [
@@ -744,21 +735,21 @@ export class Ecto extends Hookified {
 				let hasNunjucksKeyword = false;
 				for (const keyword of nunjucksSpecific) {
 					if (
-						source.includes(`{% ${keyword}`) ||
-						source.includes(`{%${keyword}`)
+						syntaxSource.includes(`{% ${keyword}`) ||
+						syntaxSource.includes(`{%${keyword}`)
 					) {
 						hasNunjucksKeyword = true;
 						break;
 					}
 				}
 				if (!hasNunjucksKeyword) {
-					return "liquid";
+					return this.acceptedEngine("liquid");
 				}
 			}
 		}
 
 		// Check for Nunjucks (uses {% %} for logic)
-		if (source.includes("{%")) {
+		if (syntaxSource.includes("{%")) {
 			const nunjucksKeywords = [
 				"block",
 				"extends",
@@ -777,53 +768,53 @@ export class Ecto extends Hookified {
 			];
 			for (const keyword of nunjucksKeywords) {
 				if (
-					source.includes(`{% ${keyword}`) ||
-					source.includes(`{%${keyword}`)
+					syntaxSource.includes(`{% ${keyword}`) ||
+					syntaxSource.includes(`{%${keyword}`)
 				) {
-					return "nunjucks";
+					return this.acceptedEngine("nunjucks");
 				}
 				/* c8 ignore next 3 */
 			}
 		}
 
 		// Check for Handlebars/Mustache (uses {{ }} and {{# }})
-		if (source.includes("{{")) {
+		if (syntaxSource.includes("{{")) {
 			// First check if it's Liquid with filters (before assuming Handlebars)
-			if (source.includes(" | ") && source.includes("}}")) {
+			if (syntaxSource.includes(" | ") && syntaxSource.includes("}}")) {
 				// This could be a Liquid filter, check for Liquid-specific keywords
 				if (
-					source.includes("{% assign ") ||
-					source.includes("{% capture ") ||
-					source.includes("{% unless ") ||
-					source.includes("{% increment ") ||
-					source.includes("{% decrement ") ||
-					source.includes("{% tablerow ") ||
-					source.includes("{% case ") ||
-					source.includes("{% when ") ||
-					source.includes(" | upcase") ||
-					source.includes(" | downcase") ||
-					source.includes(" | capitalize") ||
-					source.includes(" | minus:") ||
-					source.includes(" | plus:") ||
-					source.includes(" | money") ||
-					source.includes(" | date:")
+					syntaxSource.includes("{% assign ") ||
+					syntaxSource.includes("{% capture ") ||
+					syntaxSource.includes("{% unless ") ||
+					syntaxSource.includes("{% increment ") ||
+					syntaxSource.includes("{% decrement ") ||
+					syntaxSource.includes("{% tablerow ") ||
+					syntaxSource.includes("{% case ") ||
+					syntaxSource.includes("{% when ") ||
+					syntaxSource.includes(" | upcase") ||
+					syntaxSource.includes(" | downcase") ||
+					syntaxSource.includes(" | capitalize") ||
+					syntaxSource.includes(" | minus:") ||
+					syntaxSource.includes(" | plus:") ||
+					syntaxSource.includes(" | money") ||
+					syntaxSource.includes(" | date:")
 				) {
-					return "liquid";
+					return this.acceptedEngine("liquid");
 				}
 			}
 			// Check for Handlebars helpers
 			if (
-				source.includes("{{#") ||
-				source.includes("{{/") ||
-				source.includes("{{>") ||
-				source.includes("{{!--")
+				syntaxSource.includes("{{#") ||
+				syntaxSource.includes("{{/") ||
+				syntaxSource.includes("{{>") ||
+				syntaxSource.includes("{{!--")
 			) {
-				return "handlebars";
+				return this.acceptedEngine("handlebars");
 			}
 			// Check for basic mustache/handlebars syntax
 			/* v8 ignore next -- @preserve */
-			if (source.includes("}}") && !source.includes("{%")) {
-				return "handlebars";
+			if (syntaxSource.includes("}}") && !syntaxSource.includes("{%")) {
+				return this.acceptedEngine("handlebars");
 			}
 		}
 
@@ -832,8 +823,12 @@ export class Ecto extends Hookified {
 		let markdownIndicators = 0;
 		let pugIndicators = 0;
 
-		for (const line of lines) {
+		for (const [index, line] of lines.entries()) {
 			const trimmed = line.trim();
+			if (fences.fenced[index]) {
+				if (/^(?:`{3,}|~{3,})/.test(trimmed)) markdownIndicators++;
+				continue;
+			}
 
 			// Check for markdown headers
 			if (
@@ -874,11 +869,6 @@ export class Ecto extends Hookified {
 				markdownIndicators++;
 			}
 
-			// Check for code blocks
-			if (trimmed.startsWith("```")) {
-				markdownIndicators++;
-			}
-
 			// Check for Pug patterns (only count if it's not markdown)
 			if (
 				!trimmed.startsWith("# ") &&
@@ -887,27 +877,14 @@ export class Ecto extends Hookified {
 				!trimmed.startsWith("+ ") &&
 				!trimmed.startsWith("> ")
 			) {
-				if (
-					trimmed.startsWith("doctype") ||
-					trimmed.startsWith("html") ||
-					trimmed.startsWith("head") ||
-					trimmed.startsWith("body") ||
-					trimmed.startsWith("div") ||
-					trimmed.startsWith("p") ||
-					(trimmed.startsWith("h") &&
-						trimmed.length > 1 &&
-						trimmed.charAt(1) >= "1" &&
-						trimmed.charAt(1) <= "6")
-				) {
+				if (pugTagPattern.test(trimmed)) {
 					pugIndicators++;
 				}
-				// Check for Pug class/id selectors (but not in markdown context)
+				// A leading class or id is Pug. Parentheses alone are not.
 				if (
-					(trimmed.includes("(") && trimmed.includes(")")) ||
-					trimmed.indexOf(".") === 0 || // starts with dot for class
+					trimmed.indexOf(".") === 0 ||
 					(trimmed.indexOf("#") === 0 && !trimmed.includes(" "))
 				) {
-					// starts with # but no space (not markdown header)
 					pugIndicators++;
 				}
 			}
@@ -916,14 +893,14 @@ export class Ecto extends Hookified {
 		// Check for markdown links and images
 		/* v8 ignore next -- @preserve */
 		if (
-			source.includes("](") &&
-			(source.includes("[") || source.includes("!["))
+			syntaxSource.includes("](") &&
+			(syntaxSource.includes("[") || syntaxSource.includes("!["))
 		) {
 			markdownIndicators++;
 		}
 
 		// Check for markdown tables
-		if (source.includes("|") && source.includes("---")) {
+		if (syntaxSource.includes("|") && syntaxSource.includes("---")) {
 			markdownIndicators++;
 		}
 
@@ -932,30 +909,31 @@ export class Ecto extends Hookified {
 			// Make sure it's not mixed with template syntax
 			/* v8 ignore next -- @preserve */
 			if (
-				!source.includes("<%") &&
-				!source.includes("{{") &&
-				!source.includes("{%")
+				!syntaxSource.includes("<%") &&
+				!syntaxSource.includes("{{") &&
+				!syntaxSource.includes("{%")
 			) {
-				return "markdown";
+				return this.acceptedEngine("markdown");
 			}
 		}
 
 		// Check for Pug (indentation-based, no HTML tags)
-		const hasHtmlOpenTag = source.includes("<") && source.includes(">");
-		const hasHtmlCloseTag = source.includes("</");
+		const hasHtmlOpenTag =
+			syntaxSource.includes("<") && syntaxSource.includes(">");
+		const hasHtmlCloseTag = syntaxSource.includes("</");
 		if (
 			pugIndicators > 0 &&
 			!hasHtmlOpenTag &&
 			!hasHtmlCloseTag &&
-			!source.includes("<%") &&
-			!source.includes("{{") &&
-			!source.includes("{%")
+			!syntaxSource.includes("<%") &&
+			!syntaxSource.includes("{{") &&
+			!syntaxSource.includes("{%")
 		) {
-			return "pug";
+			return this.acceptedEngine("pug");
 		}
 
 		// If no specific template syntax is found, return the default engine
-		return this._defaultEngine;
+		return this.ensureDefaultEngine();
 	}
 
 	/**
@@ -974,52 +952,26 @@ export class Ecto extends Hookified {
 	/**
 	 * Get the render engine instance by name
 	 * @param {string} engineName - The name of the engine to retrieve
-	 * @returns {EngineInterface} The engine instance (defaults to EJS if not found)
+	 * @returns {EngineInterface} The engine for that name. An unknown name uses the default engine.
 	 * @example
 	 * const engine = ecto.getRenderEngine('pug');
 	 */
 	public getRenderEngine(engineName: string): EngineInterface {
-		let result = this._ejs; // Setting default
-
 		const cleanEngineName = engineName.trim().toLowerCase();
-		switch (cleanEngineName) {
-			case "markdown": {
-				result = this._markdown;
-				break;
-			}
+		const selected = this.engineByName(cleanEngineName);
+		if (selected && this.isValidEngine(cleanEngineName)) {
+			return selected;
+		}
 
-			case "pug": {
-				result = this._pug;
-				break;
-			}
-
-			case "nunjucks": {
-				result = this._nunjucks;
-				break;
-			}
-
-			case "mustache": {
-				result = this._handlebars;
-				break;
-			}
-
-			case "handlebars": {
-				result = this._handlebars;
-				break;
-			}
-
-			case "liquid": {
-				result = this._liquid;
-				break;
-			}
-
-			default: {
-				result = this._ejs;
-				break;
+		const fallback = this.ensureDefaultEngine();
+		if (fallback !== cleanEngineName) {
+			const fallbackEngine = this.engineByName(fallback);
+			if (fallbackEngine && this.isValidEngine(fallback)) {
+				return fallbackEngine;
 			}
 		}
 
-		return result;
+		throw new Error(`Unknown engine: ${engineName}`);
 	}
 
 	/**
@@ -1060,8 +1012,19 @@ export class Ecto extends Hookified {
 	 */
 	public setFrontMatter(source: string, data: Record<string, unknown>): string {
 		const writr = new Writr(source);
-		writr.frontMatter = data;
-		return writr.content;
+		const block = `---\n${frontMatterJson(data)}\n---\n`;
+		const raw = writr.frontMatterRaw;
+		if (raw !== "") {
+			// frontMatterRaw is a slice of content, so the index is valid.
+			const start = writr.content.indexOf(raw);
+			return (
+				writr.content.slice(0, start) +
+				block +
+				writr.content.slice(start + raw.length)
+			);
+		}
+
+		return `${block}${writr.content}`;
 	}
 
 	/**
@@ -1168,6 +1131,250 @@ export class Ecto extends Hookified {
 			fs.writeFileSync(filePath, source);
 		}
 	}
+
+	/**
+	 * Choose a built-in engine for this render.
+	 * A blank name or an unknown name uses the default engine.
+	 */
+	private resolveEngineName(engineName?: string): string {
+		const requested = engineName?.trim().toLowerCase() ?? "";
+		if (
+			requested !== "" &&
+			this.engineByName(requested) &&
+			this.isValidEngine(requested)
+		) {
+			return requested;
+		}
+		return this.ensureDefaultEngine();
+	}
+
+	/**
+	 * Use the file extension when the caller does not name an engine.
+	 */
+	private engineNameForFile(filePath: string, engineName?: string): string {
+		if (engineName !== undefined && engineName.trim() !== "") {
+			return engineName;
+		}
+		return this.getEngineByFilePath(filePath);
+	}
+
+	/**
+	 * Keep the default engine on a mapping that still has a renderer.
+	 */
+	private ensureDefaultEngine(): string {
+		if (
+			this.engineByName(this._defaultEngine) &&
+			this.isValidEngine(this._defaultEngine)
+		) {
+			return this._defaultEngine;
+		}
+
+		for (const name of builtinEngineNames) {
+			if (this.engineByName(name) && this.isValidEngine(name)) {
+				this._defaultEngine = name;
+				return name;
+			}
+		}
+
+		return this._defaultEngine;
+	}
+
+	/**
+	 * Return a detected name only when that engine is still registered.
+	 */
+	private acceptedEngine(name: string): string {
+		if (this.engineByName(name) && this.isValidEngine(name)) {
+			return name;
+		}
+		return this.ensureDefaultEngine();
+	}
+
+	private engineByName(name: string): EngineInterface | undefined {
+		switch (name) {
+			case "ejs": {
+				return this._ejs;
+			}
+			case "markdown": {
+				return this._markdown;
+			}
+			case "pug": {
+				return this._pug;
+			}
+			case "nunjucks": {
+				return this._nunjucks;
+			}
+			case "mustache":
+			case "handlebars": {
+				return this._handlebars;
+			}
+			case "liquid": {
+				return this._liquid;
+			}
+			default: {
+				return undefined;
+			}
+		}
+	}
+
+	/**
+	 * Return the first file whose stem and extension match.
+	 * A dot file, a directory, and an unknown extension do not match.
+	 */
+	private matchTemplateFile(
+		path: string,
+		templateName: string,
+		files: fs.Dirent[],
+	): string {
+		if (!isSafeTemplateName(templateName)) return "";
+
+		for (const file of files) {
+			if (!file.isFile()) continue;
+			const parsed = nodePath.parse(file.name);
+			if (parsed.name !== templateName) continue;
+			const extension = parsed.ext.startsWith(".")
+				? parsed.ext.slice(1)
+				: parsed.ext;
+			if (extension === "" || this._mapping.getName(extension) === undefined) {
+				continue;
+			}
+			return nodePath.join(path, file.name);
+		}
+
+		return "";
+	}
+
+	/**
+	 * Build a cache key for plain JSON data.
+	 * Data that JSON cannot store is not cached.
+	 */
+	private cacheKey(
+		engineName: string,
+		source: string,
+		data: Record<string, unknown> | undefined,
+		rootTemplatePath?: string,
+	): string | undefined {
+		const payload = data ?? null;
+		if (!isJsonFaithful(payload)) return undefined;
+
+		const body = JSON.stringify({
+			scope: this.cacheScope,
+			engine: engineName,
+			root: normalizeRoot(rootTemplatePath),
+			source,
+			data: payload,
+		});
+		return createHash("sha256").update(body).digest("hex");
+	}
+}
+
+const defaultCacheLimit = 1000;
+const defaultCacheTtl = "5m";
+const builtinEngineNames = [
+	"ejs",
+	"markdown",
+	"pug",
+	"nunjucks",
+	"handlebars",
+	"mustache",
+	"liquid",
+] as const;
+const pugTagPattern =
+	/^(?:doctype|html|head|body|title|div|p|h[1-6])(?:\s|$|:)|^[\w-]+(?:[=(]|[.#])/;
+
+function readFences(source: string): { text: string; fenced: boolean[] } {
+	const lines = source.split("\n");
+	const fenced = Array.from({ length: lines.length }, () => false);
+	const kept: string[] = [];
+	let inFence = false;
+	let fenceChar = "";
+	let fenceLength = 0;
+
+	for (const [index, line] of lines.entries()) {
+		const trimmed = line.trim();
+		const fence = /^(?<marker>`{3,}|~{3,})/.exec(trimmed);
+		if (fence?.groups?.marker) {
+			const marker = fence.groups.marker;
+			const character = marker.charAt(0);
+			if (!inFence) {
+				inFence = true;
+				fenceChar = character;
+				fenceLength = marker.length;
+				fenced[index] = true;
+				continue;
+			}
+			if (character === fenceChar && marker.length >= fenceLength) {
+				inFence = false;
+				fenced[index] = true;
+				continue;
+			}
+		}
+
+		if (inFence) {
+			fenced[index] = true;
+			continue;
+		}
+
+		const withoutInline = line.replace(/`[^`\n]*`/g, "");
+		kept.push(withoutInline);
+	}
+
+	return { text: kept.join("\n"), fenced };
+}
+
+function frontMatterJson(data: Record<string, unknown>): string {
+	return JSON.stringify(data).replace(/-(?=--)/g, "\\u002d");
+}
+
+function normalizeRoot(root?: string): string {
+	if (root === undefined || root.trim() === "") return "";
+	return nodePath.resolve(root);
+}
+
+function isSafeTemplateName(templateName: string): boolean {
+	return (
+		templateName !== "" &&
+		!templateName.startsWith(".") &&
+		!templateName.includes("/") &&
+		!templateName.includes("\\") &&
+		!templateName.includes("\0")
+	);
+}
+
+function isJsonFaithful(value: unknown, seen = new Set<object>()): boolean {
+	if (value === null) return true;
+	if (typeof value === "string" || typeof value === "boolean") return true;
+	if (typeof value === "number") return Number.isFinite(value);
+	if (typeof value !== "object") return false;
+	if (seen.has(value)) return false;
+	seen.add(value);
+
+	if (Array.isArray(value)) {
+		if (Object.getPrototypeOf(value) !== Array.prototype) return false;
+		const keys = Reflect.ownKeys(value);
+		if (keys.length !== value.length + 1) return false;
+		for (let index = 0; index < value.length; index++) {
+			const descriptor = Object.getOwnPropertyDescriptor(value, index);
+			if (!descriptor || descriptor.get || descriptor.set) return false;
+			if (!descriptor.enumerable) return false;
+			if (!isJsonFaithful(value[index], seen)) return false;
+		}
+		return true;
+	}
+
+	const prototype = Object.getPrototypeOf(value);
+	if (prototype !== Object.prototype && prototype !== null) return false;
+
+	for (const key of Reflect.ownKeys(value)) {
+		if (typeof key === "symbol") return false;
+		const descriptor = Object.getOwnPropertyDescriptor(value, key);
+		if (!descriptor || descriptor.get || descriptor.set) return false;
+		if (!descriptor.enumerable) return false;
+		if (!isJsonFaithful((value as Record<string, unknown>)[key], seen)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 // Export base types for developers who want to create custom engines

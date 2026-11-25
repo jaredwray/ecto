@@ -72,4 +72,32 @@ describe("Ecto FrontMatter", async () => {
 			"documentation",
 		]);
 	});
+
+	test("should keep replacement text inside the front matter value", () => {
+		const ecto = new Ecto();
+		const source = "---\ntitle: Old\nrole: admin\n---\nBody\n";
+		const updated = ecto.setFrontMatter(source, {
+			title: "$'",
+			role: "user",
+			approved: true,
+		});
+		const frontMatter = ecto.getFrontMatter(updated);
+		expect(frontMatter.title).toBe("$'");
+		expect(frontMatter.role).toBe("user");
+		expect(frontMatter.approved).toBe(true);
+		expect(updated).toContain("Body");
+		expect(ecto.removeFrontMatter(updated).trim()).toBe("Body");
+	});
+
+	test("should keep a dash line inside a front matter value", () => {
+		const ecto = new Ecto();
+		const updated = ecto.setFrontMatter("Body\n", {
+			title: "hello --- world",
+			note: "line1\n---\nline2",
+		});
+		const frontMatter = ecto.getFrontMatter(updated);
+		expect(frontMatter.title).toBe("hello --- world");
+		expect(frontMatter.note).toBe("line1\n---\nline2");
+		expect(ecto.removeFrontMatter(updated).trim()).toBe("Body");
+	});
 });

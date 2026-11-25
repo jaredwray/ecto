@@ -1,5 +1,7 @@
 import fs from "node:fs";
+import nodePath from "node:path";
 import { BaseEngine } from "../base-engine.js";
+import { readInsideRoot } from "../confined-read.js";
 import type { EngineInterface } from "../engine-interface.js";
 import { createSafeFumanchu } from "./fumanchu-safety.js";
 
@@ -22,32 +24,11 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		source: string,
 		data?: Record<string, unknown>,
 	): Promise<string> {
-		// Register partials
-		if (this.rootTemplatePath) {
-			this.initPartials();
-		}
-
-		const options = this.templateOptions();
-		const template = this.engine.compile(source, options);
-
-		// Standard Handlebars semantics: `{{var}}` HTML-escapes, `{{{var}}}`
-		// inserts raw. No post-render entity decoding — a blanket decode
-		// corrupts legitimately escaped content in the data (for example
-		// `&#x3C;` inside pre-rendered code blocks) and re-activates
-		// escaped markup.
-		return template(data, options);
+		return this.renderTemplate(source, data);
 	}
 
 	renderSync(source: string, data?: Record<string, unknown>): string {
-		// Register partials
-		if (this.rootTemplatePath) {
-			this.initPartials();
-		}
-
-		const options = this.templateOptions();
-		const template = this.engine.compile(source, options);
-
-		return template(data, options);
+		return this.renderTemplate(source, data);
 	}
 
 	/**
@@ -63,45 +44,129 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		return rest;
 	}
 
-	initPartials(): void {
-		for (const path of this.partialsPath) {
-			const fullPath = `${this.rootTemplatePath}/${path}`;
-			this.registerPartials(fullPath);
-		}
+	/**
+	 * Compile and render one template.
+	 * File partials apply to this call only.
+	 */
+	private renderTemplate(
+		source: string,
+		data?: Record<string, unknown>,
+	): string {
+		const options = this.templateOptions();
+		const template = this.engine.compile(source, options);
+		const configured = (options?.partials ?? {}) as Record<string, unknown>;
+		const runtime = {
+			...(options ?? {}),
+			partials: {
+				...this.engine.partials,
+				...this.filePartials(),
+				...configured,
+			},
+		};
+
+		// Standard Handlebars semantics: `{{var}}` HTML-escapes, `{{{var}}}`
+		// inserts raw. No post-render entity decoding — a blanket decode
+		// corrupts legitimately escaped content in the data (for example
+		// `&#x3C;` inside pre-rendered code blocks) and re-activates
+		// escaped markup.
+		return template(data, runtime);
 	}
 
-	registerPartials(partialsPath: string): boolean {
-		let result = false;
+	/**
+	 * Load partials for this root. The result is not stored on the engine.
+	 * A symlink or a file outside the root is skipped.
+	 */
+	private filePartials(): Record<string, string> {
+		const root = this.rootTemplatePath?.trim();
+		if (!root) return {};
 
-		if (fs.existsSync(partialsPath)) {
-			const partials = fs.readdirSync(partialsPath, {
-				recursive: true,
-				encoding: "utf8",
-			});
-
-			for (const p of partials) {
-				if (fs.statSync(`${partialsPath}/${p}`).isDirectory()) {
-					const directoryPartials = fs.readdirSync(`${partialsPath}/${p}`, {
-						recursive: true,
-						encoding: "utf8",
-					});
-					for (const dp of directoryPartials) {
-						const source = fs
-							.readFileSync(`${partialsPath}/${p}/${dp}`)
-							.toString();
-						const name = `${p}/${dp.split(".")[0]}`;
-						this.engine.registerPartial(name, this.engine.compile(source));
-					}
-				} else {
-					const source = fs.readFileSync(`${partialsPath}/${p}`, "utf8");
-					const name = p.split(".")[0];
-					this.engine.registerPartial(name, this.engine.compile(source));
-				}
-			}
-
-			result = true;
+		let realRoot: string;
+		try {
+			realRoot = fs.realpathSync(root);
+			if (!fs.statSync(realRoot).isDirectory()) return {};
+		} catch {
+			return {};
 		}
 
-		return result;
+		const partials: Record<string, string> = {};
+		for (const partialPath of this.partialsPath) {
+			this.collectPartials(realRoot, partialPath, partials);
+		}
+		return partials;
+	}
+
+	private collectPartials(
+		realRoot: string,
+		partialPath: string,
+		partials: Record<string, string>,
+	): void {
+		const directory = nodePath.resolve(realRoot, partialPath);
+		let realDirectory: string;
+		try {
+			const stat = fs.lstatSync(directory);
+			if (stat.isSymbolicLink() || !stat.isDirectory()) return;
+			realDirectory = fs.realpathSync(directory);
+		} catch {
+			return;
+		}
+
+		const relativeDirectory = nodePath.relative(realRoot, realDirectory);
+		if (
+			relativeDirectory.startsWith("..") ||
+			nodePath.isAbsolute(relativeDirectory)
+		) {
+			return;
+		}
+
+		this.walkPartials(realRoot, realDirectory, realDirectory, partials);
+	}
+
+	/**
+	 * Read partial files under this directory.
+	 * Skip a symlink that leaves the root.
+	 * Skip a pipe.
+	 * Skip a directory when the read fails.
+	 */
+	private walkPartials(
+		realRoot: string,
+		base: string,
+		current: string,
+		partials: Record<string, string>,
+	): void {
+		let entries: fs.Dirent[];
+		try {
+			entries = fs.readdirSync(current, { withFileTypes: true });
+		} catch {
+			return;
+		}
+
+		const allowed = new Set(this.getExtensions());
+		for (const entry of entries) {
+			const fullPath = nodePath.join(current, entry.name);
+			if (entry.isDirectory()) {
+				this.walkPartials(realRoot, base, fullPath, partials);
+				continue;
+			}
+
+			if (!entry.isFile()) continue;
+
+			const extension = nodePath.extname(entry.name).slice(1).toLowerCase();
+			if (!allowed.has(extension)) continue;
+
+			let text: string;
+			try {
+				text = readInsideRoot(realRoot, fullPath).text;
+			} catch {
+				continue;
+			}
+
+			const relativeParent = nodePath.relative(base, current);
+			const stem = nodePath.basename(entry.name, nodePath.extname(entry.name));
+			const name =
+				relativeParent === ""
+					? stem
+					: `${relativeParent.split(nodePath.sep).join("/")}/${stem}`;
+			partials[name] = text;
+		}
 	}
 }

@@ -50,3 +50,12 @@ it("Markdown - Rendering a simple string after inital render", async () => {
 	expect(await engine.render(exampleSource1)).toContain("<h1");
 	expect(await engine.render(exampleSource2)).toContain("<em>");
 });
+
+it("Markdown - template data does not change render options", async () => {
+	const engine = new Markdown();
+	const source = "Hello <b>secret</b>";
+	const safe = "<p>Hello secret</p>";
+	expect(await engine.render(source, { user: "a" })).toBe(safe);
+	expect(await engine.render(source, { rawHtml: true })).toBe(safe);
+	expect(engine.renderSync(source, { rawHtml: true })).toBe(safe);
+});
