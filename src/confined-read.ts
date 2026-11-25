@@ -7,23 +7,20 @@ const fileFlags = fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW;
 
 /**
  * Read one file that stays inside the root.
- * The reader opens each path component from the parent descriptor.
+ * The path may use the configured root or the canonical root.
+ * The reader opens each path component from the canonical directory.
  * The reader rejects a symlink.
  */
 export function readInsideRoot(
 	root: string,
 	candidate: string,
 ): { text: string; filename: string } {
+	const configured = nodePath.resolve(root);
 	const realRoot = fs.realpathSync(root);
-	const relative = nodePath.relative(
-		realRoot,
-		nodePath.resolve(realRoot, candidate),
-	);
-	if (
-		relative === "" ||
-		relative.startsWith("..") ||
-		nodePath.isAbsolute(relative)
-	) {
+	const relative =
+		relativeInside(configured, candidate) ??
+		relativeInside(realRoot, candidate);
+	if (relative === undefined) {
 		throw new Error("Ecto rejects an include that leaves the template root.");
 	}
 
@@ -51,6 +48,22 @@ export function readInsideRoot(
 	} finally {
 		fs.closeSync(currentFd);
 	}
+}
+
+/**
+ * Return the path that stays inside the base.
+ * Return no path when the candidate leaves the base.
+ */
+function relativeInside(base: string, candidate: string): string | undefined {
+	const relative = nodePath.relative(base, nodePath.resolve(base, candidate));
+	if (
+		relative === "" ||
+		relative.startsWith("..") ||
+		nodePath.isAbsolute(relative)
+	) {
+		return undefined;
+	}
+	return relative;
 }
 
 /**

@@ -93,6 +93,45 @@ it("EJS - an include cannot leave the template root", () => {
 	}
 });
 
+it("EJS - a symlinked root includes a file inside it", () => {
+	const parent = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-ejs-link-root-"));
+	const real = path.join(parent, "real");
+	const link = path.join(parent, "link");
+	fs.mkdirSync(path.join(real, "dir"), { recursive: true });
+	fs.writeFileSync(
+		path.join(real, "page.ejs"),
+		"ROOT-<%- include('./other') %>",
+	);
+	fs.writeFileSync(path.join(real, "other.ejs"), "OTHER");
+	fs.writeFileSync(path.join(real, "dir", "page.ejs"), "INSIDE");
+	fs.writeFileSync(path.join(parent, "secret.ejs"), "EJS-SECRET");
+	fs.symlinkSync(real, link, "dir");
+	try {
+		const plain = new EJS();
+		plain.rootTemplatePath = link;
+		expect(plain.renderSync("<%- include('/page') %>")).toBe("ROOT-OTHER");
+		expect(() => plain.renderSync("<%- include('/../secret') %>")).toThrow(
+			/leaves the template root/,
+		);
+
+		const virtual = new EJS({
+			includer: (original: string) => {
+				if (original === "virtual") {
+					return {
+						template: "<%- include('./page') %>",
+						filename: "dir/logical.ejs",
+					} as unknown as { filename: string };
+				}
+				return undefined as unknown as { filename: string };
+			},
+		});
+		virtual.rootTemplatePath = link;
+		expect(virtual.renderSync("<%- include('virtual') %>")).toContain("INSIDE");
+	} finally {
+		fs.rmSync(parent, { recursive: true, force: true });
+	}
+});
+
 it("EJS - a swapped directory does not expose another file", () => {
 	const parent = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-ejs-swap-"));
 	const root = path.join(parent, "root");
