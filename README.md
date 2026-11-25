@@ -618,6 +618,31 @@ const source = "{{year}}";
 await ecto.render(source, undefined, "handlebars"); //returns current year as a number
 ```
 
+### Helper safety
+
+A template that calls one of the helpers below fails until you set `unsafeHelpers`. Ecto does not register helpers that read files, resolve file paths, render raw HTML, or change object prototypes.
+
+Ecto blocks these helpers by default:
+
+* `read`, `readdir`, and `embed`
+* `md` and `markdown`
+* `absolute` and `resolve`
+* `get`, `getObject`, `merge`, and `forIn`
+
+The other Fumanchu helpers stay available.
+
+Set `unsafeHelpers` to `true` to enable the full list. Set `unsafeHelpers` to a list of names to enable only those helpers. Pass the option to the Handlebars constructor, or set `engineOptions.handlebars`. The same engine renders Mustache files, so the option applies to both.
+
+```javascript
+const ecto = new Ecto({
+  engineOptions: {
+    handlebars: { unsafeHelpers: ["read"] }
+  }
+});
+```
+
+Helpers that walk an object path block the keys `__proto__`, `constructor`, and `prototype`. Ecto still blocks these keys when you enable the unsafe helpers.
+
 ## Liquid
 
 Some refer to Liquid as a template language, while others may call it a template engine. It doesn't really matter which label you apply, in many ways both are right. It has a syntax (like traditional programming languages), has concepts such as output, logic, and loops, and it interacts with variables and data, just as you would with a language such as PHP.
@@ -627,6 +652,14 @@ Liquid, like the previous template engines, creates a bridge between an HTML fil
 Liquid files have the extension of `.liquid`. A liquid file is a mix of standard HTML code and Liquid constructs. Its clear syntax is easy to distinguish from HTML when working with a Liquid file. This is made even easier thanks to the use of two sets of delimiters.
 
 The double curly brace delimiters `{{ }}` denote output, and the curly brace percentage delimiters `{% %}` denote logic. You'll become very familiar with these as every Liquid construct begins with one, or the other. Another way of thinking of delimiters is as placeholders. A placeholder can be viewed as a piece of code that will ultimately be replaced by data when the compiled file is sent to the browser.
+
+### Include paths
+
+Ecto builds a separate Liquid engine for each root template path. Ecto resolves `.` and `..` in that path. Each engine receives a copy of the options.
+
+When you omit the root template path, Ecto sets no file root. An include or a render tag then fails. Ecto does not use the current directory as the file root.
+
+An explicit `root` in the Liquid options still applies when you omit the root template path.
 
 # FrontMatter Helper Functions
 

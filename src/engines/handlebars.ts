@@ -1,7 +1,7 @@
 import fs from "node:fs";
-import { fumanchu } from "@jaredwray/fumanchu";
 import { BaseEngine } from "../base-engine.js";
 import type { EngineInterface } from "../engine-interface.js";
+import { createSafeFumanchu } from "./fumanchu-safety.js";
 
 export class Handlebars extends BaseEngine implements EngineInterface {
 	public partialsPath = ["partials", "includes", "templates"];
@@ -12,7 +12,8 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 		this.names = ["handlebars", "mustache"];
 		this.opts = options;
 
-		this.engine = fumanchu();
+		// `unsafeHelpers` selects helpers. It is not a Handlebars compile option.
+		this.engine = createSafeFumanchu(options);
 
 		this.setExtensions(["hbs", "hjs", "handlebars", "mustache"]);
 	}
@@ -26,14 +27,15 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 			this.initPartials();
 		}
 
-		const template = this.engine.compile(source, this.opts);
+		const options = this.templateOptions();
+		const template = this.engine.compile(source, options);
 
 		// Standard Handlebars semantics: `{{var}}` HTML-escapes, `{{{var}}}`
 		// inserts raw. No post-render entity decoding — a blanket decode
 		// corrupts legitimately escaped content in the data (for example
 		// `&#x3C;` inside pre-rendered code blocks) and re-activates
 		// escaped markup.
-		return template(data, this.opts);
+		return template(data, options);
 	}
 
 	renderSync(source: string, data?: Record<string, unknown>): string {
@@ -42,9 +44,23 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 			this.initPartials();
 		}
 
-		const template = this.engine.compile(source, this.opts);
+		const options = this.templateOptions();
+		const template = this.engine.compile(source, options);
 
-		return template(data, this.opts);
+		return template(data, options);
+	}
+
+	/**
+	 * Handlebars compile options. Omit `unsafeHelpers` so the flag
+	 * does not reach the compiler.
+	 */
+	private templateOptions(): Record<string, unknown> | undefined {
+		if (!this.opts || !Object.hasOwn(this.opts, "unsafeHelpers")) {
+			return this.opts;
+		}
+
+		const { unsafeHelpers: _unsafeHelpers, ...rest } = this.opts;
+		return rest;
 	}
 
 	initPartials(): void {
