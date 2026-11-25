@@ -25,13 +25,13 @@ it("EngineMap - set with duplicate extensions should deduplicate", () => {
 	expect(mappings.get("ejs")?.toString()).toBe("ejs,md,njk");
 });
 
-it("EngineMap - set with no extensions should be undefined", () => {
+it("EngineMap - set with an empty extension list should be undefined", () => {
 	const mappings = new EngineMap();
 	mappings.set("ejs", []);
 	expect(mappings.get("ejs")?.length).toBe(undefined);
 });
 
-it("EngineMap - set with no extensions should be undefined", () => {
+it("EngineMap - set with a blank engine name should be undefined", () => {
 	const mappings = new EngineMap();
 	mappings.set("", ["md"]);
 	expect(mappings.get("")?.length).toBe(undefined);

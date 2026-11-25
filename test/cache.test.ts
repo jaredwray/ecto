@@ -123,14 +123,14 @@ it("render via ejs synchronous with file with caching enabled sync", () => {
 	fs.rmSync(testOutputFullDirectory, { recursive: true, force: true });
 });
 
-it("render via ejs hello from docs with caching disabled", async () => {
+it("render via ejs hello from docs with the async cache disabled", async () => {
 	const ecto = new Ecto({ cache: false });
 	const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 	const data = { firstName: "John", lastName: "Doe" };
 	expect(await ecto.render(source, data)).toBe("<h1>Hello John Doe!</h1>");
 });
 
-it("render via ejs hello from docs with caching disabled", () => {
+it("render via ejs hello from docs with the sync cache disabled", () => {
 	const ecto = new Ecto({ cacheSync: false });
 	const source = "<h1>Hello <%= firstName%> <%= lastName %>!</h1>";
 	const data = { firstName: "John", lastName: "Doe" };
