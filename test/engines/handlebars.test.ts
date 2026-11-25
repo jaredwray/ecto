@@ -1,5 +1,7 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: test file
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { expect, it } from "vitest";
 import { Handlebars } from "../../src/engines/handlebars.js";
 
@@ -451,6 +453,136 @@ it("Handlebars - double-stash escapes HTML in data", async () => {
 		content: "<script>alert(1)</script>",
 	});
 	expect(result).toBe("&lt;script&gt;alert(1)&lt;/script&gt;");
+});
+
+it("Handlebars - file read helper is blocked by default", () => {
+	const directory = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-hbs-"));
+	const file = path.join(directory, "secret.txt");
+	fs.writeFileSync(file, "TOP-SECRET-VALUE");
+	try {
+		const engine = new Handlebars();
+		expect(() => engine.renderSync(`{{read "${file}"}}`)).toThrow(/read/);
+	} finally {
+		fs.rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+it("Handlebars - helpers cannot pollute Object.prototype", () => {
+	const marker = `ectoPolluted${Date.now().toString(36)}`;
+	const engine = new Handlebars();
+	const payload = `{"${marker}":"yes"}`;
+	try {
+		expect(() =>
+			engine.renderSync('{{merge (get "__proto__" obj) (JSONparse payload)}}', {
+				obj: {},
+				payload,
+			}),
+		).toThrow();
+		expect(({} as Record<string, unknown>)[marker]).toBeUndefined();
+	} finally {
+		delete (Object.prototype as Record<string, unknown>)[marker];
+	}
+});
+
+it("Handlebars - kept helpers block prototype keys", () => {
+	const engine = new Handlebars();
+	const data = {
+		language: "en",
+		en: { hello: "world", prototype: { leaked: "SECRET" } },
+	};
+	expect(engine.renderSync('{{i18n "hello"}}', data)).toBe("world");
+	expect(() => engine.renderSync('{{i18n "constructor"}}', data)).toThrow(
+		/blocks this object key/,
+	);
+	expect(() => engine.renderSync('{{i18n "__proto__"}}', data)).toThrow(
+		/blocks this object key/,
+	);
+	expect(() => engine.renderSync('{{i18n "prototype.leaked"}}', data)).toThrow(
+		/blocks this object key/,
+	);
+	expect(() =>
+		engine.renderSync("{{pick paths obj}}", {
+			paths: ["hello", "constructor"],
+			obj: { hello: "world" },
+		}),
+	).toThrow(/blocks this object key/);
+	expect(() =>
+		engine.renderSync("{{i18n count}}", { ...data, count: 5 }),
+	).toThrow(/string/);
+});
+
+it("Handlebars - extend blocks a __proto__ key", () => {
+	const engine = new Handlebars();
+	const payload = '{"__proto__":{"polluted":"yes"}}';
+	expect(() =>
+		engine.renderSync("{{extend base (JSONparse payload)}}", {
+			base: { ok: true },
+			payload,
+		}),
+	).toThrow(/blocks this object key/);
+	expect(() =>
+		engine.renderSync("{{extend base (JSONparse payload)}}", {
+			base: { ok: true },
+			payload: '[{"__proto__":{"polluted":"yes"}}]',
+		}),
+	).toThrow(/blocks this object key/);
+	expect(() =>
+		engine.engine.helpers.extend(
+			{ ok: true },
+			JSON.parse('{"__proto__":{"polluted":"yes"}}'),
+		),
+	).toThrow(/blocks this object key/);
+
+	const cyclic: Record<string, unknown> = { name: "ada" };
+	cyclic.self = cyclic;
+	expect(
+		engine.renderSync("{{extend base extra}}", {
+			base: cyclic,
+			extra: { city: "TX" },
+		}),
+	).toContain("[object Object]");
+});
+
+it("Handlebars - unsafeHelpers allowlist enables only named helpers", () => {
+	const directory = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-hbs-"));
+	const file = path.join(directory, "secret.txt");
+	fs.writeFileSync(file, "TOP-SECRET-VALUE");
+	try {
+		const engine = new Handlebars({
+			unsafeHelpers: ["read", "not-a-helper", 1],
+		});
+		expect(engine.renderSync(`{{read "${file}"}}`)).toContain(
+			"TOP-SECRET-VALUE",
+		);
+		expect(() => engine.renderSync(`{{readdir "${directory}"}}`)).toThrow(
+			/readdir/,
+		);
+	} finally {
+		fs.rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+it("Handlebars - unsafeHelpers true still blocks prototype keys", () => {
+	const marker = `ectoPolluted${Date.now().toString(36)}opt`;
+	const engine = new Handlebars({ unsafeHelpers: true });
+	const payload = `{"${marker}":"yes"}`;
+	try {
+		expect(() =>
+			engine.renderSync('{{merge (get "__proto__" obj) (JSONparse payload)}}', {
+				obj: {},
+				payload,
+			}),
+		).toThrow(/blocks this object key/);
+		expect(({} as Record<string, unknown>)[marker]).toBeUndefined();
+		expect(() =>
+			engine.renderSync("{{merge base (JSONparse payload)}}", {
+				base: { ok: true },
+				payload: '{"__proto__":{"polluted":"yes"}}',
+			}),
+		).toThrow(/blocks this object key/);
+	} finally {
+		delete (Object.prototype as Record<string, unknown>)[marker];
+	}
 });
 
 it("Handlebars - triple-stash inserts raw HTML without decoding entities", async () => {
