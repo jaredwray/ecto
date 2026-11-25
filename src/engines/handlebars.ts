@@ -53,12 +53,11 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 	): string {
 		const options = this.templateOptions();
 		const template = this.engine.compile(source, options);
-		const registered = (this.engine.partials ?? {}) as Record<string, unknown>;
 		const configured = (options?.partials ?? {}) as Record<string, unknown>;
 		const runtime = {
 			...(options ?? {}),
 			partials: {
-				...registered,
+				...this.engine.partials,
 				...configured,
 				...this.filePartials(),
 			},
@@ -123,7 +122,9 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
 	/**
 	 * Read partial files under this directory.
-	 * A symlink is skipped, so the walk does not leave the directory.
+	 * Skip a symlink that leaves the root.
+	 * Skip a pipe.
+	 * Skip a directory when the read fails.
 	 */
 	private walkPartials(
 		realRoot: string,
@@ -140,16 +141,11 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 
 		const allowed = new Set(this.getExtensions());
 		for (const entry of entries) {
-			if (entry.isSymbolicLink()) continue;
 			const fullPath = nodePath.join(current, entry.name);
 			if (entry.isDirectory()) {
 				this.walkPartials(realRoot, base, fullPath, partials);
 				continue;
 			}
-			if (!entry.isFile()) continue;
-
-			const extension = nodePath.extname(entry.name).slice(1).toLowerCase();
-			if (!allowed.has(extension)) continue;
 
 			let realFile: string;
 			try {
@@ -162,6 +158,10 @@ export class Handlebars extends BaseEngine implements EngineInterface {
 			if (relativeFile.startsWith("..") || nodePath.isAbsolute(relativeFile)) {
 				continue;
 			}
+			if (!entry.isFile()) continue;
+
+			const extension = nodePath.extname(entry.name).slice(1).toLowerCase();
+			if (!allowed.has(extension)) continue;
 
 			const relativeParent = nodePath.relative(base, current);
 			const stem = nodePath.basename(entry.name, nodePath.extname(entry.name));

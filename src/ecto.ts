@@ -1015,14 +1015,13 @@ export class Ecto extends Hookified {
 		const block = `---\n${frontMatterJson(data)}\n---\n`;
 		const raw = writr.frontMatterRaw;
 		if (raw !== "") {
+			// frontMatterRaw is a slice of content, so the index is valid.
 			const start = writr.content.indexOf(raw);
-			if (start >= 0) {
-				return (
-					writr.content.slice(0, start) +
-					block +
-					writr.content.slice(start + raw.length)
-				);
-			}
+			return (
+				writr.content.slice(0, start) +
+				block +
+				writr.content.slice(start + raw.length)
+			);
 		}
 
 		return `${block}${writr.content}`;
@@ -1295,7 +1294,7 @@ function readFences(source: string): { text: string; fenced: boolean[] } {
 		const fence = /^(?<marker>`{3,}|~{3,})/.exec(trimmed);
 		if (fence?.groups?.marker) {
 			const marker = fence.groups.marker;
-			const character = marker[0] ?? "";
+			const character = marker.charAt(0);
 			if (!inFence) {
 				inFence = true;
 				fenceChar = character;

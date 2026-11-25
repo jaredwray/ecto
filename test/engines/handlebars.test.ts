@@ -1,4 +1,5 @@
 // biome-ignore-all lint/suspicious/noExplicitAny: test file
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -617,6 +618,15 @@ it("Handlebars - file partials stay inside one root", () => {
 	fs.mkdirSync(outsidePartials);
 	fs.writeFileSync(path.join(outsidePartials, "onlya.hbs"), "ESCAPED");
 	fs.symlinkSync(outside, path.join(rootA, "partials", "link.hbs"));
+	fs.symlinkSync(
+		path.join(rootA, "missing.hbs"),
+		path.join(rootA, "partials", "broken.hbs"),
+	);
+	execFileSync("mkfifo", [path.join(rootA, "partials", "pipe.hbs")]);
+	const locked = path.join(rootA, "partials", "locked");
+	fs.mkdirSync(locked);
+	fs.writeFileSync(path.join(locked, "secret.hbs"), "LOCKED-SECRET");
+	fs.chmodSync(locked, 0);
 	const linked = fs.mkdtempSync(path.join(os.tmpdir(), "ecto-hbs-link-"));
 	fs.writeFileSync(path.join(linked, "hid.hbs"), "LINKED-SECRET");
 	fs.symlinkSync(linked, path.join(rootA, "partials", "linked"));
@@ -628,6 +638,10 @@ it("Handlebars - file partials stay inside one root", () => {
 		expect(engine.renderSync("{{> header.v2}}")).toContain("VERSIONED");
 		expect(() => engine.renderSync("{{> notes}}")).toThrow();
 		expect(() => engine.renderSync("{{> link}}")).toThrow();
+		expect(() => engine.renderSync("{{> broken}}")).toThrow();
+		expect(() => engine.renderSync("{{> pipe}}")).toThrow();
+		expect(() => engine.renderSync("{{> locked/secret}}")).toThrow();
+		expect(engine.renderSync("{{> onlya}}")).not.toContain("LOCKED-SECRET");
 
 		engine.rootTemplatePath = rootB;
 		expect(engine.renderSync("{{> header}}")).toContain("FROM-B");
@@ -652,6 +666,7 @@ it("Handlebars - file partials stay inside one root", () => {
 		expect(engine.renderSync("{{> mine}}")).toContain("MANUAL");
 		expect(() => engine.renderSync("{{> header}}")).toThrow();
 	} finally {
+		fs.chmodSync(path.join(rootA, "partials", "locked"), 0o700);
 		fs.rmSync(rootA, { recursive: true, force: true });
 		fs.rmSync(rootB, { recursive: true, force: true });
 		fs.rmSync(outside, { force: true });

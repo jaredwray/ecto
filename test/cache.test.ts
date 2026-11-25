@@ -245,4 +245,90 @@ it("cache does not reuse a result for data that JSON cannot store", async () => 
 			items: ["x", null],
 		}),
 	).toBe("true");
+
+	class Tagged extends Array<string> {
+		label(): string {
+			return "one";
+		}
+	}
+	class TaggedTwo extends Array<string> {
+		label(): string {
+			return "two";
+		}
+	}
+	const firstItems = new Tagged();
+	firstItems.push("x");
+	const secondItems = new TaggedTwo();
+	secondItems.push("x");
+	expect(ecto.renderSync("<%= items.label() %>", { items: firstItems })).toBe(
+		"one",
+	);
+	expect(ecto.renderSync("<%= items.label() %>", { items: secondItems })).toBe(
+		"two",
+	);
+
+	const hiddenIndex = ["one"];
+	Object.defineProperty(hiddenIndex, "0", {
+		value: "one",
+		enumerable: false,
+		writable: true,
+		configurable: true,
+	});
+	expect(
+		ecto.renderSync("<%= Object.keys(items).length %>", {
+			items: hiddenIndex,
+		}),
+	).toBe("0");
+	expect(
+		ecto.renderSync("<%= Object.keys(items).length %>", { items: ["one"] }),
+	).toBe("1");
+
+	expect(ecto.renderSync("<%= items[0]() %>", { items: [() => "one"] })).toBe(
+		"one",
+	);
+	expect(ecto.renderSync("<%= items[0]() %>", { items: [() => "two"] })).toBe(
+		"two",
+	);
+
+	const sparse = [] as string[];
+	sparse.length = 1;
+	Object.defineProperty(sparse, "extra", { value: "one", enumerable: true });
+	const sparseTwo = [] as string[];
+	sparseTwo.length = 1;
+	Object.defineProperty(sparseTwo, "extra", {
+		value: "two",
+		enumerable: true,
+	});
+	expect(ecto.renderSync("<%= items.extra %>", { items: sparse })).toBe("one");
+	expect(ecto.renderSync("<%= items.extra %>", { items: sparseTwo })).toBe(
+		"two",
+	);
+
+	const symbolKey = Symbol("secret");
+	const symbolOne = { name: "ada" };
+	const symbolTwo = { name: "ada" };
+	Object.defineProperty(symbolOne, symbolKey, {
+		value: "one",
+		enumerable: true,
+	});
+	Object.defineProperty(symbolTwo, symbolKey, {
+		value: "two",
+		enumerable: true,
+	});
+	const symbolTemplate = "<%= data[Object.getOwnPropertySymbols(data)[0]] %>";
+	expect(ecto.renderSync(symbolTemplate, { data: symbolOne })).toBe("one");
+	expect(ecto.renderSync(symbolTemplate, { data: symbolTwo })).toBe("two");
+
+	const hiddenOne = {};
+	const hiddenTwo = {};
+	Object.defineProperty(hiddenOne, "name", {
+		value: "one",
+		enumerable: false,
+	});
+	Object.defineProperty(hiddenTwo, "name", {
+		value: "two",
+		enumerable: false,
+	});
+	expect(ecto.renderSync("{{name}}", hiddenOne, "handlebars")).toBe("one");
+	expect(ecto.renderSync("{{name}}", hiddenTwo, "handlebars")).toBe("two");
 });
